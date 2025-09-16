@@ -2,7 +2,9 @@ package org.libraryexpress.domain.entity;
 
 import org.libraryexpress.helper.Generator;
 
-public class Client {
+import java.util.Objects;
+
+public class Client implements Comparable<Client> {
 
     private final String ID = Generator.genUUID();
 
@@ -33,6 +35,31 @@ public class Client {
 
     public void changeEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "{\n" +
+                " ID: " + ID + "\n," +
+                " name: " + name + "\n," +
+                " email: " + email + "\n" +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Client client)) return false;
+        return Objects.equals(ID, client.ID) || Objects.equals(email, client.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash();
+    }
+
+    @Override
+    public int compareTo(Client otherClient) {
+        return Objects.compare(this.name, otherClient.getName(), String::compareTo);
     }
 
     public static class Builder {

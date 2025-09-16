@@ -2,12 +2,15 @@ package org.libraryexpress.domain.repository;
 
 import org.libraryexpress.domain.entity.Client;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface IClientRepository {
 
+    void create(Client client);
+    boolean update(String id, String email);
+
     Optional<Client> getById(String id);
     Optional<Client> getByEmail(String email);
-    Optional<List<Client>> all();
+    Optional<Set<Client>> all();
 }

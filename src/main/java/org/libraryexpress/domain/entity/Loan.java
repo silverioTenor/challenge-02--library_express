@@ -1,23 +1,26 @@
 package org.libraryexpress.domain.entity;
 
-import java.util.Date;
+import org.libraryexpress.enums.LoanStatus;
 
-public class Loan {
+import java.util.Date;
+import java.util.Objects;
+
+public class Loan implements Comparable<Loan> {
 
     private final Book book;
 
     private final Client client;
 
-    private boolean active;
+    private LoanStatus status;
 
     private final Date acquisitionDate;
 
     private final Date deliveryDate;
 
-    private Loan(Book book, Client client, boolean active, Date acquisitionDate, Date deliveryDate) {
+    private Loan(Book book, Client client, LoanStatus status, Date acquisitionDate, Date deliveryDate) {
         this.book = book;
         this.client = client;
-        this.active = active;
+        this.status = status;
         this.acquisitionDate = acquisitionDate;
         this.deliveryDate = deliveryDate;
     }
@@ -30,12 +33,12 @@ public class Loan {
         return client;
     }
 
-    public boolean isActive() {
-        return active;
+    public LoanStatus status() {
+        return status;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void changeStatus(LoanStatus status) {
+        this.status = status;
     }
 
     public Date getAcquisitionDate() {
@@ -46,13 +49,40 @@ public class Loan {
         return deliveryDate;
     }
 
+    @Override
+    public String toString() {
+        return "{\n" +
+                "book: " + book + ",\n" +
+                " client: " + client + ",\n" +
+                " status: " + status + ",\n" +
+                " acquisitionDate: " + acquisitionDate + ",\n" +
+                " deliveryDate: " + deliveryDate + ",\n" +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Loan loan)) return false;
+        return Objects.equals(book, loan.book) && Objects.equals(acquisitionDate, loan.acquisitionDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(book, acquisitionDate);
+    }
+
+    @Override
+    public int compareTo(Loan o) {
+        return Objects.compare(acquisitionDate, o.getAcquisitionDate(), Date::compareTo);
+    }
+
     public static class Builder {
 
         private Book book;
 
         private Client client;
 
-        private boolean active;
+        private LoanStatus status;
 
         private Date acquisitionDate;
 
@@ -66,7 +96,7 @@ public class Loan {
             return this;
         }
 
-        Builder active(boolean active) {
+        Builder status(LoanStatus status) {
             return this;
         }
 
@@ -79,7 +109,7 @@ public class Loan {
         }
 
         Loan buid() {
-            return new Loan(book, client, active, acquisitionDate, deliveryDate);
+            return new Loan(book, client, status, acquisitionDate, deliveryDate);
         }
     }
 }

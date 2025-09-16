@@ -2,7 +2,9 @@ package org.libraryexpress.domain.entity;
 
 import org.libraryexpress.helper.Generator;
 
-public class Book {
+import java.util.Objects;
+
+public class Book implements Comparable<Book> {
 
     public final String ISBN = Generator.genISBN();
 
@@ -50,6 +52,22 @@ public class Book {
                 " year: " + year + ",\n" +
                 " qty: " + qty + ",\n" +
                 "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Book book)) return false;
+        return Objects.equals(ISBN, book.ISBN);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(year);
+    }
+
+    @Override
+    public int compareTo(Book otherBook) {
+        return Objects.compare(this.title, otherBook.getTitle(), String::compareTo);
     }
 
     public static class Builder {
