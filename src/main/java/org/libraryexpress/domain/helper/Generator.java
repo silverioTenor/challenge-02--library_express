@@ -1,4 +1,4 @@
-package org.libraryexpress.helper;
+package org.libraryexpress.domain.helper;
 
 import java.util.List;
 import java.util.Random;

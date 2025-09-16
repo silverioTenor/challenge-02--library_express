@@ -1,6 +1,6 @@
 package org.libraryexpress.domain.entity;
 
-import org.libraryexpress.helper.Generator;
+import org.libraryexpress.domain.helper.Generator;
 
 import java.util.Objects;
 
@@ -68,15 +68,17 @@ public class Client implements Comparable<Client> {
 
         private String email;
 
-        Builder name(String name) {
+        public Builder setName(String name) {
+            this.name = name;
             return this;
         }
 
-        Builder email(String email) {
+        public Builder setEmail(String email) {
+            this.email = email;
             return this;
         }
 
-        Client build() {
+        public Client build() {
             return new Client(name, email);
         }
     }

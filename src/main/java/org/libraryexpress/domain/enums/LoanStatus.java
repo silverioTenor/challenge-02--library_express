@@ -1,4 +1,4 @@
-package org.libraryexpress.enums;
+package org.libraryexpress.domain.enums;
 
 public enum LoanStatus {
     AVAILABLE,

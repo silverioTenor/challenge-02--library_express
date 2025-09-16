@@ -2,7 +2,7 @@ package org.libraryexpress.infrastructure.repository;
 
 import org.libraryexpress.domain.entity.Loan;
 import org.libraryexpress.domain.repository.ILoanRepository;
-import org.libraryexpress.enums.LoanStatus;
+import org.libraryexpress.domain.enums.LoanStatus;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,10 +30,10 @@ public enum LoanRepository implements ILoanRepository {
     }
 
     @Override
-    public Optional<Loan> getByStatus(LoanStatus status) {
+    public Set<Loan> getByStatus(LoanStatus status) {
         return group.stream()
                 .filter(loan -> loan.status().equals(status))
-                .findAny();
+                .collect(Collectors.toSet());
     }
 
     @Override

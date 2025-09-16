@@ -1,6 +1,6 @@
 package org.libraryexpress.domain.entity;
 
-import org.libraryexpress.helper.Generator;
+import org.libraryexpress.domain.helper.Generator;
 
 import java.util.Objects;
 
@@ -12,11 +12,11 @@ public class Book implements Comparable<Book> {
 
     private final String author;
 
-    private final String year;
+    private final int year;
 
-    private String qty;
+    private int qty;
 
-    private Book(String title, String author, String year, String qty) {
+    private Book(String title, String author, int year, int qty) {
         this.title = title;
         this.author = author;
         this.year = year;
@@ -31,15 +31,15 @@ public class Book implements Comparable<Book> {
         return author;
     }
 
-    public String getYear() {
+    public int getYear() {
         return year;
     }
 
-    public String getQty() {
+    public int getQty() {
         return qty;
     }
 
-    public void changeQty(String qty) {
+    public void changeQty(int qty) {
         this.qty = qty;
     }
 
@@ -76,27 +76,31 @@ public class Book implements Comparable<Book> {
 
         private String author;
 
-        private String year;
+        private int year;
 
-        private String qty;
+        private int qty;
 
-        Builder title(String title) {
+        public Builder setTitle(String title) {
+            this.title = title;
             return this;
         }
 
-        Builder author(String author) {
+        public Builder setAuthor(String author) {
+            this.author = author;
             return this;
         }
 
-        Builder year(String year) {
+        public Builder setYear(int year) {
+            this.year = year;
             return this;
         }
 
-        Builder qty(String qty) {
+        public Builder setQty(int qty) {
+            this.qty = qty;
             return this;
         }
 
-        Book build() {
+        public Book build() {
             return new Book(title, author, year, qty);
         }
     }
