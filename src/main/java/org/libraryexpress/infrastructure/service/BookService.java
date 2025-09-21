@@ -2,6 +2,7 @@ package org.libraryexpress.infrastructure.service;
 
 import org.libraryexpress.domain.entity.Book;
 import org.libraryexpress.domain.repository.IBookRepository;
+import org.libraryexpress.infrastructure.exception.BookUnavailableException;
 import org.libraryexpress.infrastructure.repository.BookRepository;
 
 import java.util.Scanner;
@@ -45,8 +46,12 @@ public class BookService {
         return book;
     }
 
-    public Book findByIsbn(String isbn) {
-        return this.bookRepository.getByIsbn(isbn).orElse(null);
+    public Book findByIsbn(String isbn) throws BookUnavailableException {
+        var result = this.bookRepository.getByIsbn(isbn);
+
+        if (result.isEmpty()) throw new BookUnavailableException("Book unavailable!");
+
+        return result.get();
     }
 
     public Set<Book> findAll() {

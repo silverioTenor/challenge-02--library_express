@@ -1,19 +1,13 @@
-package org.libraryexpress.infrastructure.service;
+package org.libraryexpress.infrastructure.controller;
 
 import java.util.Scanner;
 
-public class ManagementService {
+public class ManagementController {
 
-    private final BookService bookService;
+    private final LoanController loanController;
 
-    private final ClientService clientService;
-
-    private final LoanService loanService;
-
-    public ManagementService() {
-        bookService = new BookService();
-        clientService = new ClientService();
-        loanService = new LoanService();
+    public ManagementController() {
+        loanController = new LoanController();
     }
 
     public void app() {
@@ -29,18 +23,22 @@ public class ManagementService {
             System.out.println("[1] - Loan");
             System.out.println("[2] - Book");
             System.out.println("[3] - Client");
-            System.out.println("[4] - Waiting list");
-            System.out.println("[5] - Devolution");
             System.out.println("[6] - Exit");
             System.out.println(" ");
 
             int option = scan.nextInt();
 
             switch (option) {
-                case 1, 2, 3, 4, 5 -> System.out.println("Option currently unavailable");
-                case 6 -> loop = false;
+                case 1 -> this.loanController.init(scan);
+                case 2, 3, 4, 5 -> System.out.println("Option currently unavailable");
+                case 6 -> {
+                    loop = false;
+                    System.out.println("Good bye!");
+                }
                 default -> System.out.println("Invalid option!");
             }
         } while (loop);
+
+        scan.close();
     }
 }

@@ -20,7 +20,7 @@ public class LoanService {
         this.loanRepository = LoanRepository.DB;
     }
 
-    public Loan generate(Client client, Book book) {
+    public Loan subscribe(Client client, Book book) {
         LocalDate acquisitionDate = LocalDate.now();
         LocalDate deliveryDate = acquisitionDate.plusDays(LOAN_DURATION_IN_DAYS);
 
@@ -33,6 +33,7 @@ public class LoanService {
                 .build();
 
         this.loanRepository.create(loan);
+
         return loan;
     }
 

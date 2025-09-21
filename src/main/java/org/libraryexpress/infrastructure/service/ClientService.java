@@ -2,6 +2,7 @@ package org.libraryexpress.infrastructure.service;
 
 import org.libraryexpress.domain.entity.Client;
 import org.libraryexpress.domain.repository.IClientRepository;
+import org.libraryexpress.infrastructure.exception.NotFoundException;
 import org.libraryexpress.infrastructure.repository.ClientRepository;
 
 import java.util.Optional;
@@ -55,7 +56,11 @@ public class ClientService {
         return this.clientRepository.getById(id).orElse(null);
     }
 
-    public Client findByEmail(String email) {
-        return this.clientRepository.getByEmail(email).orElse(null);
+    public Client findByEmail(String email) throws NotFoundException {
+        var result = this.clientRepository.getByEmail(email);
+
+        if (result.isEmpty()) throw new NotFoundException("Client not found!");
+
+        return result.get();
     }
 }
