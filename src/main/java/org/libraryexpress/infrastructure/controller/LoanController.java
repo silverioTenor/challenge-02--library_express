@@ -56,7 +56,7 @@ class LoanController {
             System.out.println("Enter the client's e-mail");
             email = scan.next();
 
-            Client client = this.clientService.findByEmail(email);
+            Client client = this.clientService.findByEmailOrFail(email);
 
             System.out.println(" ");
             System.out.println("Enter the ISBN");

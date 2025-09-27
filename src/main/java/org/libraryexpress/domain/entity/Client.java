@@ -40,8 +40,8 @@ public class Client implements Comparable<Client> {
     @Override
     public String toString() {
         return "{\n" +
-                " ID: " + ID + "\n," +
-                " name: " + name + "\n," +
+                " ID: " + ID + ",\n" +
+                " name: " + name + ",\n" +
                 " email: " + email + "\n" +
                 '}';
     }

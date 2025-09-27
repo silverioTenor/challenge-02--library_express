@@ -6,8 +6,11 @@ public class ManagementController {
 
     private final LoanController loanController;
 
+    private final ClientController clientController;
+
     public ManagementController() {
         loanController = new LoanController();
+        clientController = new ClientController();
     }
 
     public void app() {
@@ -30,7 +33,8 @@ public class ManagementController {
 
             switch (option) {
                 case 1 -> this.loanController.init(scan);
-                case 2, 3, 4, 5 -> System.out.println("Option currently unavailable");
+                case 2, 4, 5 -> System.out.println("Option currently unavailable");
+                case 3 -> this.clientController.init(scan);
                 case 6 -> {
                     loop = false;
                     System.out.println("Good bye!");
