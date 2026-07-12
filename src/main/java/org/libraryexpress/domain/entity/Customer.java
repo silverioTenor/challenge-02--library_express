@@ -4,7 +4,7 @@ import org.libraryexpress.domain.helper.Generator;
 
 import java.util.Objects;
 
-public class Client implements Comparable<Client> {
+public class Customer implements Comparable<Customer> {
 
     private final String ID = Generator.genUUID();
 
@@ -12,7 +12,7 @@ public class Client implements Comparable<Client> {
 
     private String email;
 
-    private Client(String name, String email) {
+    private Customer(String name, String email) {
         this.name = name;
         this.email = email;
     }
@@ -48,8 +48,8 @@ public class Client implements Comparable<Client> {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Client client)) return false;
-        return Objects.equals(ID, client.ID) || Objects.equals(email, client.email);
+        if (!(o instanceof Customer customer)) return false;
+        return Objects.equals(ID, customer.ID) || Objects.equals(email, customer.email);
     }
 
     @Override
@@ -58,8 +58,8 @@ public class Client implements Comparable<Client> {
     }
 
     @Override
-    public int compareTo(Client otherClient) {
-        return Objects.compare(this.name, otherClient.getName(), String::compareTo);
+    public int compareTo(Customer otherCustomer) {
+        return Objects.compare(this.name, otherCustomer.getName(), String::compareTo);
     }
 
     public static class Builder {
@@ -78,8 +78,8 @@ public class Client implements Comparable<Client> {
             return this;
         }
 
-        public Client build() {
-            return new Client(name, email);
+        public Customer build() {
+            return new Customer(name, email);
         }
     }
 }

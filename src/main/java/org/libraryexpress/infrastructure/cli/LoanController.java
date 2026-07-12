@@ -1,14 +1,13 @@
-package org.libraryexpress.infrastructure.controller;
+package org.libraryexpress.infrastructure.cli;
 
 import org.libraryexpress.domain.entity.Book;
-import org.libraryexpress.domain.entity.Client;
+import org.libraryexpress.domain.entity.Customer;
 import org.libraryexpress.domain.entity.Loan;
 import org.libraryexpress.domain.entity.WaitingList;
 import org.libraryexpress.infrastructure.exception.BookUnavailableException;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
-import org.libraryexpress.infrastructure.service.BookService;
-import org.libraryexpress.infrastructure.service.ClientService;
-import org.libraryexpress.infrastructure.service.LoanService;
+import org.libraryexpress.application.BookService;
+import org.libraryexpress.application.LoanService;
 
 import java.util.Scanner;
 
@@ -16,13 +15,13 @@ class LoanController {
 
     private final BookService bookService;
 
-    private final ClientService clientService;
+    private final CustomerService customerService;
 
     private final LoanService loanService;
 
     public LoanController() {
         bookService = new BookService();
-        clientService = new ClientService();
+        customerService = new CustomerService();
         loanService = new LoanService();
     }
 
@@ -33,7 +32,7 @@ class LoanController {
             System.out.println(" ");
             System.out.println("[1] - New");
 //            System.out.println("[2] - Book");
-//            System.out.println("[3] - Client");
+//            System.out.println("[3] - Customer");
             System.out.println("[6] - Return");
             System.out.println(" ");
 
@@ -53,10 +52,10 @@ class LoanController {
         String email = "";
 
         try {
-            System.out.println("Enter the client's e-mail");
+            System.out.println("Enter the customer's e-mail");
             email = scan.next();
 
-            Client client = this.clientService.findByEmailOrFail(email);
+            Customer customer = this.customerService.findByEmailOrFail(email);
 
             System.out.println(" ");
             System.out.println("Enter the ISBN");
@@ -64,7 +63,7 @@ class LoanController {
 
             Book book = this.bookService.findByIsbn(isbn);
 
-            Loan loan = this.loanService.subscribe(client, book);
+            Loan loan = this.loanService.subscribe(customer, book);
 
             System.out.println(" ");
             System.out.println("Loan made successfully!");
@@ -77,7 +76,7 @@ class LoanController {
         } catch (BookUnavailableException e) {
 
             System.out.println(" ");
-            System.out.println("Do you want to join the waiting list?");
+            System.out.println("Do you want to join the waiting execute?");
             String response = scan.next().toLowerCase();
 
             if (response.equals("y") && (!isbn.isEmpty() && !email.isEmpty())) {

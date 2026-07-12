@@ -9,7 +9,7 @@ public class Loan implements Comparable<Loan> {
 
     private final Book book;
 
-    private final Client client;
+    private final Customer customer;
 
     private LoanStatus status;
 
@@ -17,9 +17,9 @@ public class Loan implements Comparable<Loan> {
 
     private final LocalDate deliveryDate;
 
-    private Loan(Book book, Client client, LoanStatus status, LocalDate acquisitionDate, LocalDate deliveryDate) {
+    private Loan(Book book, Customer customer, LoanStatus status, LocalDate acquisitionDate, LocalDate deliveryDate) {
         this.book = book;
-        this.client = client;
+        this.customer = customer;
         this.status = status;
         this.acquisitionDate = acquisitionDate;
         this.deliveryDate = deliveryDate;
@@ -29,8 +29,8 @@ public class Loan implements Comparable<Loan> {
         return book;
     }
 
-    public Client getClient() {
-        return client;
+    public Customer getClient() {
+        return customer;
     }
 
     public LoanStatus status() {
@@ -53,7 +53,7 @@ public class Loan implements Comparable<Loan> {
     public String toString() {
         return "{\n" +
                 "book: " + book + ",\n" +
-                " client: " + client + ",\n" +
+                " customer: " + customer + ",\n" +
                 " status: " + status + ",\n" +
                 " acquisitionDate: " + acquisitionDate.toString() + ",\n" +
                 " deliveryDate: " + deliveryDate.toString() + ",\n" +
@@ -80,7 +80,7 @@ public class Loan implements Comparable<Loan> {
 
         private Book book;
 
-        private Client client;
+        private Customer customer;
 
         private LoanStatus status;
 
@@ -93,8 +93,8 @@ public class Loan implements Comparable<Loan> {
             return this;
         }
 
-        public Builder setClient(Client client) {
-            this.client = client;
+        public Builder setClient(Customer customer) {
+            this.customer = customer;
             return this;
         }
 
@@ -114,7 +114,7 @@ public class Loan implements Comparable<Loan> {
         }
 
         public Loan build() {
-            return new Loan(book, client, status, acquisitionDate, deliveryDate);
+            return new Loan(book, customer, status, acquisitionDate, deliveryDate);
         }
     }
 }

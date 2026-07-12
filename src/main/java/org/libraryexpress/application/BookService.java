@@ -1,4 +1,4 @@
-package org.libraryexpress.infrastructure.service;
+package org.libraryexpress.application;
 
 import org.libraryexpress.domain.entity.Book;
 import org.libraryexpress.domain.repository.IBookRepository;

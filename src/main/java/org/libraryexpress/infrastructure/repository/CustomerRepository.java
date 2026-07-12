@@ -1,24 +1,25 @@
 package org.libraryexpress.infrastructure.repository;
 
-import org.libraryexpress.domain.entity.Client;
-import org.libraryexpress.domain.repository.IClientRepository;
+import org.libraryexpress.domain.entity.Customer;
+import org.libraryexpress.domain.repository.ICustomerRepository;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-public enum ClientRepository implements IClientRepository {
+public enum CustomerRepository implements ICustomerRepository {
     DB;
 
-    private final Set<Client> group = new HashSet<>();
+    private final Set<Customer> group = ConcurrentHashMap.newKeySet();
 
     @Override
-    public void create(Client client) {
-        group.add(client);
+    public void create(Customer customer) {
+        group.add(customer);
     }
 
     @Override
-    public boolean update(String id, String email) {
+    public synchronized boolean update(String id, String email) {
         return group.stream()
                 .filter(client -> client.getID().equals(id))
                 .findFirst()
@@ -31,21 +32,21 @@ public enum ClientRepository implements IClientRepository {
     }
 
     @Override
-    public Optional<Client> getById(String id) {
+    public Optional<Customer> getById(String id) {
         return group.stream()
                 .filter(client -> client.getID().equals(id))
                 .findFirst();
     }
 
     @Override
-    public Optional<Client> getByEmail(String email) {
+    public Optional<Customer> getByEmail(String email) {
         return group.stream()
                 .filter(client -> client.getEmail().equals(email))
                 .findFirst();
     }
 
     @Override
-    public Optional<Set<Client>> all() {
+    public Optional<Set<Customer>> all() {
         return Optional.of(group);
     }
 }

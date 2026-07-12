@@ -1,16 +1,16 @@
-package org.libraryexpress.infrastructure.controller;
+package org.libraryexpress.infrastructure.cli;
 
 import java.util.Scanner;
 
-public class ManagementController {
+public class ManagementCli {
 
     private final LoanController loanController;
 
-    private final ClientController clientController;
+    private final CustomerCli customerCli;
 
-    public ManagementController() {
+    public ManagementCli() {
         loanController = new LoanController();
-        clientController = new ClientController();
+        customerCli = new CustomerCli();
     }
 
     public void app() {
@@ -25,7 +25,7 @@ public class ManagementController {
             System.out.println(" ");
             System.out.println("[1] - Loan");
             System.out.println("[2] - Book");
-            System.out.println("[3] - Client");
+            System.out.println("[3] - Customer");
             System.out.println("[6] - Exit");
             System.out.println(" ");
 
@@ -34,7 +34,7 @@ public class ManagementController {
             switch (option) {
                 case 1 -> this.loanController.init(scan);
                 case 2, 4, 5 -> System.out.println("Option currently unavailable");
-                case 3 -> this.clientController.init(scan);
+                case 3 -> this.customerCli.init(scan);
                 case 6 -> {
                     loop = false;
                     System.out.println("Good bye!");
