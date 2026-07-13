@@ -1,10 +1,13 @@
 package org.libraryexpress.application.customer.usecase;
 
+import org.libraryexpress.application.customer.dto.response.CustomerDto;
 import org.libraryexpress.application.customer.mapper.CustomerMapper;
 import org.libraryexpress.domain.entity.Customer;
 import org.libraryexpress.domain.repository.ICustomerRepository;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
 import org.libraryexpress.infrastructure.repository.CustomerRepository;
+
+import java.util.Optional;
 
 public class FindCustomer {
 
@@ -16,19 +19,14 @@ public class FindCustomer {
         this.mapper = CustomerMapper.INSTANCE;
     }
 
-    public Customer findById(String id) {
-        return this.customerRepository.getById(id).orElse(null);
-    }
+    public CustomerDto execute(String emailOrId) throws NotFoundException {
 
-    public Customer findByEmail(String email) {
-        return this.customerRepository.getByEmail(email).orElse(null);
-    }
+        Optional<Customer> customer = emailOrId.contains("@")
+                ? this.customerRepository.getByEmail(emailOrId)
+                : this.customerRepository.getById(emailOrId);
 
-    public Customer findByEmailOrFail(String email) throws NotFoundException {
-        var result = this.customerRepository.getByEmail(email);
-
-        if (result.isEmpty()) throw new NotFoundException("Customer not found!");
-
-        return result.get();
+        return customer
+                .map(mapper::toResponseDto)
+                .orElseThrow(() -> new NotFoundException("Customer not found!"));
     }
 }

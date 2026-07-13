@@ -8,7 +8,7 @@ import java.util.Set;
 public interface ICustomerRepository {
 
     void create(Customer customer);
-    boolean update(String id, String email);
+    void update(String id, String email);
 
     Optional<Customer> getById(String id);
     Optional<Customer> getByEmail(String email);

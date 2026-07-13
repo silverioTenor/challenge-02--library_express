@@ -25,7 +25,7 @@ public class CreateCustomer {
 
         if (hasClient.isPresent()) throw new RuleViolationException("E-mail must be unique.");
 
-        Customer customer = mapper.toEntity(createCustomerDto);
+        Customer customer = mapper.toEntity(createCustomerDto).build();
 
         this.customerRepository.create(customer);
     }

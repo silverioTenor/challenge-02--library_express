@@ -1,12 +1,11 @@
 package org.libraryexpress.infrastructure.cli;
 
-import org.libraryexpress.application.customer.dto.request.FindCustomerDto;
 import org.libraryexpress.application.customer.dto.request.UpdateCustomerEmailDto;
+import org.libraryexpress.application.customer.dto.response.CustomerDto;
 import org.libraryexpress.application.customer.usecase.CreateCustomer;
 import org.libraryexpress.application.customer.usecase.FindCustomer;
 import org.libraryexpress.application.customer.usecase.ListCustomers;
 import org.libraryexpress.application.customer.usecase.UpdateCustomerEmail;
-import org.libraryexpress.domain.entity.Customer;
 import org.libraryexpress.application.customer.dto.request.CreateCustomerDto;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
 import org.libraryexpress.infrastructure.exception.RuleViolationException;
@@ -44,8 +43,8 @@ class CustomerCli {
 
             switch (option) {
                 case 1 -> this.create(scan);
-//                case 2 -> this.show(scan);
-//                case 3 -> this.update(scan);
+                case 2 -> this.show(scan);
+                case 3 -> this.update(scan);
                 case 4 -> this.list();
                 case 6 -> loop = false;
                 default -> System.out.println("Invalid option!");
@@ -83,52 +82,44 @@ class CustomerCli {
         }
     }
 
-    private void show(FindCustomerDto findCustomerDto) {
-        Customer customer;
+    private void show(Scanner scan) {
 
         System.out.println("Enter the customer's mail or ID");
-        String dataToSearch = findCustomerDto.emailOrId();
+        String dataToSearch = scan.next();
 
-        if (dataToSearch.contains("@")) {
-            customer = this.findCustomer.findByEmail(dataToSearch);
-        } else {
-            customer = this.findCustomer.findById(dataToSearch);
+        try {
+            CustomerDto customerDto = this.findCustomer.execute(dataToSearch);
+            System.out.println(customerDto);
+
+        } catch (NotFoundException e) {
+            System.out.println(e.getMessage());
         }
 
-        String dataToView = Objects.isNull(customer)
-                ? "Customer not found!"
-                : customer.toString();
-
-        System.out.println(dataToView);
     }
 
     private void update(Scanner scan) {
         System.out.println("Enter the client's ID");
         String id = scan.next();
 
-        Customer foundCustomer = this.findCustomer.findById(id);
+        try {
+            CustomerDto customerDto = this.findCustomer.execute(id);
+            System.out.println(customerDto);
 
-        if (Objects.isNull(foundCustomer)) {
-            System.out.println("Customer not found!");
-        } else {
             System.out.println("Enter the new client's e-mail");
-            String email = scan.next();
+            String newEmail = scan.next();
 
-            UpdateCustomerEmailDto updateEmail = new UpdateCustomerEmailDto(foundCustomer.getID(), email);
+            UpdateCustomerEmailDto updateEmail = new UpdateCustomerEmailDto(customerDto.id(), newEmail);
 
-            try {
-                this.updateEmail.execute(updateEmail);
-            } catch (NotFoundException e) {
-                System.out.println(e.getMessage());
-                return;
-            } catch (Exception e) {
-                System.out.println(" ");
-                System.out.println("Unexpected error has occurred:");
-                System.out.println(e.getMessage());
-                return;
-            }
+            this.updateEmail.execute(updateEmail);
 
             System.out.println("Update success!");
+
+        } catch (NotFoundException e) {
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println(" ");
+            System.out.println("Unexpected error has occurred:");
+            System.out.println(e.getMessage());
         }
     }
 

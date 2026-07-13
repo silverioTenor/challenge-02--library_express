@@ -3,7 +3,6 @@ package org.libraryexpress.infrastructure.repository;
 import org.libraryexpress.domain.entity.Customer;
 import org.libraryexpress.domain.repository.ICustomerRepository;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,15 +18,14 @@ public enum CustomerRepository implements ICustomerRepository {
     }
 
     @Override
-    public synchronized boolean update(String id, String email) {
-        return group.stream()
+    public synchronized void update(String id, String email) {
+        group.stream()
                 .filter(client -> client.getID().equals(id))
                 .findFirst()
                 .map(client -> {
                     client.changeEmail(email);
                     return true;
-                })
-                .orElse(false);
+                });
 
     }
 
