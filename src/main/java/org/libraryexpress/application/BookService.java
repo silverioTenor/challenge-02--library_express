@@ -1,4 +1,4 @@
-package org.libraryexpress.application.book;
+package org.libraryexpress.application;
 
 import org.libraryexpress.domain.entity.Book;
 import org.libraryexpress.domain.repository.IBookRepository;
@@ -17,11 +17,27 @@ public class BookService {
     }
 
     public Book register() {
+        Scanner scan = new Scanner(System.in);
+
+        System.out.println("  ");
+        System.out.println("Enter with title:");
+        String title = scan.next();
+
+        System.out.println("  ");
+        System.out.println("Enter with author:");
+        String author = scan.next();
+
+        System.out.println("  ");
+        System.out.println("Enter with year:");
+        int year = scan.nextInt();
+
+        int qty = 1;
 
         Book book = new Book.Builder()
                 .setTitle(title)
                 .setAuthor(author)
                 .setYear(year)
+                .setQty(qty)
                 .build();
 
         scan.close();

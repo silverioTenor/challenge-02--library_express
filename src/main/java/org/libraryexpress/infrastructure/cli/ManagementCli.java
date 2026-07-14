@@ -7,12 +7,10 @@ public class ManagementCli {
 //    private final LoanController loanController;
 
     private final CustomerCli customerCli;
-    private final BookCli bookCli;
 
     public ManagementCli() {
 //        loanController = new LoanController();
-        this.customerCli = new CustomerCli();
-        this.bookCli = new BookCli();
+        customerCli = new CustomerCli();
     }
 
     public void app() {
@@ -35,8 +33,7 @@ public class ManagementCli {
 
             switch (option) {
 //                case 1 -> this.loanController.init(scan);
-                case 2 -> this.bookCli.init(scan);
-                case 1, 4, 5 -> System.out.println("Option currently unavailable");
+                case 1, 2, 4, 5 -> System.out.println("Option currently unavailable");
                 case 3 -> this.customerCli.init(scan);
                 case 6 -> {
                     loop = false;

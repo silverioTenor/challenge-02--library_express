@@ -1,5 +1,16 @@
 package org.libraryexpress.infrastructure.cli;
 
+import org.libraryexpress.domain.entity.Book;
+import org.libraryexpress.domain.entity.Customer;
+import org.libraryexpress.domain.entity.Loan;
+import org.libraryexpress.domain.entity.WaitingList;
+import org.libraryexpress.infrastructure.exception.BookUnavailableException;
+import org.libraryexpress.infrastructure.exception.NotFoundException;
+import org.libraryexpress.application.BookService;
+import org.libraryexpress.application.LoanService;
+
+import java.util.Scanner;
+
 //class LoanController {
 //
 //    private final BookService bookService;
