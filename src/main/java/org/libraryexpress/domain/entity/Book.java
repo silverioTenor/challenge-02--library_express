@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class Book implements Comparable<Book> {
 
-    public final String ISBN = Generator.genISBN();
+    public final String ISBN;
 
     private final String title;
 
@@ -17,11 +17,16 @@ public class Book implements Comparable<Book> {
 
     private BookStatus status;
 
-    private Book(String title, String author, int year, BookStatus status) {
+    private Book(String ISBN, String title, String author, int year, BookStatus status) {
+        this.ISBN = ISBN;
         this.title = title;
         this.author = author;
         this.year = year;
         this.status = status;
+    }
+
+    public String getISBN() {
+        return ISBN;
     }
 
     public String getTitle() {
@@ -47,7 +52,7 @@ public class Book implements Comparable<Book> {
     @Override
     public String toString() {
         return "{\n" +
-                " isbn: " + ISBN + ",\n" +
+                " ISBN: " + ISBN + ",\n" +
                 " title: " + title + ",\n" +
                 " author: " + author + ",\n" +
                 " year: " + year + ",\n" +
@@ -72,6 +77,8 @@ public class Book implements Comparable<Book> {
 
     public static class Builder {
 
+        private String ISBN;
+
         private String title;
 
         private String author;
@@ -80,6 +87,10 @@ public class Book implements Comparable<Book> {
 
         private BookStatus status;
 
+        public Builder setISBN(String ISBN) {
+            this.ISBN = ISBN;
+            return this;
+        }
 
         public Builder setTitle(String title) {
             this.title = title;
@@ -102,7 +113,7 @@ public class Book implements Comparable<Book> {
         }
 
         public Book build() {
-            return new Book(title, author, year, status);
+            return new Book(ISBN, title, author, year, status);
         }
     }
 }
