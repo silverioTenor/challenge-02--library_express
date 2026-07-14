@@ -1,5 +1,6 @@
 package org.libraryexpress.domain.entity;
 
+import org.libraryexpress.domain.enums.BookStatus;
 import org.libraryexpress.domain.helper.Generator;
 
 import java.util.Objects;
@@ -14,13 +15,13 @@ public class Book implements Comparable<Book> {
 
     private final int year;
 
-    private int qty;
+    private BookStatus status;
 
-    private Book(String title, String author, int year, int qty) {
+    private Book(String title, String author, int year, BookStatus status) {
         this.title = title;
         this.author = author;
         this.year = year;
-        this.qty = qty;
+        this.status = status;
     }
 
     public String getTitle() {
@@ -35,12 +36,12 @@ public class Book implements Comparable<Book> {
         return year;
     }
 
-    public int getQty() {
-        return qty;
+    public BookStatus getStatus() {
+        return status;
     }
 
-    public void changeQty(int qty) {
-        this.qty = qty;
+    public void changeStatus(BookStatus status) {
+        this.status = status;
     }
 
     @Override
@@ -50,7 +51,6 @@ public class Book implements Comparable<Book> {
                 " title: " + title + ",\n" +
                 " author: " + author + ",\n" +
                 " year: " + year + ",\n" +
-                " qty: " + qty + ",\n" +
                 "}";
     }
 
@@ -78,7 +78,8 @@ public class Book implements Comparable<Book> {
 
         private int year;
 
-        private int qty;
+        private BookStatus status;
+
 
         public Builder setTitle(String title) {
             this.title = title;
@@ -95,13 +96,13 @@ public class Book implements Comparable<Book> {
             return this;
         }
 
-        public Builder setQty(int qty) {
-            this.qty = qty;
+        public Builder setStatus(BookStatus status) {
+            this.status = status;
             return this;
         }
 
         public Book build() {
-            return new Book(title, author, year, qty);
+            return new Book(title, author, year, status);
         }
     }
 }
