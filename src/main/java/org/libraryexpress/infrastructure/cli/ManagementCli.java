@@ -4,15 +4,14 @@ import java.util.Scanner;
 
 public class ManagementCli {
 
-//    private final LoanController loanController;
-
     private final CustomerCli customerCli;
     private final BookCli bookCli;
+    private final LoanCli loanCli;
 
     public ManagementCli() {
-//        loanController = new LoanController();
         this.customerCli = new CustomerCli();
         this.bookCli = new BookCli();
+        this.loanCli = new LoanCli();
     }
 
     public void app() {
@@ -34,10 +33,10 @@ public class ManagementCli {
             int option = scan.nextInt();
 
             switch (option) {
-//                case 1 -> this.loanController.init(scan);
+                case 1 -> this.loanCli.init(scan);
                 case 2 -> this.bookCli.init(scan);
-                case 1, 4, 5 -> System.out.println("Option currently unavailable");
                 case 3 -> this.customerCli.init(scan);
+                case 4, 5 -> System.out.println("Option currently unavailable");
                 case 6 -> {
                     loop = false;
                     System.out.println("Good bye!");

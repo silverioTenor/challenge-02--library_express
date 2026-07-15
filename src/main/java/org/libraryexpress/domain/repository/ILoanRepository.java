@@ -9,9 +9,6 @@ public interface ILoanRepository {
 
     void create(Loan loan);
     boolean update(Loan loanToUpdate);
-
-    Set<Loan> getByStatus(LoanStatus status);
-    Set<Loan> getByClientId(String clientId);
-    Set<Loan> getByBookIsbn(String isbn);
+    Set<Loan> search(String customerId, String ISBN, Set<LoanStatus> statuses);
     Set<Loan> all();
 }
