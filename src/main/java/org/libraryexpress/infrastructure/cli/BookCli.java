@@ -73,7 +73,7 @@ public class BookCli {
             return;
         }
 
-        RegisterBookDto registerBookDto = new RegisterBookDto(ISBN, title, author, year, BookStatus.ACTIVE);
+        RegisterBookDto registerBookDto = new RegisterBookDto(ISBN, title, author, year, BookStatus.AVAILABLE);
 
         try {
             this.registerBook.execute(registerBookDto);

@@ -7,9 +7,11 @@ import java.util.Objects;
 
 public class Loan implements Comparable<Loan> {
 
-    private final Book book;
+    private final String id;
 
-    private final Customer customer;
+    private final String ISBN;
+
+    private final String customerId;
 
     private LoanStatus status;
 
@@ -17,20 +19,32 @@ public class Loan implements Comparable<Loan> {
 
     private final LocalDate deliveryDate;
 
-    private Loan(Book book, Customer customer, LoanStatus status, LocalDate acquisitionDate, LocalDate deliveryDate) {
-        this.book = book;
-        this.customer = customer;
+    private Loan(
+            String id,
+            String ISBN,
+            String customerId,
+            LoanStatus status,
+            LocalDate acquisitionDate,
+            LocalDate deliveryDate
+    ) {
+        this.id = id;
+        this.ISBN = ISBN;
+        this.customerId = customerId;
         this.status = status;
         this.acquisitionDate = acquisitionDate;
         this.deliveryDate = deliveryDate;
     }
 
-    public Book getBook() {
-        return book;
+    public String getId() {
+        return id;
     }
 
-    public Customer getClient() {
-        return customer;
+    public String getISBN() {
+        return ISBN;
+    }
+
+    public String getCustomerId() {
+        return customerId;
     }
 
     public LoanStatus status() {
@@ -52,23 +66,24 @@ public class Loan implements Comparable<Loan> {
     @Override
     public String toString() {
         return "{\n" +
-                "book: " + book + ",\n" +
-                " customer: " + customer + ",\n" +
+                " ID: " + id + ",\n" +
+                " ISBN: " + ISBN + ",\n" +
+                " customerId: " + customerId + ",\n" +
                 " status: " + status + ",\n" +
                 " acquisitionDate: " + acquisitionDate.toString() + ",\n" +
                 " deliveryDate: " + deliveryDate.toString() + ",\n" +
-                '}';
+                "}";
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Loan loan)) return false;
-        return Objects.equals(book, loan.book) && Objects.equals(acquisitionDate, loan.acquisitionDate);
+        return Objects.equals(ISBN, loan.ISBN) && Objects.equals(acquisitionDate, loan.acquisitionDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(book, acquisitionDate);
+        return Objects.hash(ISBN, acquisitionDate);
     }
 
     @Override
@@ -78,9 +93,11 @@ public class Loan implements Comparable<Loan> {
 
     public static class Builder {
 
-        private Book book;
+        private String id;
 
-        private Customer customer;
+        private String ISBN;
+
+        private String customerId;
 
         private LoanStatus status;
 
@@ -88,13 +105,18 @@ public class Loan implements Comparable<Loan> {
 
         private LocalDate deliveryDate;
 
-        public Builder setBook(Book book) {
-            this.book = book;
+        public Builder setId(String id) {
+            this.id = id;
             return this;
         }
 
-        public Builder setClient(Customer customer) {
-            this.customer = customer;
+        public Builder setISBN(String ISBN) {
+            this.ISBN = ISBN;
+            return this;
+        }
+
+        public Builder setCustomerId(String customerId) {
+            this.customerId = customerId;
             return this;
         }
 
@@ -114,7 +136,7 @@ public class Loan implements Comparable<Loan> {
         }
 
         public Loan build() {
-            return new Loan(book, customer, status, acquisitionDate, deliveryDate);
+            return new Loan(id, ISBN, customerId, status, acquisitionDate, deliveryDate);
         }
     }
 }

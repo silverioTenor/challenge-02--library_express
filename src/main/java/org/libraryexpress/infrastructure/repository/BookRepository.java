@@ -1,6 +1,7 @@
 package org.libraryexpress.infrastructure.repository;
 
 import org.libraryexpress.domain.entity.Book;
+import org.libraryexpress.domain.enums.BookStatus;
 import org.libraryexpress.domain.repository.IBookRepository;
 
 import java.util.HashSet;
@@ -15,6 +16,11 @@ public enum BookRepository implements IBookRepository {
     @Override
     public void create(Book book) {
         group.add(book);
+    }
+
+    @Override
+    public Set<Book> search(String ISBN, Set<BookStatus> statuses) {
+        return Set.of();
     }
 
     @Override
