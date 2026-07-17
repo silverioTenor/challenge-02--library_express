@@ -37,6 +37,8 @@ public class CreateLoan {
                 .setStatus(LoanStatus.ACTIVE)
                 .build();
 
+        // Adicionar etapa para alterar o status do livro
+
         this.loanRepository.create(loan);
     }
 }

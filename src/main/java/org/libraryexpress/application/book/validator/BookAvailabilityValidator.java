@@ -21,6 +21,10 @@ public class BookAvailabilityValidator implements IValidator<String> {
     @Override
     public void validate(String ISBN) throws NotFoundException, RuleViolationException {
 
+        if (ISBN == null || ISBN.isBlank()) {
+            throw new RuleViolationException("ISBN cannot be empty.");
+        }
+
         Set<Book> books = this.bookRepository.search(ISBN, null);
 
         Book book = books.stream()

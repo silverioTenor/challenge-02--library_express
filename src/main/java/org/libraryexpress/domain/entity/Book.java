@@ -56,6 +56,7 @@ public class Book implements Comparable<Book> {
                 " title: " + title + ",\n" +
                 " author: " + author + ",\n" +
                 " year: " + year + ",\n" +
+                " status: " + status + ",\n" +
                 "}";
     }
 
