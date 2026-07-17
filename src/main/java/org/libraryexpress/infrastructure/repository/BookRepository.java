@@ -5,8 +5,11 @@ import org.libraryexpress.domain.enums.BookStatus;
 import org.libraryexpress.domain.repository.IBookRepository;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public enum BookRepository implements IBookRepository {
     DB;
@@ -20,7 +23,20 @@ public enum BookRepository implements IBookRepository {
 
     @Override
     public Set<Book> search(String ISBN, Set<BookStatus> statuses) {
-        return Set.of();
+
+        Predicate<Book> criteria = book -> true;
+
+        if (Objects.nonNull(ISBN) && !ISBN.isBlank()) {
+            criteria = criteria.and(book -> book.getISBN().equals(ISBN));
+        }
+
+        if (Objects.nonNull(statuses)) {
+            criteria = criteria.and(book -> statuses.contains(book.getStatus()));
+        }
+
+        return group.stream()
+                .filter(criteria)
+                .collect(Collectors.toSet());
     }
 
     @Override
