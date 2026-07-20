@@ -27,14 +27,14 @@ public class LoanEligibilityValidator implements IValidator<String> {
         );
 
         boolean hasOverdue = loans.stream()
-                .anyMatch(loan -> loan.status() == LoanStatus.OVERDUE);
+                .anyMatch(loan -> loan.getStatus() == LoanStatus.OVERDUE);
 
         if (hasOverdue) {
             throw new RuleViolationException("Customer has a pending overdue return.");
         }
 
         long activeCount = loans.stream()
-                .filter(loan -> loan.status() == LoanStatus.ACTIVE)
+                .filter(loan -> loan.getStatus() == LoanStatus.ACTIVE)
                 .count();
 
         if (activeCount > 1) {

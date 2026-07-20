@@ -3,6 +3,7 @@ package org.libraryexpress.infrastructure.repository;
 import org.libraryexpress.domain.entity.Book;
 import org.libraryexpress.domain.enums.BookStatus;
 import org.libraryexpress.domain.repository.IBookRepository;
+import org.libraryexpress.infrastructure.exception.NotFoundException;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -19,6 +20,17 @@ public enum BookRepository implements IBookRepository {
     @Override
     public void create(Book book) {
         group.add(book);
+    }
+
+    @Override
+    public void update(String ISBN, BookStatus status) {
+
+        Book foundBook = group.stream()
+                .filter(book -> book.ISBN.equals(ISBN))
+                .findFirst()
+                .orElse(null);
+
+        Objects.requireNonNull(foundBook).changeStatus(status);
     }
 
     @Override

@@ -2,10 +2,14 @@ package org.libraryexpress.domain.entity;
 
 import org.libraryexpress.domain.enums.LoanStatus;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 public class Loan implements Comparable<Loan> {
+
+    private static final int MAX_DAY_TO_RETURN = 15;
 
     private final String id;
 
@@ -15,24 +19,24 @@ public class Loan implements Comparable<Loan> {
 
     private LoanStatus status;
 
-    private final LocalDate acquisitionDate;
+    private final LocalDate startDate;
 
-    private final LocalDate deliveryDate;
+    private final LocalDate endDate;
 
     private Loan(
             String id,
             String ISBN,
             String customerId,
             LoanStatus status,
-            LocalDate acquisitionDate,
-            LocalDate deliveryDate
+            LocalDate startDate,
+            LocalDate endDate
     ) {
         this.id = id;
         this.ISBN = ISBN;
         this.customerId = customerId;
         this.status = status;
-        this.acquisitionDate = acquisitionDate;
-        this.deliveryDate = deliveryDate;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     public String getId() {
@@ -47,7 +51,7 @@ public class Loan implements Comparable<Loan> {
         return customerId;
     }
 
-    public LoanStatus status() {
+    public LoanStatus getStatus() {
         return status;
     }
 
@@ -55,12 +59,16 @@ public class Loan implements Comparable<Loan> {
         this.status = status;
     }
 
-    public LocalDate getAcquisitionDate() {
-        return acquisitionDate;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public LocalDate getDeliveryDate() {
-        return deliveryDate;
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public boolean isOverdue(Clock clock) {
+        return ChronoUnit.DAYS.between(startDate, LocalDate.now(clock)) > MAX_DAY_TO_RETURN;
     }
 
     @Override
@@ -69,26 +77,26 @@ public class Loan implements Comparable<Loan> {
                 " ID: " + id + ",\n" +
                 " ISBN: " + ISBN + ",\n" +
                 " customerId: " + customerId + ",\n" +
-                " status: " + status + ",\n" +
-                " acquisitionDate: " + acquisitionDate.toString() + ",\n" +
-                " deliveryDate: " + deliveryDate.toString() + ",\n" +
+                " status: " + status.toString() + ",\n" +
+                " startDate: " + startDate + ",\n" +
+                " endDate: " + endDate + ",\n" +
                 "}";
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Loan loan)) return false;
-        return Objects.equals(ISBN, loan.ISBN) && Objects.equals(acquisitionDate, loan.acquisitionDate);
+        return Objects.equals(ISBN, loan.ISBN) && Objects.equals(startDate, loan.startDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ISBN, acquisitionDate);
+        return Objects.hash(ISBN, startDate);
     }
 
     @Override
     public int compareTo(Loan o) {
-        return Objects.compare(acquisitionDate, o.getAcquisitionDate(), LocalDate::compareTo);
+        return Objects.compare(startDate, o.getStartDate(), LocalDate::compareTo);
     }
 
     public static class Builder {
@@ -101,9 +109,9 @@ public class Loan implements Comparable<Loan> {
 
         private LoanStatus status;
 
-        private LocalDate acquisitionDate;
+        private LocalDate startDate;
 
-        private LocalDate deliveryDate;
+        private LocalDate endDate;
 
         public Builder setId(String id) {
             this.id = id;
@@ -125,18 +133,18 @@ public class Loan implements Comparable<Loan> {
             return this;
         }
 
-        public Builder setAcquisitionDate(LocalDate acquisitionDate) {
-            this.acquisitionDate = acquisitionDate;
+        public Builder setStartDate(LocalDate startDate) {
+            this.startDate = startDate;
             return this;
         }
 
-        public Builder setDeliveryDate(LocalDate deliveryDate) {
-            this.deliveryDate = deliveryDate;
+        public Builder setEndDate(LocalDate endDate) {
+            this.endDate = endDate;
             return this;
         }
 
         public Loan build() {
-            return new Loan(id, ISBN, customerId, status, acquisitionDate, deliveryDate);
+            return new Loan(id, ISBN, customerId, status, startDate, endDate);
         }
     }
 }
