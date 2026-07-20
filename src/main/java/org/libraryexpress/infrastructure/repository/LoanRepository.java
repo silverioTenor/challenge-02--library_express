@@ -24,7 +24,7 @@ public enum LoanRepository implements ILoanRepository {
                 .filter(loan -> loan.equals(loanToUpdate))
                 .findFirst()
                 .map(loan -> {
-                    loan.changeStatus(loanToUpdate.status());
+                    loan.changeStatus(loanToUpdate.getStatus());
                     return true;
                 })
                 .orElse(false);
@@ -44,7 +44,7 @@ public enum LoanRepository implements ILoanRepository {
         }
 
         if (Objects.nonNull(statuses)) {
-            criteria = criteria.and(loan -> statuses.contains(loan.status()));
+            criteria = criteria.and(loan -> statuses.contains(loan.getStatus()));
         }
 
         return group.stream()

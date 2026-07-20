@@ -4,9 +4,10 @@ import org.libraryexpress.application.book.dto.request.RegisterBookDto;
 import org.libraryexpress.application.book.dto.response.BookDto;
 import org.libraryexpress.domain.entity.Book;
 import org.mapstruct.Mapper;
+import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(unmappedTargetPolicy = ReportingPolicy.WARN)
 public interface BookMapper {
 
     BookMapper INSTANCE = Mappers.getMapper(BookMapper.class);
