@@ -20,7 +20,7 @@ public class LoanEligibilityValidator implements IValidator<String> {
     @Override
     public void validate(String customerId) throws RuleViolationException {
 
-        Set<Loan> loans = this.loanRepository.search(
+        Set<Loan> loans = this.loanRepository.findBy(
                 customerId,
                 null,
                 Set.of(LoanStatus.ACTIVE, LoanStatus.OVERDUE)

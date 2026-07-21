@@ -3,6 +3,7 @@ package org.libraryexpress.application.loan.usecase;
 import org.libraryexpress.application.loan.dto.request.FilterLoansDto;
 import org.libraryexpress.application.loan.dto.response.LoanDto;
 import org.libraryexpress.application.loan.mapper.LoanMapper;
+import org.libraryexpress.application.loan.validator.SearchLoanValidator;
 import org.libraryexpress.domain.entity.Loan;
 import org.libraryexpress.domain.repository.ILoanRepository;
 import org.libraryexpress.infrastructure.exception.RuleViolationException;
@@ -15,21 +16,19 @@ public class SearchLoans {
 
     private final ILoanRepository loanRepository;
     private final LoanMapper mapper;
+    private final SearchLoanValidator searchLoanValidator;
 
     public SearchLoans() {
         this.loanRepository = LoanRepository.DB;
         this.mapper = LoanMapper.INSTANCE;
+        this.searchLoanValidator = new SearchLoanValidator();
     }
 
     public Set<LoanDto> execute(FilterLoansDto filter) throws RuleViolationException {
 
-        boolean hasAnyCriteria = filter.status() != null
-                || (filter.customerId() != null && !filter.customerId().isBlank())
-                || (filter.ISBN() != null && !filter.ISBN().isBlank());
+        this.searchLoanValidator.validate(filter);
 
-        if (!hasAnyCriteria) throw new RuleViolationException("At least one search criteria must be provided");
-
-        Set<Loan> loans = this.loanRepository.search(filter.customerId(), filter.ISBN(), Set.of(filter.status()));
+        Set<Loan> loans = this.loanRepository.findBy(filter.customerId(), filter.ISBN(), Set.of(filter.status()));
 
         return loans.stream()
                 .map(mapper::toResponseDto)
