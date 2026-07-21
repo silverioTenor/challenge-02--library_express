@@ -31,7 +31,14 @@ public enum LoanRepository implements ILoanRepository {
     }
 
     @Override
-    public Set<Loan> search(String customerId, String ISBN, Set<LoanStatus> statuses) {
+    public Optional<Loan> findById(String loanId) {
+        return group.stream()
+                .filter(loan -> loan.getId().equals(loanId))
+                .findFirst();
+    }
+
+    @Override
+    public Set<Loan> findBy(String customerId, String ISBN, Set<LoanStatus> statuses) {
 
         Predicate<Loan> criteria = loan -> true;
 
