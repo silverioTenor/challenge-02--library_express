@@ -5,7 +5,7 @@
 >
 > Para a visão de produto de longo prazo (expansões futuras: marketplace, pagamentos, clube do livro, audiobook), ver `VISION.md`. Este arquivo trata só do que é executável.
 >
-> **Nota sobre idioma:** este documento está em português (língua de trabalho do planejamento). O `../README.md` do repositório está em inglês, por ser a documentação voltada ao público — a divisão é intencional.
+> **Nota sobre idioma:** este documento está em português (língua de trabalho do planejamento). O `README.md` do repositório está em inglês, por ser a documentação voltada ao público — a divisão é intencional.
 
 ---
 
@@ -14,10 +14,11 @@
 | ID | Épico | Status |
 |----|-------|--------|
 | E0 | Organização e limpeza inicial | ✅ Concluído (Sprint 0 e 1) |
-| E1 | MVP — Ciclo de vida do empréstimo | 🔵 Em andamento (Sprint 2) |
-| E2 | Débito técnico e qualidade | ⏳ Backlog (pós-MVP) |
+| E1 | Foundation — desacoplar I/O das Services, centralizar interação na CLI | ✅ Concluído |
+| E2 | MVP — Ciclo de vida do empréstimo | 🔵 Em andamento (Sprint 2) |
+| E9 | Débito técnico e qualidade | ⏳ Backlog (pós-MVP) |
 | E3 | Inversão de dependência manual | ⏳ Backlog |
-| E6 | CD — Pipeline de entrega + API mínima (**Marco 2 — Go Live**) | ⏳ Próximo após E1 |
+| E6 | CD — Pipeline de entrega + API mínima (**Marco 2 — Go Live**) | ⏳ Próximo após E2 |
 | E7 | CI real — testes automatizados rodando no pipeline | ⏳ Backlog |
 | E4 | Persistência real (JDBC/JPA) | ⏳ Backlog |
 | E5 | Evolução arquitetural completa (migração da API mínima pra Spring) | ⏳ Backlog |
@@ -27,16 +28,24 @@
 
 > **E8** nasceu de uma discussão durante o Sprint 2, sobre o fluxo de devolução (US-203): quando um empréstimo está em atraso, o cliente perde pontos de score; após 3 atrasos é "marcado" (conceito ainda a refinar); após 5, é bloqueado por tempo determinado. Não é débito técnico — é escopo novo. Sem multa/dinheiro envolvido (alinhado ao sequenciamento de pagamentos do `VISION.md`). Sem prioridade definida ainda; será refinado em BDD quando entrar na fila, seguindo a regra de "um épico por vez". Questões técnicas já identificadas: (1) como detectar atraso sem scheduler — provavelmente cálculo *lazy* na devolução/validação, não job em background; (2) `Customer` vai precisar de campos novos (score, contagem de atrasos, `blockedUntil`).
 
+### Histórico — épicos já concluídos (registrado a partir do board do GitHub)
+
+**E0 — Preparação do Projeto** · Iteration 1 (Jul 07–Jul 20) · Done
+
+**E1 — Foundation** · Done
+Objetivo: preparar a base da aplicação para suportar novas interfaces sem alterar as regras de negócio. Tarefas: remover `Scanner` e `System.out.println()` das Services; alterar Services para receber apenas parâmetros e retornar apenas resultados; centralizar toda interação com o usuário na camada CLI; revisar nomenclatura de variáveis; atualizar documentação da arquitetura. Critérios de aceite: nenhuma Service conhece a CLI; toda interação ocorre na camada de interface; a aplicação continua funcionando normalmente.
+> É esse épico que explica por que as usecases já nasceram desacopladas de I/O quando auditei o código pela primeira vez — não foi acidente.
+
 ---
 
 ## Roadmap — Fases e Marcos
 
 ### 🌱 Fase 1 — Foundation
 **Objetivo:** construir uma base sólida, consolidando o domínio e eliminando problemas arquiteturais antes de introduzir novas tecnologias.
-**Escopo:** E0, E1, E3.
+**Escopo:** E0, E1, E2, E3.
 
 ### 🚀 Marco 1 — MVP
-O sistema atende aos requisitos funcionais essenciais de uma biblioteca, via CLI. Fecha com E1.
+O sistema atende aos requisitos funcionais essenciais de uma biblioteca, via CLI. Fecha com E2.
 
 ### 🚀 Marco 2 — Go Live
 Primeira subida real pra produção (Heroku). Fecha **junto**: pipeline de CD (E6) + API mínima sem framework (`com.sun.net.httpserver.HttpServer`, sem Spring ainda — evita reescrever esforço quando a migração acontecer em E5). O deploy só "vale" quando há um serviço HTTP de verdade recebendo tráfego — antes disso, CD sozinho seria só teatro de automação sem produto real por trás.
@@ -67,7 +76,7 @@ Primeira subida real pra produção (Heroku). Fecha **junto**: pipeline de CD (E
 
 ---
 
-# 🔵 Épico E1 — MVP: Ciclo de vida do empréstimo
+# 🔵 Épico E2 — MVP: Ciclo de vida do empréstimo
 
 ### Objetivo do épico
 Entregar a primeira versão **funcional e utilizável** do sistema: um usuário consegue, via CLI, cadastrar clientes e livros, realizar um empréstimo e devolvê-lo — respeitando as regras de negócio — sem bugs bloqueantes e sem exceções não tratadas.
@@ -82,16 +91,30 @@ Sem isso, o sistema não é uma biblioteca funcional: hoje um livro pode ser emp
 - [ ] Todas as histórias abaixo em status Done
 
 ### Sprint
-Sprint 2 · Capacidade: ~20h/semana · Total: **13 pontos**
+Sprint 2 · Capacidade: ~20h/semana · Total: **17 pontos** (13 originais + 4 descobertos na revisão do épico: US-206 + US-207)
+
+### Mapeamento com o board do GitHub (Projects)
+| US | Issue | Status no board |
+|----|-------|------------------|
+| Epic E2 | #13 | Ready |
+| US-201 | #14 | In review |
+| US-202 | #15 | In review |
+| US-203 | #16 | In review |
+| US-204 | #17 | In progress |
+| US-205 | #18 | Ready |
+
+> Sincronizado manualmente a partir do board — este arquivo não é atualizado automaticamente pelo GitHub. Atualizar aqui sempre que o status mudar por lá.
 
 ### Ordem de dependência
 ```
 US-201 (busca de livro)
-   └──> US-202 (sincronizar status do livro)
-          └──> US-203 (devolução)
+└──> US-202 (sincronizar status do livro)
+└──> US-203 (devolução)
+└──> US-206 (reversão manual de OVERDUE — paliativo até E8)
 
 US-204 (busca de empréstimo) ── independente
 US-205 (limite de empréstimos) ── independente
+US-207 (fix NPE + busca por critério único na CLI) ── segue US-204
 ```
 
 ---
@@ -100,7 +123,7 @@ US-205 (limite de empréstimos) ── independente
 
 **Story:** Como *sistema*, preciso localizar livros corretamente na busca, para que a validação de disponibilidade funcione e empréstimos possam ser criados.
 
-**Pontos:** 2 · **Status:** 🔲 To Do
+**Pontos:** 2 · **Status:** 🔵 In Review (GitHub #14)
 
 ### Cenários (BDD)
 
@@ -139,7 +162,7 @@ Scenario: Buscar ISBN inexistente
 
 **Story:** Como *sistema*, preciso sincronizar o status do livro com o ciclo do empréstimo, para impedir que o mesmo exemplar seja emprestado simultaneamente para mais de um cliente.
 
-**Pontos:** 3 · **Status:** 🔲 To Do
+**Pontos:** 3 · **Status:** 🔵 In Review (GitHub #15)
 **Depende de:** US-201
 
 ### Cenários (BDD)
@@ -168,13 +191,15 @@ Scenario: Devolução libera o livro
 - [ ] Nota técnica: como `Book.equals`/`hashCode` são baseados no ISBN (campo imutável), mutar o `status` de um `Book` já presente no `HashSet` é seguro — não corrompe a estrutura interna do `Set`
 - [ ] Validar manualmente: emprestar → tentar emprestar de novo (deve bloquear) → devolver → emprestar de novo (deve permitir)
 
+> ✅ **Implementado**, com um desvio da AC: usa `BookStatus.BORROWED` em vez de `UNAVAILABLE` — semanticamente melhor, mantido.
+
 ---
 
 ## US-203 — Registrar devolução de empréstimo
 
 **Story:** Como *atendente*, quero registrar a devolução de um empréstimo, para que o livro fique disponível novamente e o histórico do cliente seja atualizado.
 
-**Pontos:** 5 · **Status:** 🔲 To Do
+**Pontos:** 5 · **Status:** 🔵 In Review (GitHub #16)
 **Depende de:** US-202
 
 ### Cenários (BDD)
@@ -205,13 +230,15 @@ Scenario: Tentar devolver um empréstimo já finalizado
 - [ ] Implementar `LoanCli.finishLoan(scan)`: coletar `customerId` e `ISBN`, chamar o usecase, tratar exceções
 - [ ] Conectar a opção de devolução ao menu do `LoanCli.init()` (hoje só existe `[1] New`, `[2] Search`, `[3] List` — falta a opção de devolução)
 
+> ✅ **Implementado** como usecase `ReturnLoan`, com dois desvios da AC, ambos mantidos: (1) busca por **`loanId`** direto em vez de `customerId + ISBN` — evita ambiguidade se o cliente tiver o mesmo livro em datas diferentes; o `id` já é exposto no JSON de busca/listagem, então o fluxo funciona (busca/lista → pega o `id` → devolve); (2) se o empréstimo estiver atrasado no momento da devolução, o status vira `OVERDUE` em vez de `FINISHED` — antecipação inteligente do E8, mas gerou o bug crítico documentado em **US-206**.
+
 ---
 
 ## US-204 — Buscar empréstimos por qualquer critério isolado
 
 **Story:** Como *atendente*, quero buscar empréstimos usando apenas um critério (cliente, livro ou status), para consultar o histórico sem precisar preencher todos os campos.
 
-**Pontos:** 2 · **Status:** 🔲 To Do
+**Pontos:** 2 · **Status:** 🟡 In Progress (GitHub #17)
 **Independente** (pode ser feita em paralelo com US-202/203)
 
 ### Cenários (BDD)
@@ -251,7 +278,7 @@ Scenario: Buscar com status nulo mas outro critério preenchido
 
 **Story:** Como *sistema*, preciso aplicar corretamente o limite de empréstimos ativos por cliente, para manter a regra de negócio clara, nomeada e testável.
 
-**Pontos:** 1 · **Status:** 🔲 To Do
+**Pontos:** 1 · **Status:** 🔲 Ready (GitHub #18)
 **Independente**
 
 ### Cenários (BDD)
@@ -280,9 +307,88 @@ Scenario: Cliente com empréstimo em atraso
 
 ### Tasks
 - [ ] Criar constante nomeada `MAX_ACTIVE_LOANS = 2` (sugestão: em `infrastructure/config/Constant.java`, que já existe)
-- [ ] Atualizar `LoanEligibility` para usar a constante em vez do número mágico atual
+- [ ] Atualizar `LoanEligibilityValidator` para usar a constante em vez do número mágico atual
 - [ ] Corrigir a mensagem de erro para refletir o valor real do limite (hoje o texto diz "more than one", mas a regra permite 2)
 - [ ] Validar manualmente os 4 cenários acima
+
+> ✅ **Implementado** — código real usa `Loan.MAX_ACTIVE_LOANS = 2` (constante na própria entidade, em vez de `Constant.java` — decisão válida, mais coesa com DDD). Validação com `>=` correta.
+
+---
+
+## US-206 — Reversão manual de empréstimo travado em atraso (paliativo até E8)
+
+**Story:** Como *atendente*, quero reverter manualmente o status de um empréstimo travado em `OVERDUE`, para desbloquear um cliente que já devolveu o livro fisicamente, enquanto o sistema de reputação (E8) não existe.
+
+**Pontos:** 2 · **Status:** 🔲 To Do (descoberta na revisão do épico, ainda sem issue no GitHub)
+
+**Origem:** `ReturnLoan` marca o empréstimo como `OVERDUE` (em vez de `FINISHED`) quando a devolução acontece fora do prazo — antecipando o E8. Mas `LoanEligibility.check()` bloqueia qualquer cliente com empréstimo `OVERDUE`, sem limite de tempo, e nada reverte esse status depois. Resultado: **um único atraso bloqueia o cliente permanentemente.** Isso é consequência direta de termos adiado o score/multa (E8) — essa US é o paliativo até lá, não a solução definitiva.
+
+### Cenários (BDD)
+
+```gherkin
+Scenario: Reverter empréstimo OVERDUE para FINISHED
+  Given um empréstimo existe com status OVERDUE
+  When o atendente aciona a reversão manual desse empréstimo
+  Then o status muda para FINISHED
+  And o cliente deixa de estar bloqueado por esse empréstimo na próxima tentativa de novo empréstimo
+
+Scenario: Tentar reverter empréstimo que não está OVERDUE
+  Given um empréstimo está com status ACTIVE ou FINISHED
+  When o atendente tenta aplicar a reversão manual
+  Then o sistema deve rejeitar, informando que a ação só se aplica a empréstimos OVERDUE
+
+Scenario: Tentar reverter empréstimo inexistente
+  Given não existe empréstimo com o ID informado
+  When o atendente tenta reverter
+  Then o sistema deve informar "empréstimo não encontrado"
+```
+
+### Tasks
+- [ ] Criar usecase restrito à transição `OVERDUE` → `FINISHED` apenas (não um editor de status genérico — evita reativar/corromper empréstimos por engano)
+- [ ] Implementar ação no `LoanCli` (nova opção de menu, com rótulo claro, ex: "Clear overdue flag")
+- [ ] Comentário no código explícito: `// Paliativo até E8 (reputação) existir — remover quando o bloqueio por tempo determinado for implementado`
+- [ ] Validar manualmente os 3 cenários
+
+---
+
+## US-207 — Corrigir NPE latente e permitir busca de empréstimo por critério único na CLI
+
+**Story:** Como *atendente*, quero buscar empréstimos informando apenas um critério, sem ser obrigado a preencher todos os campos, e sem risco do sistema quebrar quando um campo não for informado.
+
+**Pontos:** 2 · **Status:** 🔲 To Do (descoberta na revisão do épico, ainda sem issue no GitHub)
+
+**Origem:** US-204 corrigiu o `hasAnyCriteria` (agora usa `||` corretamente, em `SearchLoanValidator`), mas dois problemas persistem: (1) `SearchLoans.execute()` ainda envolve `filter.status()` em `Set.of(...)` sempre — se `status` for nulo, `Set.of(null)` lança `NullPointerException`; (2) `LoanCli.searchLoan()` obriga o atendente a digitar os 3 campos sempre, então o bug do item 1 nunca aparece em teste manual, mas o objetivo original da US-204 (buscar por critério isolado) não está de fato disponível pra quem usa o sistema.
+
+### Cenários (BDD)
+
+```gherkin
+Scenario: Buscar deixando o status em branco na CLI
+  Given o atendente está no fluxo de busca de empréstimos
+  When ele pressiona Enter sem digitar um status
+  Then a busca ocorre normalmente, sem lançar NullPointerException, tratando como "sem filtro de status"
+
+Scenario: Buscar deixando ISBN ou customerId em branco
+  Given o atendente deixa o ISBN ou o customerId vazio
+  When a busca é executada
+  Then esse campo não restringe o resultado
+
+Scenario: Buscar sem preencher nenhum campo
+  Given todos os campos são deixados em branco
+  When a busca é executada
+  Then o sistema rejeita com "At least one search criteria must be provided" (comportamento já existente, preservado)
+
+Scenario: Informar um status inválido
+  Given o atendente digita um valor que não corresponde a nenhum LoanStatus
+  When a busca é executada
+  Then o sistema informa um erro tratado, sem quebrar a aplicação (hoje IllegalArgumentException não é capturada)
+```
+
+### Tasks
+- [ ] Corrigir `SearchLoans.execute()`: parar de envolver `filter.status()` sempre em `Set.of(...)`; tratar nulo como "sem filtro"
+- [ ] Ajustar `LoanCli.searchLoan()` pra aceitar Enter vazio em cada campo, tratando entrada vazia como "não informado"
+- [ ] Capturar `IllegalArgumentException` de `LoanStatus.valueOf()` quando o atendente digitar um status inválido
+- [ ] Corrigir rótulo confuso no menu do `LoanCli`: opção `[6] - Return` hoje só sai do submenu (`loop = false`) — renomear pra "Back"/"Voltar", já que a devolução real está na opção `[3] - Devolution`
+- [ ] Validar manualmente os cenários acima
 
 ---
 
@@ -340,4 +446,4 @@ fix(loan-validator): US-205 formaliza limite de emprestimos ativos
 
 ---
 
-*Última atualização: Épico E1 detalhado — Sprint 2*
+*Última atualização: Épico E2 detalhado — Sprint 2*
