@@ -1,25 +1,23 @@
-package org.libraryexpress.application.book.validator;
+package org.libraryexpress.application.book.helper;
 
 import org.libraryexpress.domain.entity.Book;
 import org.libraryexpress.domain.enums.BookStatus;
 import org.libraryexpress.domain.repository.IBookRepository;
-import org.libraryexpress.domain.validator.IValidator;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
 import org.libraryexpress.infrastructure.exception.RuleViolationException;
 import org.libraryexpress.infrastructure.repository.BookRepository;
 
 import java.util.Set;
 
-public class BookAvailabilityValidator implements IValidator<String> {
+public class BookAvailability {
 
     private final IBookRepository bookRepository;
 
-    public BookAvailabilityValidator() {
+    public BookAvailability() {
         this.bookRepository = BookRepository.DB;
     }
 
-    @Override
-    public void validate(String ISBN) throws NotFoundException, RuleViolationException {
+    public void check(String ISBN) throws NotFoundException, RuleViolationException {
 
         if (ISBN == null || ISBN.isBlank()) {
             throw new RuleViolationException("ISBN cannot be empty.");

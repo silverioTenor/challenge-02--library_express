@@ -54,7 +54,7 @@ class CustomerCli {
     }
 
     private void create(Scanner scan) {
-        System.out.println("Enter with name:");
+        System.out.println("Enter the first name:"); // TODO - change to allow full name
         String name = scan.next();
         System.out.println("  ");
 

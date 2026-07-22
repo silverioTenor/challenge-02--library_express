@@ -1,24 +1,22 @@
-package org.libraryexpress.application.loan.validator;
+package org.libraryexpress.application.loan.helper;
 
 import org.libraryexpress.domain.entity.Loan;
 import org.libraryexpress.domain.enums.LoanStatus;
 import org.libraryexpress.domain.repository.ILoanRepository;
-import org.libraryexpress.domain.validator.IValidator;
 import org.libraryexpress.infrastructure.exception.RuleViolationException;
 import org.libraryexpress.infrastructure.repository.LoanRepository;
 
 import java.util.Set;
 
-public class LoanEligibilityValidator implements IValidator<String> {
+public class LoanEligibility {
 
     private final ILoanRepository loanRepository;
 
-    public LoanEligibilityValidator() {
+    public LoanEligibility() {
         this.loanRepository = LoanRepository.DB;
     }
 
-    @Override
-    public void validate(String customerId) throws RuleViolationException {
+    public void check(String customerId) throws RuleViolationException {
 
         Set<Loan> loans = this.loanRepository.findBy(
                 customerId,
@@ -37,8 +35,8 @@ public class LoanEligibilityValidator implements IValidator<String> {
                 .filter(loan -> loan.getStatus() == LoanStatus.ACTIVE)
                 .count();
 
-        if (activeCount > 1) {
-            throw new RuleViolationException("Customer already has more than one active loan.");
+        if (activeCount >= Loan.MAX_ACTIVE_LOANS) {
+            throw new RuleViolationException("Customer has reached the maximum limit of active loans.");
         }
     }
 }

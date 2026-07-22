@@ -280,7 +280,7 @@ Scenario: Cliente com empréstimo em atraso
 
 ### Tasks
 - [ ] Criar constante nomeada `MAX_ACTIVE_LOANS = 2` (sugestão: em `infrastructure/config/Constant.java`, que já existe)
-- [ ] Atualizar `LoanEligibilityValidator` para usar a constante em vez do número mágico atual
+- [ ] Atualizar `LoanEligibility` para usar a constante em vez do número mágico atual
 - [ ] Corrigir a mensagem de erro para refletir o valor real do limite (hoje o texto diz "more than one", mas a regra permite 2)
 - [ ] Validar manualmente os 4 cenários acima
 
