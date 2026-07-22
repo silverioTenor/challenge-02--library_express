@@ -33,7 +33,7 @@ public class BookCli {
             System.out.println("[1] - Register");
             System.out.println("[2] - Show");
             System.out.println("[3] - List");
-            System.out.println("[6] - Return");
+            System.out.println("[6] - Back");
             System.out.println(" ");
 
             int option = scan.nextInt();

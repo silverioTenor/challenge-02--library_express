@@ -36,7 +36,7 @@ class CustomerCli {
             System.out.println("[2] - Show");
             System.out.println("[3] - Update");
             System.out.println("[4] - List");
-            System.out.println("[6] - Return");
+            System.out.println("[6] - Back");
             System.out.println(" ");
 
             int option = scan.nextInt();

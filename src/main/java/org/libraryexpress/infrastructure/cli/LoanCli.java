@@ -6,10 +6,7 @@ import org.libraryexpress.application.customer.usecase.FindCustomer;
 import org.libraryexpress.application.loan.dto.request.CreateLoanDto;
 import org.libraryexpress.application.loan.dto.request.FilterLoansDto;
 import org.libraryexpress.application.loan.dto.response.LoanDto;
-import org.libraryexpress.application.loan.usecase.CreateLoan;
-import org.libraryexpress.application.loan.usecase.ListLoans;
-import org.libraryexpress.application.loan.usecase.ReturnLoan;
-import org.libraryexpress.application.loan.usecase.SearchLoans;
+import org.libraryexpress.application.loan.usecase.*;
 import org.libraryexpress.domain.enums.LoanStatus;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
 import org.libraryexpress.infrastructure.exception.RuleViolationException;
@@ -25,6 +22,7 @@ class LoanCli {
     private final SearchLoans searchLoans;
     private final ListLoans listLoans;
     private final ReturnLoan returnLoan;
+    private final CloseOverdueLoan closeOverdueLoan;
 
     public LoanCli() {
         this.findCustomer = new FindCustomer();
@@ -32,6 +30,7 @@ class LoanCli {
         this.searchLoans = new SearchLoans();
         this.listLoans = new ListLoans();
         this.returnLoan = new ReturnLoan();
+        this.closeOverdueLoan = new CloseOverdueLoan();
     }
 
     public void init(Scanner scan) {
@@ -43,8 +42,9 @@ class LoanCli {
             System.out.println("[1] - New");
             System.out.println("[2] - Search");
             System.out.println("[3] - Devolution");
-            System.out.println("[4] - List");
-            System.out.println("[6] - Return");
+            System.out.println("[4] - Close Overdue Loan");
+            System.out.println("[5] - List");
+            System.out.println("[6] - Back");
             System.out.println(" ");
 
             int option = scan.nextInt();
@@ -53,8 +53,8 @@ class LoanCli {
                 case 1 -> this.createLoan(scan);
                 case 2 -> this.searchLoan(scan);
                 case 3 -> this.returnLoan(scan);
-                case 4 -> this.listLoans(scan);
-                case 5 -> System.out.println("Option currently unavailable");
+                case 4 -> this.closeOverdueLoan(scan);
+                case 5 -> this.listLoans(scan);
                 case 6 -> loop = false;
                 default -> System.out.println("Invalid option!");
             }
@@ -134,6 +134,22 @@ class LoanCli {
             System.out.println("Loan successfully completed!");
 
         } catch (RuleViolationException | NotFoundException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void closeOverdueLoan(Scanner scan) {
+
+        System.out.println("  ");
+        System.out.println("Enter the loan ID");
+        String loanId = scan.next();
+
+        try {
+            this.closeOverdueLoan.execute(loanId);
+            System.out.println("  ");
+            System.out.println("Loan finished successfully!");
+
+        } catch (NotFoundException | RuleViolationException e) {
             System.out.println(e.getMessage());
         }
     }
