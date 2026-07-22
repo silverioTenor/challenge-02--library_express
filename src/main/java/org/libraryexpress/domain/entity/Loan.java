@@ -9,6 +9,8 @@ import java.util.Objects;
 
 public class Loan implements Comparable<Loan> {
 
+    public static final int MAX_ACTIVE_LOANS = 2;
+
     private static final int MAX_DAY_TO_RETURN = 15;
 
     private final String id;
@@ -36,7 +38,7 @@ public class Loan implements Comparable<Loan> {
         this.customerId = customerId;
         this.status = status;
         this.startDate = startDate;
-        this.endDate = endDate;
+        this.endDate = endDate != null ? endDate : this.dueDate();
     }
 
     public String getId() {
@@ -69,6 +71,10 @@ public class Loan implements Comparable<Loan> {
 
     public boolean isOverdue(Clock clock) {
         return ChronoUnit.DAYS.between(startDate, LocalDate.now(clock)) > MAX_DAY_TO_RETURN;
+    }
+
+    private LocalDate dueDate() {
+        return this.startDate.plusDays(MAX_DAY_TO_RETURN);
     }
 
     @Override
