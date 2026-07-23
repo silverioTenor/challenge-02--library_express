@@ -2,38 +2,58 @@ package org.libraryexpress.domain.entity;
 
 import org.libraryexpress.domain.enums.LoanStatus;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 public class Loan implements Comparable<Loan> {
 
-    private final Book book;
+    public static final int MAX_ACTIVE_LOANS = 2;
 
-    private final Client client;
+    private static final int MAX_DAY_TO_RETURN = 15;
+
+    private final String id;
+
+    private final String ISBN;
+
+    private final String customerId;
 
     private LoanStatus status;
 
-    private final LocalDate acquisitionDate;
+    private final LocalDate startDate;
 
-    private final LocalDate deliveryDate;
+    private final LocalDate endDate;
 
-    private Loan(Book book, Client client, LoanStatus status, LocalDate acquisitionDate, LocalDate deliveryDate) {
-        this.book = book;
-        this.client = client;
+    private Loan(
+            String id,
+            String ISBN,
+            String customerId,
+            LoanStatus status,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        this.id = id;
+        this.ISBN = ISBN;
+        this.customerId = customerId;
         this.status = status;
-        this.acquisitionDate = acquisitionDate;
-        this.deliveryDate = deliveryDate;
+        this.startDate = startDate;
+        this.endDate = endDate != null ? endDate : this.dueDate();
     }
 
-    public Book getBook() {
-        return book;
+    public String getId() {
+        return id;
     }
 
-    public Client getClient() {
-        return client;
+    public String getISBN() {
+        return ISBN;
     }
 
-    public LoanStatus status() {
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public LoanStatus getStatus() {
         return status;
     }
 
@@ -41,60 +61,76 @@ public class Loan implements Comparable<Loan> {
         this.status = status;
     }
 
-    public LocalDate getAcquisitionDate() {
-        return acquisitionDate;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public LocalDate getDeliveryDate() {
-        return deliveryDate;
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public boolean isOverdue(Clock clock) {
+        return ChronoUnit.DAYS.between(startDate, LocalDate.now(clock)) > MAX_DAY_TO_RETURN;
+    }
+
+    private LocalDate dueDate() {
+        return this.startDate.plusDays(MAX_DAY_TO_RETURN);
     }
 
     @Override
     public String toString() {
         return "{\n" +
-                "book: " + book + ",\n" +
-                " client: " + client + ",\n" +
-                " status: " + status + ",\n" +
-                " acquisitionDate: " + acquisitionDate.toString() + ",\n" +
-                " deliveryDate: " + deliveryDate.toString() + ",\n" +
-                '}';
+                " ID: " + id + ",\n" +
+                " ISBN: " + ISBN + ",\n" +
+                " customerId: " + customerId + ",\n" +
+                " statuses: " + status.toString() + ",\n" +
+                " startDate: " + startDate + ",\n" +
+                " endDate: " + endDate + ",\n" +
+                "}";
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Loan loan)) return false;
-        return Objects.equals(book, loan.book) && Objects.equals(acquisitionDate, loan.acquisitionDate);
+        return Objects.equals(ISBN, loan.ISBN) && Objects.equals(startDate, loan.startDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(book, acquisitionDate);
+        return Objects.hash(ISBN, startDate);
     }
 
     @Override
     public int compareTo(Loan o) {
-        return Objects.compare(acquisitionDate, o.getAcquisitionDate(), LocalDate::compareTo);
+        return Objects.compare(startDate, o.getStartDate(), LocalDate::compareTo);
     }
 
     public static class Builder {
 
-        private Book book;
+        private String id;
 
-        private Client client;
+        private String ISBN;
+
+        private String customerId;
 
         private LoanStatus status;
 
-        private LocalDate acquisitionDate;
+        private LocalDate startDate;
 
-        private LocalDate deliveryDate;
+        private LocalDate endDate;
 
-        public Builder setBook(Book book) {
-            this.book = book;
+        public Builder setId(String id) {
+            this.id = id;
             return this;
         }
 
-        public Builder setClient(Client client) {
-            this.client = client;
+        public Builder setISBN(String ISBN) {
+            this.ISBN = ISBN;
+            return this;
+        }
+
+        public Builder setCustomerId(String customerId) {
+            this.customerId = customerId;
             return this;
         }
 
@@ -103,18 +139,18 @@ public class Loan implements Comparable<Loan> {
             return this;
         }
 
-        public Builder setAcquisitionDate(LocalDate acquisitionDate) {
-            this.acquisitionDate = acquisitionDate;
+        public Builder setStartDate(LocalDate startDate) {
+            this.startDate = startDate;
             return this;
         }
 
-        public Builder setDeliveryDate(LocalDate deliveryDate) {
-            this.deliveryDate = deliveryDate;
+        public Builder setEndDate(LocalDate endDate) {
+            this.endDate = endDate;
             return this;
         }
 
         public Loan build() {
-            return new Loan(book, client, status, acquisitionDate, deliveryDate);
+            return new Loan(id, ISBN, customerId, status, startDate, endDate);
         }
     }
 }
