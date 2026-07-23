@@ -15,7 +15,7 @@
 |----|-------|--------|
 | E0 | Organização e limpeza inicial | ✅ Concluído (Sprint 0 e 1) |
 | E1 | Foundation — desacoplar I/O das Services, centralizar interação na CLI | ✅ Concluído |
-| E2 | MVP — Ciclo de vida do empréstimo | 🔵 Em andamento (Sprint 2) |
+| E2 | MVP — Ciclo de vida do empréstimo | ✅ Concluído (Sprint 2) |
 | E9 | Débito técnico e qualidade | ⏳ Backlog (pós-MVP) |
 | E10 | Containerização (Docker) | ⏳ Backlog |
 | E3 | Inversão de dependência manual | ⏳ Backlog |
@@ -45,7 +45,7 @@ Objetivo: preparar a base da aplicação para suportar novas interfaces sem alte
 **Objetivo:** construir uma base sólida, consolidando o domínio e eliminando problemas arquiteturais antes de introduzir novas tecnologias.
 **Escopo:** E0, E1, E2, E3.
 
-### 🚀 Marco 1 — MVP
+### 🚀 Marco 1 — MVP ✅ Alcançado
 O sistema atende aos requisitos funcionais essenciais de uma biblioteca, via CLI. Fecha com E2.
 
 ### 🏗️ Fase 2 — Software Maturity
@@ -89,10 +89,12 @@ Entregar a primeira versão **funcional e utilizável** do sistema: um usuário 
 Sem isso, o sistema não é uma biblioteca funcional: hoje um livro pode ser emprestado infinitas vezes em paralelo e não existe forma de encerrar um empréstimo. Este é o núcleo mínimo que torna o projeto "real".
 
 ### Definition of Done do épico
-- [ ] Fluxo completo executável via CLI: cadastrar cliente → cadastrar livro → emprestar → devolver → emprestar novamente
-- [ ] Regras de negócio (disponibilidade do livro, limite de empréstimos ativos) aplicadas corretamente
-- [ ] Nenhuma exceção não tratada (`NullPointerException`, etc.) durante o fluxo feliz ou os fluxos de erro esperados
-- [ ] Todas as histórias abaixo em status Done
+- [x] Fluxo completo executável via CLI: cadastrar cliente → cadastrar livro → emprestar → devolver → emprestar novamente
+- [x] Regras de negócio (disponibilidade do livro, limite de empréstimos ativos) aplicadas corretamente
+- [x] Nenhuma exceção não tratada (`NullPointerException`, etc.) durante o fluxo feliz ou os fluxos de erro esperados
+- [x] Todas as histórias abaixo em status Done
+
+> ✅ **Épico E2 concluído.** Validado via testes manuais no terminal — todos os requisitos atendidos. Marco 1 (MVP) alcançado: a aplicação tem todas as funcionalidades básicas 100% funcionais.
 
 ### Sprint
 Sprint 2 · Capacidade: ~20h/semana · Total: **17 pontos** (13 originais + 4 descobertos na revisão do épico: US-206 + US-207)
@@ -127,7 +129,7 @@ US-207 (fix NPE + busca por critério único na CLI) ── segue US-204
 
 **Story:** Como *sistema*, preciso localizar livros corretamente na busca, para que a validação de disponibilidade funcione e empréstimos possam ser criados.
 
-**Pontos:** 2 · **Status:** 🔵 In Review (GitHub #14)
+**Pontos:** 2 · **Status:** ✅ Done (GitHub #14)
 
 ### Cenários (BDD)
 
@@ -166,7 +168,7 @@ Scenario: Buscar ISBN inexistente
 
 **Story:** Como *sistema*, preciso sincronizar o status do livro com o ciclo do empréstimo, para impedir que o mesmo exemplar seja emprestado simultaneamente para mais de um cliente.
 
-**Pontos:** 3 · **Status:** 🔵 In Review (GitHub #15)
+**Pontos:** 3 · **Status:** ✅ Done (GitHub #15)
 **Depende de:** US-201
 
 ### Cenários (BDD)
@@ -203,7 +205,7 @@ Scenario: Devolução libera o livro
 
 **Story:** Como *atendente*, quero registrar a devolução de um empréstimo, para que o livro fique disponível novamente e o histórico do cliente seja atualizado.
 
-**Pontos:** 5 · **Status:** 🔵 In Review (GitHub #16)
+**Pontos:** 5 · **Status:** ✅ Done (GitHub #16)
 **Depende de:** US-202
 
 ### Cenários (BDD)
@@ -242,7 +244,7 @@ Scenario: Tentar devolver um empréstimo já finalizado
 
 **Story:** Como *atendente*, quero buscar empréstimos usando apenas um critério (cliente, livro ou status), para consultar o histórico sem precisar preencher todos os campos.
 
-**Pontos:** 2 · **Status:** 🟡 In Progress (GitHub #17)
+**Pontos:** 2 · **Status:** ✅ Done (GitHub #17)
 **Independente** (pode ser feita em paralelo com US-202/203)
 
 ### Cenários (BDD)
@@ -282,7 +284,7 @@ Scenario: Buscar com status nulo mas outro critério preenchido
 
 **Story:** Como *sistema*, preciso aplicar corretamente o limite de empréstimos ativos por cliente, para manter a regra de negócio clara, nomeada e testável.
 
-**Pontos:** 1 · **Status:** 🔲 Ready (GitHub #18)
+**Pontos:** 1 · **Status:** ✅ Done (GitHub #18)
 **Independente**
 
 ### Cenários (BDD)
@@ -323,7 +325,7 @@ Scenario: Cliente com empréstimo em atraso
 
 **Story:** Como *atendente*, quero reverter manualmente o status de um empréstimo travado em `OVERDUE`, para desbloquear um cliente que já devolveu o livro fisicamente, enquanto o sistema de reputação (E8) não existe.
 
-**Pontos:** 2 · **Status:** 🔲 To Do (descoberta na revisão do épico, ainda sem issue no GitHub)
+**Pontos:** 2 · **Status:** ✅ Done
 
 **Origem:** `ReturnLoan` marca o empréstimo como `OVERDUE` (em vez de `FINISHED`) quando a devolução acontece fora do prazo — antecipando o E8. Mas `LoanEligibility.check()` bloqueia qualquer cliente com empréstimo `OVERDUE`, sem limite de tempo, e nada reverte esse status depois. Resultado: **um único atraso bloqueia o cliente permanentemente.** Isso é consequência direta de termos adiado o score/multa (E8) — essa US é o paliativo até lá, não a solução definitiva.
 
@@ -359,7 +361,7 @@ Scenario: Tentar reverter empréstimo inexistente
 
 **Story:** Como *atendente*, quero buscar empréstimos informando apenas um critério, sem ser obrigado a preencher todos os campos, e sem risco do sistema quebrar quando um campo não for informado.
 
-**Pontos:** 2 · **Status:** 🔲 To Do (descoberta na revisão do épico, ainda sem issue no GitHub)
+**Pontos:** 2 · **Status:** ✅ Done
 
 **Origem:** US-204 corrigiu o `hasAnyCriteria` (agora usa `||` corretamente, em `SearchLoanValidator`), mas dois problemas persistem: (1) `SearchLoans.execute()` ainda envolve `filter.status()` em `Set.of(...)` sempre — se `status` for nulo, `Set.of(null)` lança `NullPointerException`; (2) `LoanCli.searchLoan()` obriga o atendente a digitar os 3 campos sempre, então o bug do item 1 nunca aparece em teste manual, mas o objetivo original da US-204 (buscar por critério isolado) não está de fato disponível pra quem usa o sistema.
 
@@ -450,4 +452,4 @@ fix(loan-validator): US-205 formaliza limite de emprestimos ativos
 
 ---
 
-*Última atualização: Épico E2 detalhado — Sprint 2*
+*Última atualização: Épico E2 concluído — Marco 1 (MVP) alcançado. Validado via testes manuais no terminal.*
