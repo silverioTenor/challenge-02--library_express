@@ -17,8 +17,9 @@
 | E1 | Foundation — desacoplar I/O das Services, centralizar interação na CLI | ✅ Concluído |
 | E2 | MVP — Ciclo de vida do empréstimo | 🔵 Em andamento (Sprint 2) |
 | E9 | Débito técnico e qualidade | ⏳ Backlog (pós-MVP) |
+| E10 | Containerização (Docker) | ⏳ Backlog |
 | E3 | Inversão de dependência manual | ⏳ Backlog |
-| E6 | CD — Pipeline de entrega + API mínima (**Marco 2 — Go Live**) | ⏳ Próximo após E2 |
+| E6 | CD — Pipeline de entrega + API mínima (**Marco 2 — Go Live**, com E10, na AWS) | ⏳ Próximo após E2 |
 | E7 | CI real — testes automatizados rodando no pipeline | ⏳ Backlog |
 | E4 | Persistência real (JDBC/JPA) | ⏳ Backlog |
 | E5 | Evolução arquitetural completa (migração da API mínima pra Spring) | ⏳ Backlog |
@@ -47,17 +48,20 @@ Objetivo: preparar a base da aplicação para suportar novas interfaces sem alte
 ### 🚀 Marco 1 — MVP
 O sistema atende aos requisitos funcionais essenciais de uma biblioteca, via CLI. Fecha com E2.
 
-### 🚀 Marco 2 — Go Live
-Primeira subida real pra produção (Heroku). Fecha **junto**: pipeline de CD (E6) + API mínima sem framework (`com.sun.net.httpserver.HttpServer`, sem Spring ainda — evita reescrever esforço quando a migração acontecer em E5). O deploy só "vale" quando há um serviço HTTP de verdade recebendo tráfego — antes disso, CD sozinho seria só teatro de automação sem produto real por trás.
-
 ### 🏗️ Fase 2 — Software Maturity
-**Objetivo:** aumentar qualidade e confiabilidade do sistema, guiado pelas necessidades reais do projeto.
+**Objetivo:** aumentar qualidade e confiabilidade do sistema, guiado pelas necessidades reais do projeto — agora também calibrado para gerar valor de portfólio em processos seletivos internacionais (EUA/Canadá).
 **Sequência de temas:**
-1. Marco 2 — Go Live (E6)
-2. Testes automatizados (TD-05)
-3. CI real — testes como gate do pipeline (E7)
-4. Persistência real (E4)
-5. Evolução arquitetural — migração pra Spring (E5)
+1. Testes automatizados (TD-05) — JUnit puro
+2. CI real — testes como gate do pipeline (E7)
+3. Containerização — Docker (E10)
+4. **Marco 2 — Go Live** (E6 + E10)
+5. Persistência real (E4) — JDBC puro
+6. Evolução arquitetural — migração pra Spring (E5)
+
+### 🚀 Marco 2 — Go Live
+Primeira subida real pra produção — na **AWS** (free tier: ECS/Fargate ou Elastic Beanstalk com Docker; substituiu o plano original de Heroku, que tem pouca relevância no mercado que estamos mirando). Fecha **junto**: pipeline de CD (E6), imagem Docker (E10) e API mínima sem framework (`com.sun.net.httpserver.HttpServer`, sem Spring ainda — evita reescrever esforço quando a migração acontecer em E5). O deploy só "vale" quando há um serviço HTTP de verdade recebendo tráfego — antes disso, CD sozinho seria só teatro de automação sem produto real por trás.
+
+> **Por que Go Live agora vem depois de testes/CI/Docker, e não antes?** Reordenado a pedido do foco em mercado internacional: subir pra produção sem testes, sem gate de CI e sem containerização não é uma boa história de portfólio. A sequência revisada conta uma narrativa mais forte: testei → automatizei → containerizei → só então fui pra produção — que é como equipes reais operam.
 
 > **Por que testes e persistência crus antes do Spring, e não o contrário?** `@SpringBootTest`/Mockito e Spring Data JPA são abstrações sobre JUnit puro e JDBC puro. Fazer o caminho manual primeiro é deliberado: força entender o mecanismo por baixo (DI, transação, `Connection`/`PreparedStatement`) antes da conveniência do framework escondê-lo. Refazer com Spring depois em E5 não é retrabalho desperdiçado — é o próprio exercício que revela o que a abstração compra. Essa é uma escolha pedagógica, não a única correta; um time sob prazo real provavelmente iria direto pro Spring Data e aprenderia os internals sob demanda.
 
