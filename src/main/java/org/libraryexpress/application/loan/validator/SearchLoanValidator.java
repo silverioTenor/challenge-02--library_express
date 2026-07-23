@@ -7,7 +7,7 @@ public class SearchLoanValidator {
 
     public void validate(FilterLoansDto filter) throws RuleViolationException {
 
-        boolean hasAnyCriteria = filter.status() != null
+        boolean hasAnyCriteria = filter.statuses() != null
                 || (filter.customerId() != null && !filter.customerId().isBlank())
                 || (filter.ISBN() != null && !filter.ISBN().isBlank());
 

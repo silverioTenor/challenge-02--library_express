@@ -97,19 +97,40 @@ class LoanCli {
 
     public void searchLoan(Scanner scan) {
 
+        scan.nextLine();
+
         System.out.println("  ");
         System.out.println("Enter the customer ID");
-        String customerId = scan.next();
+        String customerId = scan.nextLine().trim();
+
+        customerId = !customerId.isEmpty() ? customerId : null;
 
         System.out.println("  ");
         System.out.println("Enter the ISBN");
-        String ISBN = scan.next();
+        String ISBN = scan.nextLine().trim();
+
+        ISBN = !ISBN.isEmpty() ? ISBN : null;
 
         System.out.println("  ");
         System.out.println("Enter the getStatus");
-        LoanStatus status = LoanStatus.valueOf(scan.next().toUpperCase());
+        String inputStatus = scan.nextLine().trim();
 
-        FilterLoansDto filterDto = new FilterLoansDto(customerId, ISBN, status);
+        LoanStatus status;
+
+        try {
+            status = !inputStatus.isEmpty()
+                    ? LoanStatus.valueOf(inputStatus.toUpperCase())
+                    : null;
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("  ");
+            System.out.println("The provided status is invalid!");
+            return;
+        }
+
+        Set<LoanStatus> statuses = status != null ? Set.of(status) : null;
+
+        FilterLoansDto filterDto = new FilterLoansDto(customerId, ISBN, statuses);
 
         try {
             Set<LoanDto> loans = this.searchLoans.execute(filterDto);

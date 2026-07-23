@@ -18,7 +18,7 @@ public class LoanEligibility {
 
     public void check(String customerId) throws RuleViolationException {
 
-        Set<Loan> loans = this.loanRepository.findBy(
+        Set<Loan> loans = this.loanRepository.find(
                 customerId,
                 null,
                 Set.of(LoanStatus.ACTIVE, LoanStatus.OVERDUE)

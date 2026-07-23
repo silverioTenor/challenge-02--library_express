@@ -28,7 +28,7 @@ public class SearchLoans {
 
         this.searchLoanValidator.validate(filter);
 
-        Set<Loan> loans = this.loanRepository.findBy(filter.customerId(), filter.ISBN(), Set.of(filter.status()));
+        Set<Loan> loans = this.loanRepository.find(filter.customerId(), filter.ISBN(), filter.statuses());
 
         return loans.stream()
                 .map(mapper::toResponseDto)
