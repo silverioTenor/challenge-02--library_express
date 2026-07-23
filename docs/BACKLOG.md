@@ -442,6 +442,21 @@ fix(loan-validator): US-205 formaliza limite de emprestimos ativos
 
 ---
 
+## Convenção de versionamento
+
+Segue [SemVer](https://semver.org/) (`MAJOR.MINOR.PATCH`):
+
+- **`0.y.z`** enquanto o projeto está em desenvolvimento inicial — contratos internos (arquitetura, persistência, framework) ainda podem mudar sem aviso. `1.0.0` fica reservado pra quando o sistema estabilizar (por volta da Fase 3).
+- **Sufixos `alpha`/`beta`/`rc`** só fazem sentido a partir do **Marco 2** (quando a API REST existir) — eles qualificam a estabilidade de uma interface que outros consomem; um CLI local não tem esse tipo de "consumidor" externo, então o rótulo ficaria sem função antes disso.
+- **`-SNAPSHOT`** no `pom.xml` durante desenvolvimento contínuo; a tag/release usa a versão limpa.
+
+**Tags:**
+| Tag | Marco | Data |
+|-----|-------|------|
+| `v0.1.0` | Marco 1 — MVP (Épico E2 concluído) | ver histórico do Git |
+
+---
+
 ## Convenções do board
 
 - **Pontos:** escala Fibonacci simplificada (1, 2, 3, 5, 8)
