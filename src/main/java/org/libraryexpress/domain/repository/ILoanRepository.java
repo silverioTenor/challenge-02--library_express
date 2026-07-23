@@ -11,6 +11,6 @@ public interface ILoanRepository {
     void create(Loan loan);
     boolean update(Loan loanToUpdate);
     Optional<Loan> findById(String loanId);
-    Set<Loan> findBy(String customerId, String ISBN, Set<LoanStatus> statuses);
+    Set<Loan> find(String customerId, String ISBN, Set<LoanStatus> statuses);
     Set<Loan> all();
 }

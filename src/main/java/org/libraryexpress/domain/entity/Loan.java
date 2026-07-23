@@ -83,7 +83,7 @@ public class Loan implements Comparable<Loan> {
                 " ID: " + id + ",\n" +
                 " ISBN: " + ISBN + ",\n" +
                 " customerId: " + customerId + ",\n" +
-                " status: " + status.toString() + ",\n" +
+                " statuses: " + status.toString() + ",\n" +
                 " startDate: " + startDate + ",\n" +
                 " endDate: " + endDate + ",\n" +
                 "}";

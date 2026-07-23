@@ -38,7 +38,7 @@ public enum LoanRepository implements ILoanRepository {
     }
 
     @Override
-    public Set<Loan> findBy(String customerId, String ISBN, Set<LoanStatus> statuses) {
+    public Set<Loan> find(String customerId, String ISBN, Set<LoanStatus> statuses) {
 
         Predicate<Loan> criteria = loan -> true;
 
