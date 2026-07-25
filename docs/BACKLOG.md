@@ -16,18 +16,20 @@
 | E0 | Organização e limpeza inicial | ✅ Concluído (Sprint 0 e 1) |
 | E1 | Foundation — desacoplar I/O das Services, centralizar interação na CLI | ✅ Concluído |
 | E2 | MVP — Ciclo de vida do empréstimo | ✅ Concluído (Sprint 2) |
-| E9 | Débito técnico e qualidade | ⏳ Backlog (pós-MVP) |
-| E10 | Containerização (Docker) | ⏳ Backlog |
-| E3 | Inversão de dependência manual | ⏳ Backlog |
-| E6 | CD — Pipeline de entrega + API mínima (**Marco 2 — Go Live**, com E10, na AWS) | ⏳ Próximo após E2 |
+| E3 | Inversão de dependência manual | 🟡 Em andamento |
+| E4 | Débito técnico e qualidade | ⏳ Backlog (pós-MVP) |
+| E5 | Containerização (Docker) | ⏳ Backlog |
+| E6 | Persistência real (JDBC/JPA) | ⏳ Backlog |
 | E7 | CI real — testes automatizados rodando no pipeline | ⏳ Backlog |
-| E4 | Persistência real (JDBC/JPA) | ⏳ Backlog |
-| E5 | Evolução arquitetural completa (migração da API mínima pra Spring) | ⏳ Backlog |
-| E8 | Reputação do cliente e bloqueio por atraso | ⏳ Backlog (sem prioridade definida) |
+| E8 | CD — Pipeline de entrega + API mínima (**Marco 2 — Go Live**, com E5 + E6, na AWS) | ⏳ Backlog ↑ (prioridade elevada) |
+| E9 | Evolução arquitetural completa (migração da API mínima pra Spring) | ⏳ Backlog |
+| E10 | Reputação do cliente e bloqueio por atraso | ⏳ Backlog (sem prioridade definida) |
 
-> **E6 e E7 não são a mesma coisa.** E6 entrega só build automático + deploy — chamamos de "CD", não "CI/CD", porque sem testes não há integração *verificada*, só entrega automatizada. E7 é quando isso vira CI de verdade: testes (TD-05) passam a rodar a cada push, como gate do pipeline.
+> **Renumeração (25/07):** os IDs de E3 a E10 foram reordenados para refletir a sequência real de execução da Fase 2. Reputação do cliente passou de E8 para **E10** — atenção ao ler qualquer material antigo (issues fechadas, prints, conversas passadas) que ainda cite "E8" como reputação: o número mudou, o escopo do épico não.
 
-> **E8** nasceu de uma discussão durante o Sprint 2, sobre o fluxo de devolução (US-203): quando um empréstimo está em atraso, o cliente perde pontos de score; após 3 atrasos é "marcado" (conceito ainda a refinar); após 5, é bloqueado por tempo determinado. Não é débito técnico — é escopo novo. Sem multa/dinheiro envolvido (alinhado ao sequenciamento de pagamentos do `VISION.md`). Sem prioridade definida ainda; será refinado em BDD quando entrar na fila, seguindo a regra de "um épico por vez". Questões técnicas já identificadas: (1) como detectar atraso sem scheduler — provavelmente cálculo *lazy* na devolução/validação, não job em background; (2) `Customer` vai precisar de campos novos (score, contagem de atrasos, `blockedUntil`).
+> **E7 e E8 não são a mesma coisa.** E8 entrega o build automático + deploy — chamamos de "CD", não "CI/CD", porque sem testes rodando como gate não há integração *verificada*, só entrega automatizada. E7 é quando isso vira CI de verdade: testes (E4/TD-05) passam a rodar a cada push, como gate do pipeline, antes do E8 existir.
+
+> **E10** nasceu de uma discussão durante o Sprint 2, sobre o fluxo de devolução (US-203): quando um empréstimo está em atraso, o cliente perde pontos de score; após 3 atrasos é "marcado" (conceito ainda a refinar); após 5, é bloqueado por tempo determinado. Não é débito técnico — é escopo novo. Sem multa/dinheiro envolvido (alinhado ao sequenciamento de pagamentos do `VISION.md`). Sem prioridade definida ainda; será refinado em BDD quando entrar na fila, seguindo a regra de "um épico por vez". Questões técnicas já identificadas: (1) como detectar atraso sem scheduler — provavelmente cálculo *lazy* na devolução/validação, não job em background; (2) `Customer` vai precisar de campos novos (score, contagem de atrasos, `blockedUntil`).
 
 ### Histórico — épicos já concluídos (registrado a partir do board do GitHub)
 
@@ -50,20 +52,22 @@ O sistema atende aos requisitos funcionais essenciais de uma biblioteca, via CLI
 
 ### 🏗️ Fase 2 — Software Maturity
 **Objetivo:** aumentar qualidade e confiabilidade do sistema, guiado pelas necessidades reais do projeto — agora também calibrado para gerar valor de portfólio em processos seletivos internacionais (EUA/Canadá).
-**Sequência de temas:**
-1. Testes automatizados (TD-05) — JUnit puro
-2. CI real — testes como gate do pipeline (E7)
-3. Containerização — Docker (E10)
-4. **Marco 2 — Go Live** (E6 + E10)
-5. Persistência real (E4) — JDBC puro
-6. Evolução arquitetural — migração pra Spring (E5)
+**Sequência de temas (reordenada em 25/07 — prioridade de E8/Go Live elevada):**
+1. Débito técnico e qualidade, incluindo testes automatizados — JUnit puro (E4)
+2. Containerização — Docker (E5)
+3. Persistência real — JDBC puro (E6)
+4. CI real — testes como gate do pipeline (E7)
+5. **Marco 2 — Go Live** (E8, empacotando CD + API mínima, já com Docker e JDBC prontos)
+6. Evolução arquitetural — migração pra Spring (E9)
+
+> **Mudança de escopo do Marco 2:** com a Persistência real (E6) antes do Go Live, o sistema sobe pra produção **já com banco real**, não mais com repositórios em memória como estava planejado antes. Isso adia uma decisão que precisa ser tomada quando o E6 entrar em detalhamento: qual banco usar no free tier da AWS (RDS free tier vs. algo mais leve embarcado). Não é decisão para agora — só sinalizando o efeito colateral da reordenação.
 
 ### 🚀 Marco 2 — Go Live
-Primeira subida real pra produção — na **AWS** (free tier: ECS/Fargate ou Elastic Beanstalk com Docker; substituiu o plano original de Heroku, que tem pouca relevância no mercado que estamos mirando). Fecha **junto**: pipeline de CD (E6), imagem Docker (E10) e API mínima sem framework (`com.sun.net.httpserver.HttpServer`, sem Spring ainda — evita reescrever esforço quando a migração acontecer em E5). O deploy só "vale" quando há um serviço HTTP de verdade recebendo tráfego — antes disso, CD sozinho seria só teatro de automação sem produto real por trás.
+Primeira subida real pra produção — na **AWS** (free tier: ECS/Fargate ou Elastic Beanstalk com Docker; substituiu o plano original de Heroku, que tem pouca relevância no mercado que estamos mirando). Fecha **junto**: pipeline de CD (E8), imagem Docker (E5), persistência real via JDBC (E6) e API mínima sem framework (`com.sun.net.httpserver.HttpServer`, sem Spring ainda — evita reescrever esforço quando a migração acontecer em E9). O deploy só "vale" quando há um serviço HTTP de verdade recebendo tráfego, com dado persistido de verdade — antes disso, CD sozinho seria só teatro de automação sem produto real por trás.
 
-> **Por que Go Live agora vem depois de testes/CI/Docker, e não antes?** Reordenado a pedido do foco em mercado internacional: subir pra produção sem testes, sem gate de CI e sem containerização não é uma boa história de portfólio. A sequência revisada conta uma narrativa mais forte: testei → automatizei → containerizei → só então fui pra produção — que é como equipes reais operam.
+> **Por que Go Live agora vem depois de testes/Docker/persistência/CI, e não antes?** Reordenado a pedido do foco em mercado internacional: subir pra produção sem testes, sem containerização, sem persistência real e sem gate de CI não é uma boa história de portfólio. A sequência revisada conta uma narrativa mais forte: testei → containerizei → persisti → automatizei → só então fui pra produção — que é como equipes reais operam.
 
-> **Por que testes e persistência crus antes do Spring, e não o contrário?** `@SpringBootTest`/Mockito e Spring Data JPA são abstrações sobre JUnit puro e JDBC puro. Fazer o caminho manual primeiro é deliberado: força entender o mecanismo por baixo (DI, transação, `Connection`/`PreparedStatement`) antes da conveniência do framework escondê-lo. Refazer com Spring depois em E5 não é retrabalho desperdiçado — é o próprio exercício que revela o que a abstração compra. Essa é uma escolha pedagógica, não a única correta; um time sob prazo real provavelmente iria direto pro Spring Data e aprenderia os internals sob demanda.
+> **Por que testes e persistência crus antes do Spring, e não o contrário?** `@SpringBootTest`/Mockito e Spring Data JPA são abstrações sobre JUnit puro e JDBC puro. Fazer o caminho manual primeiro é deliberado: força entender o mecanismo por baixo (DI, transação, `Connection`/`PreparedStatement`) antes da conveniência do framework escondê-lo. Refazer com Spring depois em E9 não é retrabalho desperdiçado — é o próprio exercício que revela o que a abstração compra. Essa é uma escolha pedagógica, não a única correta; um time sob prazo real provavelmente iria direto pro Spring Data e aprenderia os internals sob demanda.
 
 ### ⚙️ Fase 3 — Professional Software Engineering
 **Objetivo:** aprofundar práticas de engenharia em um sistema que já está em produção desde o Marco 2 — segurança, observabilidade, performance, escalabilidade, documentação.
@@ -116,7 +120,7 @@ Sprint 2 · Capacidade: ~20h/semana · Total: **17 pontos** (13 originais + 4 de
 US-201 (busca de livro)
 └──> US-202 (sincronizar status do livro)
 └──> US-203 (devolução)
-└──> US-206 (reversão manual de OVERDUE — paliativo até E8)
+└──> US-206 (reversão manual de OVERDUE — paliativo até E10)
 
 US-204 (busca de empréstimo) ── independente
 US-205 (limite de empréstimos) ── independente
@@ -236,7 +240,7 @@ Scenario: Tentar devolver um empréstimo já finalizado
 - [ ] Implementar `LoanCli.finishLoan(scan)`: coletar `customerId` e `ISBN`, chamar o usecase, tratar exceções
 - [ ] Conectar a opção de devolução ao menu do `LoanCli.init()` (hoje só existe `[1] New`, `[2] Search`, `[3] List` — falta a opção de devolução)
 
-> ✅ **Implementado** como usecase `ReturnLoan`, com dois desvios da AC, ambos mantidos: (1) busca por **`loanId`** direto em vez de `customerId + ISBN` — evita ambiguidade se o cliente tiver o mesmo livro em datas diferentes; o `id` já é exposto no JSON de busca/listagem, então o fluxo funciona (busca/lista → pega o `id` → devolve); (2) se o empréstimo estiver atrasado no momento da devolução, o status vira `OVERDUE` em vez de `FINISHED` — antecipação inteligente do E8, mas gerou o bug crítico documentado em **US-206**.
+> ✅ **Implementado** como usecase `ReturnLoan`, com dois desvios da AC, ambos mantidos: (1) busca por **`loanId`** direto em vez de `customerId + ISBN` — evita ambiguidade se o cliente tiver o mesmo livro em datas diferentes; o `id` já é exposto no JSON de busca/listagem, então o fluxo funciona (busca/lista → pega o `id` → devolve); (2) se o empréstimo estiver atrasado no momento da devolução, o status vira `OVERDUE` em vez de `FINISHED` — antecipação inteligente do E10, mas gerou o bug crítico documentado em **US-206**.
 
 ---
 
@@ -321,13 +325,13 @@ Scenario: Cliente com empréstimo em atraso
 
 ---
 
-## US-206 — Reversão manual de empréstimo travado em atraso (paliativo até E8)
+## US-206 — Reversão manual de empréstimo travado em atraso (paliativo até E10)
 
-**Story:** Como *atendente*, quero reverter manualmente o status de um empréstimo travado em `OVERDUE`, para desbloquear um cliente que já devolveu o livro fisicamente, enquanto o sistema de reputação (E8) não existe.
+**Story:** Como *atendente*, quero reverter manualmente o status de um empréstimo travado em `OVERDUE`, para desbloquear um cliente que já devolveu o livro fisicamente, enquanto o sistema de reputação (E10) não existe.
 
 **Pontos:** 2 · **Status:** ✅ Done
 
-**Origem:** `ReturnLoan` marca o empréstimo como `OVERDUE` (em vez de `FINISHED`) quando a devolução acontece fora do prazo — antecipando o E8. Mas `LoanEligibility.check()` bloqueia qualquer cliente com empréstimo `OVERDUE`, sem limite de tempo, e nada reverte esse status depois. Resultado: **um único atraso bloqueia o cliente permanentemente.** Isso é consequência direta de termos adiado o score/multa (E8) — essa US é o paliativo até lá, não a solução definitiva.
+**Origem:** `ReturnLoan` marca o empréstimo como `OVERDUE` (em vez de `FINISHED`) quando a devolução acontece fora do prazo — antecipando o E10. Mas `LoanEligibility.check()` bloqueia qualquer cliente com empréstimo `OVERDUE`, sem limite de tempo, e nada reverte esse status depois. Resultado: **um único atraso bloqueia o cliente permanentemente.** Isso é consequência direta de termos adiado o score/multa (E10) — essa US é o paliativo até lá, não a solução definitiva.
 
 ### Cenários (BDD)
 
@@ -352,7 +356,7 @@ Scenario: Tentar reverter empréstimo inexistente
 ### Tasks
 - [ ] Criar usecase restrito à transição `OVERDUE` → `FINISHED` apenas (não um editor de status genérico — evita reativar/corromper empréstimos por engano)
 - [ ] Implementar ação no `LoanCli` (nova opção de menu, com rótulo claro, ex: "Clear overdue flag")
-- [ ] Comentário no código explícito: `// Paliativo até E8 (reputação) existir — remover quando o bloqueio por tempo determinado for implementado`
+- [ ] Comentário no código explícito: `// Paliativo até E10 (reputação) existir — remover quando o bloqueio por tempo determinado for implementado`
 - [ ] Validar manualmente os 3 cenários
 
 ---
@@ -405,8 +409,8 @@ Scenario: Informar um status inválido
 | TD-01 | Contrato `equals`/`hashCode` quebrado | `Book`: `hashCode` usa `year`, `equals` usa `ISBN` (campos diferentes = contrato violado). `Customer`: `equals` usa OR entre ID e e-mail, o que quebra transitividade | 3 |
 | TD-02 | `WaitingList` é código morto | Entidade existe, mas sem repository, usecase ou CLI — decidir: implementar a feature ou remover | 3 |
 | TD-03 | `BookUnavailableException` não utilizada | Existe mas `RuleViolationException` já cobre esse caso — avaliar remoção ou uso correto | 1 |
-| TD-04 | Ausência de Inversão de Dependência | Usecases instanciam `BookRepository.DB` / `LoanRepository.DB` direto no construtor, mesmo dependendo da interface — dificulta testes unitários isolados | 5 |
-| TD-05 | Nenhuma cobertura de testes automatizados | Introduzir JUnit 5 e cobrir as usecases principais (merece sprint próprio, dedicado a aprender a ferramenta) | 8 |
+| TD-04 | ~~Ausência de Inversão de Dependência~~ | Usecases instanciam `BookRepository.DB` / `LoanRepository.DB` direto no construtor, mesmo dependendo da interface — dificulta testes unitários isolados. **Redundante com o E3 (em andamento)** — remover esta linha quando o E3 for concluído | 5 |
+| TD-05 | Nenhuma cobertura de testes automatizados | Introduzir JUnit 5 e cobrir as usecases principais (merece sprint próprio, dedicado a aprender a ferramenta) — escopo do **E4** | 8 |
 
 ---
 
@@ -418,7 +422,7 @@ Segue [Conventional Commits](https://www.conventionalcommits.org/), commits de l
 <tipo>(<escopo>): <ID> <descrição no imperativo, minúsculo, sem ponto final>
 ```
 
-- Sem fluxo de Pull Request ainda (ver E6 no roadmap), o commit vai direto pra `develop` — não há auto-close de Issue. Ao concluir uma US, feche a Issue manualmente no board.
+- Sem fluxo de Pull Request ainda (ver E8 no roadmap), o commit vai direto pra `develop` — não há auto-close de Issue. Ao concluir uma US, feche a Issue manualmente no board.
 - Múltiplos commits na mesma US: todos repetem o mesmo ID (`US-XXX`) no início da descrição.
 
 **Mapeamento de tipo por história (Sprint 2):**
@@ -453,7 +457,7 @@ Segue [SemVer](https://semver.org/) (`MAJOR.MINOR.PATCH`):
 **Tags:**
 | Tag | Marco | Data |
 |-----|-------|------|
-| `v0.1.0` | Marco 1 — MVP (Épico E2 concluído) | ver histórico do Git |
+| `v0.1.1` | Marco 1 — MVP (Épico E2 concluído) | ver histórico do Git |
 
 ---
 
@@ -467,4 +471,4 @@ Segue [SemVer](https://semver.org/) (`MAJOR.MINOR.PATCH`):
 
 ---
 
-*Última atualização: Épico E2 concluído — Marco 1 (MVP) alcançado. Validado via testes manuais no terminal.*
+*Última atualização (25/07): repriorização da Fase 2 — épicos E3–E10 renumerados para refletir a nova sequência de execução; prioridade de E8 (Go Live) elevada; escopo do Marco 2 passa a incluir persistência real (E6/JDBC). Épico E2 concluído — Marco 1 (MVP) alcançado. Validado via testes manuais no terminal.*
