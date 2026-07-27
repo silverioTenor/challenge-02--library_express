@@ -10,8 +10,8 @@ public class ListBooks {
 
     private final IBookRepository bookRepository;
 
-    public ListBooks() {
-        this.bookRepository = BookRepository.DB;
+    public ListBooks(IBookRepository bookRepository) {
+        this.bookRepository = bookRepository;
     }
 
     public Set<Book> execute() {
