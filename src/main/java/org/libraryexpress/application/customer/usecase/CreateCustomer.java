@@ -14,9 +14,9 @@ public class CreateCustomer {
     private final ICustomerRepository customerRepository;
     private final CustomerMapper mapper;
 
-    public CreateCustomer() {
-        this.customerRepository = CustomerRepository.DB;
-        this.mapper = CustomerMapper.INSTANCE;
+    public CreateCustomer(ICustomerRepository customerRepository, CustomerMapper mapper) {
+        this.customerRepository = customerRepository;
+        this.mapper = mapper;
     }
 
     public void execute(CreateCustomerDto createCustomerDto) throws RuleViolationException {

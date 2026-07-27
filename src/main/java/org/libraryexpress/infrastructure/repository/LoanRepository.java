@@ -21,7 +21,7 @@ public enum LoanRepository implements ILoanRepository {
     @Override
     public boolean update(Loan loanToUpdate) {
         return group.stream()
-                .filter(loan -> loan.equals(loanToUpdate))
+                .filter(loan -> loan.getId().equals(loanToUpdate.getId()))
                 .findFirst()
                 .map(loan -> {
                     loan.changeStatus(loanToUpdate.getStatus());
@@ -61,6 +61,6 @@ public enum LoanRepository implements ILoanRepository {
 
     @Override
     public Set<Loan> all() {
-        return group;
+        return Set.copyOf(group);
     }
 }

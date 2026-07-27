@@ -23,11 +23,16 @@ public class CreateLoan {
     private final LoanEligibility loanEligibility;
     private final BookAvailability bookAvailability;
 
-    public CreateLoan() {
-        this.loanRepository = LoanRepository.DB;
-        this.bookRepository = BookRepository.DB;
-        this.loanEligibility = new LoanEligibility();
-        this.bookAvailability = new BookAvailability(BookRepository.DB);
+    public CreateLoan(
+            ILoanRepository loanRepository,
+            IBookRepository bookRepository,
+            LoanEligibility loanEligibility,
+            BookAvailability bookAvailability
+    ) {
+        this.loanRepository = loanRepository;
+        this.bookRepository = bookRepository;
+        this.loanEligibility = loanEligibility;
+        this.bookAvailability = bookAvailability;
     }
 
     public void execute(CreateLoanDto createLoanDto) throws RuleViolationException, NotFoundException {

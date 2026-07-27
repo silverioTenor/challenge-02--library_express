@@ -13,9 +13,9 @@ public class ListLoans {
     private final ILoanRepository loanRepository;
     private final LoanMapper mapper;
 
-    public ListLoans() {
-        this.loanRepository = LoanRepository.DB;
-        this.mapper = LoanMapper.INSTANCE;
+    public ListLoans(ILoanRepository loanRepository, LoanMapper mapper) {
+        this.loanRepository = loanRepository;
+        this.mapper = mapper;
     }
 
     public Set<LoanDto> execute() {

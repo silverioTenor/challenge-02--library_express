@@ -12,8 +12,8 @@ public class LoanEligibility {
 
     private final ILoanRepository loanRepository;
 
-    public LoanEligibility() {
-        this.loanRepository = LoanRepository.DB;
+    public LoanEligibility(ILoanRepository loanRepository) {
+        this.loanRepository = loanRepository;
     }
 
     public void check(String customerId) throws RuleViolationException {

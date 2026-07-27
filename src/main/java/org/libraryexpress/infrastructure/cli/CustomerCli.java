@@ -7,10 +7,10 @@ import org.libraryexpress.application.customer.usecase.FindCustomer;
 import org.libraryexpress.application.customer.usecase.ListCustomers;
 import org.libraryexpress.application.customer.usecase.UpdateCustomerEmail;
 import org.libraryexpress.application.customer.dto.request.CreateCustomerDto;
+import org.libraryexpress.infrastructure.config.AppContext;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
 import org.libraryexpress.infrastructure.exception.RuleViolationException;
 
-import java.util.Objects;
 import java.util.Scanner;
 
 class CustomerCli {
@@ -20,11 +20,11 @@ class CustomerCli {
     private final ListCustomers listCustomers;
     private final UpdateCustomerEmail updateEmail;
 
-    public CustomerCli() {
-        this.createCustomer = new CreateCustomer();
-        this.findCustomer = new FindCustomer();
-        this.listCustomers = new ListCustomers();
-        this.updateEmail = new UpdateCustomerEmail();
+    public CustomerCli(AppContext context) {
+        this.createCustomer = context.getCreateCustomer();
+        this.findCustomer = context.getFindCustomer();
+        this.listCustomers = context.getListCustomers();
+        this.updateEmail = context.getUpdateCustomerEmail();
     }
 
     public void init(Scanner scan) {

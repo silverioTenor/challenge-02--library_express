@@ -14,9 +14,9 @@ public class FindCustomer {
     private final ICustomerRepository customerRepository;
     private final CustomerMapper mapper;
 
-    public FindCustomer() {
-        this.customerRepository = CustomerRepository.DB;
-        this.mapper = CustomerMapper.INSTANCE;
+    public FindCustomer(ICustomerRepository customerRepository, CustomerMapper mapper) {
+        this.customerRepository = customerRepository;
+        this.mapper = mapper;
     }
 
     public CustomerDto execute(String emailOrId) throws NotFoundException {
