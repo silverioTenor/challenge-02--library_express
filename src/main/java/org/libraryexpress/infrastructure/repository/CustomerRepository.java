@@ -20,7 +20,7 @@ public enum CustomerRepository implements ICustomerRepository {
     @Override
     public synchronized void update(String id, String email) {
         group.stream()
-                .filter(client -> client.getID().equals(id))
+                .filter(client -> client.getId().equals(id))
                 .findFirst()
                 .map(client -> {
                     client.changeEmail(email);
@@ -32,7 +32,7 @@ public enum CustomerRepository implements ICustomerRepository {
     @Override
     public Optional<Customer> getById(String id) {
         return group.stream()
-                .filter(client -> client.getID().equals(id))
+                .filter(client -> client.getId().equals(id))
                 .findFirst();
     }
 

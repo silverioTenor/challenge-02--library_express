@@ -6,19 +6,20 @@ import java.util.Objects;
 
 public class Customer implements Comparable<Customer> {
 
-    private final String ID = Generator.genUUID();
+    private final String id;
 
     private String name;
 
     private String email;
 
-    private Customer(String name, String email) {
+    private Customer(String id, String name, String email) {
+        this.id = id != null ? id : Generator.genUUID();
         this.name = name;
         this.email = email;
     }
 
-    public String getID() {
-        return ID;
+    public String getId() {
+        return id;
     }
 
     public String getName() {
@@ -40,7 +41,7 @@ public class Customer implements Comparable<Customer> {
     @Override
     public String toString() {
         return "{\n" +
-                " ID: " + ID + ",\n" +
+                " Id: " + id + ",\n" +
                 " name: " + name + ",\n" +
                 " email: " + email + "\n" +
                 '}';
@@ -49,12 +50,12 @@ public class Customer implements Comparable<Customer> {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Customer customer)) return false;
-        return Objects.equals(ID, customer.ID) || Objects.equals(email, customer.email);
+        return Objects.equals(id, customer.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash();
+        return Objects.hash(id);
     }
 
     @Override
@@ -64,9 +65,16 @@ public class Customer implements Comparable<Customer> {
 
     public static class Builder {
 
+        private String id;
+
         private String name;
 
         private String email;
+
+        public Builder setId(String id) {
+            this.id = id;
+            return this;
+        }
 
         public Builder setName(String name) {
             this.name = name;
@@ -79,7 +87,7 @@ public class Customer implements Comparable<Customer> {
         }
 
         public Customer build() {
-            return new Customer(name, email);
+            return new Customer(id, name, email);
         }
     }
 }

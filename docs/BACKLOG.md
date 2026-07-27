@@ -6,74 +6,74 @@
 > Para a visão de produto de longo prazo (expansões futuras: marketplace, pagamentos, clube do livro, audiobook), ver `VISION.md`. Este arquivo trata só do que é executável.
 >
 > **Nota sobre idioma:** este documento está em português (língua de trabalho do planejamento). O `README.md` do repositório está em inglês, por ser a documentação voltada ao público — a divisão é intencional.
+>
+> **Nota sobre nível de detalhe:** épicos concluídos ficam registrados apenas como resumo (status, pontos, sprint). O detalhamento completo (Gherkin, tasks, desvios de implementação) vive no histórico do Git e nos comentários de encerramento das Issues no GitHub — não é duplicado aqui, para evitar duas fontes de verdade divergentes.
 
 ---
 
 ## Épicos
 
 | ID | Épico | Status |
-|----|-------|--------|
+| --- | --- | --- |
 | E0 | Organização e limpeza inicial | ✅ Concluído (Sprint 0 e 1) |
 | E1 | Foundation — desacoplar I/O das Services, centralizar interação na CLI | ✅ Concluído |
 | E2 | MVP — Ciclo de vida do empréstimo | ✅ Concluído (Sprint 2) |
-| E3 | Inversão de dependência manual | 🟡 Em andamento |
-| E4 | Débito técnico e qualidade | ⏳ Backlog (pós-MVP) |
+| E3 | Inversão de dependência manual + padronização de repositórios + TD-01 | ✅ Concluído (Sprint 3) |
+| E4 | Fundação de testes automatizados — JUnit 5 puro | 🟡 Em andamento (Sprint 4) |
 | E5 | Containerização (Docker) | ⏳ Backlog |
 | E6 | Persistência real (JDBC/JPA) | ⏳ Backlog |
 | E7 | CI real — testes automatizados rodando no pipeline | ⏳ Backlog |
-| E8 | CD — Pipeline de entrega + API mínima (**Marco 2 — Go Live**, com E5 + E6, na AWS) | ⏳ Backlog ↑ (prioridade elevada) |
+| E8 | CD — Pipeline de entrega + API mínima (**Marco 2 — Go Live**, com E5 + E6, na AWS) | ⏳ Backlog |
 | E9 | Evolução arquitetural completa (migração da API mínima pra Spring) | ⏳ Backlog |
 | E10 | Reputação do cliente e bloqueio por atraso | ⏳ Backlog (sem prioridade definida) |
 
-> **Renumeração (25/07):** os IDs de E3 a E10 foram reordenados para refletir a sequência real de execução da Fase 2. Reputação do cliente passou de E8 para **E10** — atenção ao ler qualquer material antigo (issues fechadas, prints, conversas passadas) que ainda cite "E8" como reputação: o número mudou, o escopo do épico não.
+> **E7 e E8 não são a mesma coisa.** E8 entrega o build automático + deploy — chamamos de "CD", não "CI/CD", porque sem testes rodando como gate não há integração *verificada*, só entrega automatizada. E7 é quando isso vira CI de verdade: testes (E4) passam a rodar a cada push, como gate do pipeline, antes do E8 existir.
 
-> **E7 e E8 não são a mesma coisa.** E8 entrega o build automático + deploy — chamamos de "CD", não "CI/CD", porque sem testes rodando como gate não há integração *verificada*, só entrega automatizada. E7 é quando isso vira CI de verdade: testes (E4/TD-05) passam a rodar a cada push, como gate do pipeline, antes do E8 existir.
-
-> **E10** nasceu de uma discussão durante o Sprint 2, sobre o fluxo de devolução (US-203): quando um empréstimo está em atraso, o cliente perde pontos de score; após 3 atrasos é "marcado" (conceito ainda a refinar); após 5, é bloqueado por tempo determinado. Não é débito técnico — é escopo novo. Sem multa/dinheiro envolvido (alinhado ao sequenciamento de pagamentos do `VISION.md`). Sem prioridade definida ainda; será refinado em BDD quando entrar na fila, seguindo a regra de "um épico por vez". Questões técnicas já identificadas: (1) como detectar atraso sem scheduler — provavelmente cálculo *lazy* na devolução/validação, não job em background; (2) `Customer` vai precisar de campos novos (score, contagem de atrasos, `blockedUntil`).
-
-### Histórico — épicos já concluídos (registrado a partir do board do GitHub)
-
-**E0 — Preparação do Projeto** · Iteration 1 (Jul 07–Jul 20) · Done
-
-**E1 — Foundation** · Done
-Objetivo: preparar a base da aplicação para suportar novas interfaces sem alterar as regras de negócio. Tarefas: remover `Scanner` e `System.out.println()` das Services; alterar Services para receber apenas parâmetros e retornar apenas resultados; centralizar toda interação com o usuário na camada CLI; revisar nomenclatura de variáveis; atualizar documentação da arquitetura. Critérios de aceite: nenhuma Service conhece a CLI; toda interação ocorre na camada de interface; a aplicação continua funcionando normalmente.
-> É esse épico que explica por que as usecases já nasceram desacopladas de I/O quando auditei o código pela primeira vez — não foi acidente.
+> **E10** nasceu de uma discussão durante o Sprint 2, sobre o fluxo de devolução: quando um empréstimo está em atraso, o cliente perde pontos de score; após 3 atrasos é "marcado" (conceito ainda a refinar); após 5, é bloqueado por tempo determinado. Não é débito técnico — é escopo novo. Sem multa/dinheiro envolvido (alinhado ao sequenciamento de pagamentos do `VISION.md`). Sem prioridade definida ainda; será refinado em BDD quando entrar na fila, seguindo a regra de "um épico por vez". Questões técnicas já identificadas: (1) como detectar atraso sem scheduler — provavelmente cálculo *lazy* na devolução/validação, não job em background; (2) `Customer` vai precisar de campos novos (score, contagem de atrasos, `blockedUntil`).
 
 ---
 
 ## Roadmap — Fases e Marcos
 
 ### 🌱 Fase 1 — Foundation
+
 **Objetivo:** construir uma base sólida, consolidando o domínio e eliminando problemas arquiteturais antes de introduzir novas tecnologias.
 **Escopo:** E0, E1, E2, E3.
 
 ### 🚀 Marco 1 — MVP ✅ Alcançado
-O sistema atende aos requisitos funcionais essenciais de uma biblioteca, via CLI. Fecha com E2.
+
+O sistema atende aos requisitos funcionais essenciais de uma biblioteca, via CLI. Fecha com E2. Tag `v0.1.1`.
 
 ### 🏗️ Fase 2 — Software Maturity
+
 **Objetivo:** aumentar qualidade e confiabilidade do sistema, guiado pelas necessidades reais do projeto — agora também calibrado para gerar valor de portfólio em processos seletivos internacionais (EUA/Canadá).
-**Sequência de temas (reordenada em 25/07 — prioridade de E8/Go Live elevada):**
-1. Débito técnico e qualidade, incluindo testes automatizados — JUnit puro (E4)
+
+**Sequência de temas:**
+
+1. Fundação de testes automatizados — JUnit puro (E4) 🟡 *atual*
 2. Containerização — Docker (E5)
 3. Persistência real — JDBC puro (E6)
 4. CI real — testes como gate do pipeline (E7)
 5. **Marco 2 — Go Live** (E8, empacotando CD + API mínima, já com Docker e JDBC prontos)
 6. Evolução arquitetural — migração pra Spring (E9)
 
-> **Mudança de escopo do Marco 2:** com a Persistência real (E6) antes do Go Live, o sistema sobe pra produção **já com banco real**, não mais com repositórios em memória como estava planejado antes. Isso adia uma decisão que precisa ser tomada quando o E6 entrar em detalhamento: qual banco usar no free tier da AWS (RDS free tier vs. algo mais leve embarcado). Não é decisão para agora — só sinalizando o efeito colateral da reordenação.
+> **Mudança de escopo do Marco 2:** com a Persistência real (E6) antes do Go Live, o sistema sobe pra produção **já com banco real**, não mais com repositórios em memória como estava planejado antes. Isso adia uma decisão que precisa ser tomada quando o E6 entrar em detalhamento: qual banco usar no free tier da AWS (RDS free tier vs. algo mais leve embarcado).
 
 ### 🚀 Marco 2 — Go Live
-Primeira subida real pra produção — na **AWS** (free tier: ECS/Fargate ou Elastic Beanstalk com Docker; substituiu o plano original de Heroku, que tem pouca relevância no mercado que estamos mirando). Fecha **junto**: pipeline de CD (E8), imagem Docker (E5), persistência real via JDBC (E6) e API mínima sem framework (`com.sun.net.httpserver.HttpServer`, sem Spring ainda — evita reescrever esforço quando a migração acontecer em E9). O deploy só "vale" quando há um serviço HTTP de verdade recebendo tráfego, com dado persistido de verdade — antes disso, CD sozinho seria só teatro de automação sem produto real por trás.
 
-> **Por que Go Live agora vem depois de testes/Docker/persistência/CI, e não antes?** Reordenado a pedido do foco em mercado internacional: subir pra produção sem testes, sem containerização, sem persistência real e sem gate de CI não é uma boa história de portfólio. A sequência revisada conta uma narrativa mais forte: testei → containerizei → persisti → automatizei → só então fui pra produção — que é como equipes reais operam.
+Primeira subida real pra produção — na **AWS** (free tier: ECS/Fargate ou Elastic Beanstalk com Docker; substituiu o plano original de Heroku, que tem pouca relevância no mercado que estamos mirando). Fecha **junto**: pipeline de CD (E8), imagem Docker (E5), persistência real via JDBC (E6) e API mínima sem framework (`com.sun.net.httpserver.HttpServer`, sem Spring ainda — evita reescrever esforço quando a migração acontecer em E9). O deploy só "vale" quando há um serviço HTTP de verdade recebendo tráfego, com dado persistido de verdade.
 
-> **Por que testes e persistência crus antes do Spring, e não o contrário?** `@SpringBootTest`/Mockito e Spring Data JPA são abstrações sobre JUnit puro e JDBC puro. Fazer o caminho manual primeiro é deliberado: força entender o mecanismo por baixo (DI, transação, `Connection`/`PreparedStatement`) antes da conveniência do framework escondê-lo. Refazer com Spring depois em E9 não é retrabalho desperdiçado — é o próprio exercício que revela o que a abstração compra. Essa é uma escolha pedagógica, não a única correta; um time sob prazo real provavelmente iria direto pro Spring Data e aprenderia os internals sob demanda.
+> **Por que Go Live vem depois de testes/Docker/persistência/CI?** A sequência conta uma narrativa forte de portfólio: testei → containerizei → persisti → automatizei → só então fui pra produção — como equipes reais operam.
+
+> **Por que testes e persistência crus antes do Spring?** `@SpringBootTest`/Mockito e Spring Data JPA são abstrações sobre JUnit puro e JDBC puro. Fazer o caminho manual primeiro é deliberado: força entender o mecanismo por baixo antes da conveniência do framework escondê-lo. Refazer com Spring depois em E9 não é retrabalho desperdiçado — é o próprio exercício que revela o que a abstração compra.
 
 ### ⚙️ Fase 3 — Professional Software Engineering
+
 **Objetivo:** aprofundar práticas de engenharia em um sistema que já está em produção desde o Marco 2 — segurança, observabilidade, performance, escalabilidade, documentação.
 **Escopo:** ainda sem épicos formais (backlog futuro).
 
-### Princípios (mantidos do roadmap original)
+### Princípios
+
 - O domínio é sempre a prioridade.
 - Novas tecnologias são introduzidas apenas quando resolvem problemas reais.
 - Cada Sprint deve gerar uma entrega funcional.
@@ -84,339 +84,332 @@ Primeira subida real pra produção — na **AWS** (free tier: ECS/Fargate ou El
 
 ---
 
-# 🔵 Épico E2 — MVP: Ciclo de vida do empréstimo
+# Histórico de épicos concluídos
+
+## E0 — Organização e limpeza inicial
+✅ Concluído · Iteration 1 (Jul 07–Jul 20)
+
+## E1 — Foundation
+✅ Concluído
+Objetivo: preparar a base da aplicação para suportar novas interfaces sem alterar as regras de negócio — Services desacopladas de I/O, interação centralizada na CLI.
+
+## E2 — MVP: Ciclo de vida do empréstimo
+✅ Concluído · Sprint 2 · **17 pontos** (US-201 a US-207)
+Entregou o fluxo completo via CLI: cadastro de cliente/livro, empréstimo, devolução, respeitando regras de negócio (disponibilidade, limite de empréstimos ativos). Marco 1 (MVP) alcançado. Tag `v0.1.1`.
+Detalhe completo (Gherkin, tasks, desvios de implementação): ver Issues #13–#18 no GitHub Projects.
+
+## E3 — Inversão de dependência manual + padronização de repositórios
+✅ Concluído · Sprint 3 · **19 pontos**
+
+| US | Descrição | Pontos | Status |
+| --- | --- | --- | --- |
+| US-301 | Injetar `BookRepository` via construtor nos usecases de Book | 3 | ✅ Done |
+| US-302 | Injetar `LoanRepository` via construtor nos usecases de Loan | 3 | ✅ Done |
+| US-303 | Composition Root para montagem manual dos usecases | 5 | ✅ Done |
+| US-304 | Corrigir contrato `equals`/`hashCode` de Book, Customer e Loan (TD-01) | 3 | ✅ Done |
+| US-305 | Padronizar nomenclatura de repositórios (remover prefixo `I`), converter enum→classe, reorganizar pastas para JDBC | 5 | ✅ Done |
+
+Detalhe completo: ver Issues correspondentes no GitHub Projects.
+
+---
+
+# 🔵 Épico E4 — Fundação de Testes Automatizados (JUnit 5)
 
 ### Objetivo do épico
-Entregar a primeira versão **funcional e utilizável** do sistema: um usuário consegue, via CLI, cadastrar clientes e livros, realizar um empréstimo e devolvê-lo — respeitando as regras de negócio — sem bugs bloqueantes e sem exceções não tratadas.
+
+Introduzir JUnit 5 no projeto e cobrir com testes automatizados as camadas de domínio (entidades) e aplicação (usecases, validators), aproveitando a DI manual entregue no E3 para isolar dependências com test doubles. Estabelecer a convenção de testes que vai servir de base para o gate de CI do E7.
 
 ### Valor de negócio
-Sem isso, o sistema não é uma biblioteca funcional: hoje um livro pode ser emprestado infinitas vezes em paralelo e não existe forma de encerrar um empréstimo. Este é o núcleo mínimo que torna o projeto "real".
 
-### Definition of Done do épico
-- [x] Fluxo completo executável via CLI: cadastrar cliente → cadastrar livro → emprestar → devolver → emprestar novamente
-- [x] Regras de negócio (disponibilidade do livro, limite de empréstimos ativos) aplicadas corretamente
-- [x] Nenhuma exceção não tratada (`NullPointerException`, etc.) durante o fluxo feliz ou os fluxos de erro esperados
-- [x] Todas as histórias abaixo em status Done
-
-> ✅ **Épico E2 concluído.** Validado via testes manuais no terminal — todos os requisitos atendidos. Marco 1 (MVP) alcançado: a aplicação tem todas as funcionalidades básicas 100% funcionais.
+Hoje toda validação é manual via terminal — não escala, não é repetível, e não protege contra regressão silenciosa. Sem essa fundação, o E7 (CI) não tem o que rodar como gate, e a suíte de portfólio não tem prova de qualidade nenhuma pra mostrar em processo seletivo internacional.
 
 ### Sprint
-Sprint 2 · Capacidade: ~20h/semana · Total: **17 pontos** (13 originais + 4 descobertos na revisão do épico: US-206 + US-207)
 
-### Mapeamento com o board do GitHub (Projects)
-| US | Issue | Status no board |
-|----|-------|------------------|
-| Epic E2 | #13 | Ready |
-| US-201 | #14 | In review |
-| US-202 | #15 | In review |
-| US-203 | #16 | In review |
-| US-204 | #17 | In progress |
-| US-205 | #18 | Ready |
-
-> Sincronizado manualmente a partir do board — este arquivo não é atualizado automaticamente pelo GitHub. Atualizar aqui sempre que o status mudar por lá.
+Sprint 4 · Capacidade estimada: ~20h/semana · Total: **18 pontos**
 
 ### Ordem de dependência
+
 ```
-US-201 (busca de livro)
-└──> US-202 (sincronizar status do livro)
-└──> US-203 (devolução)
-└──> US-206 (reversão manual de OVERDUE — paliativo até E10)
-
-US-204 (busca de empréstimo) ── independente
-US-205 (limite de empréstimos) ── independente
-US-207 (fix NPE + busca por critério único na CLI) ── segue US-204
+US-401 (setup JUnit 5 + convenção) ── bloqueia tudo abaixo
+US-402 (testes de domínio: Book, Customer, Loan) ── independente após US-401
+US-406 (test doubles / fakes de repository) ──┐
+                                                 ├──> US-403 (testes usecases Book)
+                                                 ├──> US-404 (testes usecases Loan)
+US-405 (testes de validators) ── depende de US-401, independente de US-406
 ```
 
----
+### Backlog do épico
 
-## US-201 — Corrigir busca de livros disponíveis
+| US | Descrição | Pontos | Status |
+| --- | --- | --- | --- |
+| US-401 | Configurar JUnit 5 e convenção de testes | 2 | 🔲 To Do |
+| US-402 | Testes unitários das entidades de domínio (Book, Customer, Loan) | 3 | 🔲 To Do |
+| US-403 | Testes unitários dos usecases de Book | 3 | 🔲 To Do |
+| US-404 | Testes unitários dos usecases de Loan | 5 | 🔲 To Do |
+| US-405 | Testes unitários dos validators | 2 | 🔲 To Do |
+| US-406 | Test doubles (fakes) para repositórios | 3 | 🔲 To Do |
 
-**Story:** Como *sistema*, preciso localizar livros corretamente na busca, para que a validação de disponibilidade funcione e empréstimos possam ser criados.
+## US-401 — Configurar JUnit 5 e convenção de testes
 
-**Pontos:** 2 · **Status:** ✅ Done (GitHub #14)
+**Story:** Como *desenvolvedor*, preciso da infraestrutura de testes configurada no projeto, para que toda US subsequente do épico tenha onde e como escrever testes de forma consistente.
 
 ### Cenários (BDD)
 
 ```gherkin
-Scenario: Buscar livro existente por ISBN, sem filtro de status
-  Given um livro com ISBN "123-45-67890-12-3" e status AVAILABLE está cadastrado
-  When o sistema busca livros pelo ISBN "123-45-67890-12-3" sem filtro de status
-  Then o resultado deve conter exatamente esse livro
+Scenario: Dependência JUnit 5 disponível no build
+  Given o pom.xml não possui dependência de testes
+  When a dependência junit-jupiter é adicionada com escopo test
+  Then o comando mvn test deve executar sem erros de configuração
 
-Scenario: Buscar por ISBN filtrando por status que não corresponde
-  Given um livro com ISBN "X" está cadastrado com status UNAVAILABLE
-  When o sistema busca esse ISBN filtrando por status AVAILABLE
-  Then o resultado deve vir vazio
+Scenario: Estrutura de pastas espelha o código de produção
+  Given as classes de produção residem em src/main/java
+  When a estrutura de testes é criada
+  Then as classes de teste devem residir em src/test/java, no mesmo pacote da classe testada
 
-Scenario: Buscar apenas por status, sem informar ISBN
-  Given existem livros com status AVAILABLE e status UNAVAILABLE cadastrados
-  When o sistema busca sem ISBN, filtrando por status AVAILABLE
-  Then o resultado deve conter apenas os livros com status AVAILABLE
-
-Scenario: Buscar ISBN inexistente
-  Given nenhum livro com ISBN "000-00-00000-00-0" está cadastrado
-  When o sistema busca por esse ISBN
-  Then o resultado deve vir vazio, sem lançar exceção
+Scenario: Teste de exemplo valida o pipeline de execução
+  Given a configuração do JUnit 5 foi concluída
+  When um teste trivial (ex: assertTrue(true)) é executado via mvn test
+  Then o resultado deve reportar 1 teste executado com sucesso
 ```
 
 ### Tasks
-- [ ] Implementar composição de `Predicate<Book>` em `BookRepository.search()`, seguindo o mesmo padrão já usado em `LoanRepository.search()`
-- [ ] Tratar `ISBN` nulo/em branco como "sem filtro de ISBN"
-- [ ] Tratar `statuses` nulo ou vazio como "sem filtro de status"
-- [ ] Validar manualmente via CLI: cadastrar 2 livros com status diferentes, buscar por ISBN, buscar só por status
-- [ ] Documentar checklist de validação manual (ainda sem JUnit — isso é TD-05)
+
+- [ ] Adicionar `junit-jupiter` (escopo `test`) e `maven-surefire-plugin` ao `pom.xml`
+- [ ] Confirmar Java 21 + Maven reconhecem `src/test/java` sem configuração adicional
+- [ ] Documentar convenção de nomenclatura: `NomeDaClasseTest`, métodos em inglês (alinhado ao domínio, que já é em inglês)
+- [ ] Escrever teste trivial de smoke-test pra validar o pipeline (`mvn test` verde)
+- [ ] Atualizar `README.md` com seção "Running tests" (`mvn test`)
+
+### Commits
+
+```
+build(pom): US-401 adiciona dependencia junit-jupiter e surefire
+test(smoke): US-401 adiciona teste trivial para validar pipeline de execucao
+docs(readme): US-401 documenta comando de execucao de testes
+```
 
 ---
 
-## US-202 — Sincronizar status do livro com o empréstimo
+## US-402 — Testes unitários das entidades de domínio
 
-**Story:** Como *sistema*, preciso sincronizar o status do livro com o ciclo do empréstimo, para impedir que o mesmo exemplar seja emprestado simultaneamente para mais de um cliente.
+**Story:** Como *desenvolvedor*, preciso de testes automatizados para `Book`, `Customer` e `Loan`, para garantir que as regras já embutidas nas entidades (contrato equals/hashCode, `isAvailable()`, `isOverdue()`) continuem corretas conforme o código evolui.
 
-**Pontos:** 3 · **Status:** ✅ Done (GitHub #15)
-**Depende de:** US-201
+**Depende de:** US-401
 
 ### Cenários (BDD)
 
 ```gherkin
-Scenario: Emprestar um livro disponível
-  Given um livro está com status AVAILABLE
-  When um empréstimo é criado para esse livro
-  Then o status do livro deve mudar para UNAVAILABLE
+Scenario: Book — contrato equals/hashCode por ISBN
+  Given dois Book com mesmo ISBN e atributos diferentes
+  When comparados via equals() e hashCode()
+  Then devem ser considerados iguais e ter hashCode idêntico
 
-Scenario: Tentar emprestar um livro já emprestado
-  Given um livro está com status UNAVAILABLE
-  When um novo empréstimo é solicitado para o mesmo livro
-  Then o sistema deve lançar RuleViolationException informando indisponibilidade
-  And nenhum novo empréstimo deve ser criado
+Scenario: Customer — contrato equals/hashCode por ID, incluindo reconstituição
+  Given um Customer construído com um ID explícito via Builder.setID()
+  When comparado com outro Customer com o mesmo ID mas dados diferentes
+  Then devem ser considerados iguais
 
-Scenario: Devolução libera o livro
-  Given um empréstimo ACTIVE existe para um livro com status UNAVAILABLE
-  When esse empréstimo é finalizado (US-203)
-  Then o status do livro deve voltar para AVAILABLE
+Scenario: Loan — isOverdue() calcula corretamente com base no Clock injetado
+  Given um Loan com startDate há 20 dias, considerando o limite de 15 dias
+  When isOverdue(clock) é chamado com um Clock fixo simulando a data atual
+  Then o resultado deve ser true
+
+Scenario: Loan — isOverdue() retorna false dentro do prazo
+  Given um Loan com startDate há 5 dias
+  When isOverdue(clock) é chamado
+  Then o resultado deve ser false
 ```
 
 ### Tasks
-- [ ] Adicionar um método em `IBookRepository`/`BookRepository` para atualizar o status de um livro (ex: `changeStatus(String ISBN, BookStatus status)`) — ou reaproveitar `getByIsbn` + `book.changeStatus(...)` diretamente, já que `Book` é mutável
-- [ ] Em `CreateLoan.execute()`, após criar o empréstimo, acionar a mudança de status do livro para `UNAVAILABLE`
-- [ ] Nota técnica: como `Book.equals`/`hashCode` são baseados no ISBN (campo imutável), mutar o `status` de um `Book` já presente no `HashSet` é seguro — não corrompe a estrutura interna do `Set`
-- [ ] Validar manualmente: emprestar → tentar emprestar de novo (deve bloquear) → devolver → emprestar de novo (deve permitir)
 
-> ✅ **Implementado**, com um desvio da AC: usa `BookStatus.BORROWED` em vez de `UNAVAILABLE` — semanticamente melhor, mantido.
+- [ ] `BookTest`: equals/hashCode, `compareTo` por título, `changeStatus`
+- [ ] `CustomerTest`: equals/hashCode (incluindo cenário de reconstituição via `setID`), `compareTo` por nome
+- [ ] `LoanTest`: equals/hashCode por `id`, `isOverdue()` com `Clock.fixed(...)` (nunca `Clock.systemDefaultZone()` em teste — não determinístico), cálculo de `dueDate()` via `endDate` nulo no builder
+- [ ] Cobrir os cenários de `HashSet` (dedup por identidade) para as três entidades
+
+### Commits
+
+```
+test(book): US-402 cobre contrato equals/hashCode e compareTo
+test(customer): US-402 cobre contrato equals/hashCode com reconstituicao de id
+test(loan): US-402 cobre contrato equals/hashCode e calculo de isOverdue com clock fixo
+```
 
 ---
 
-## US-203 — Registrar devolução de empréstimo
+## US-406 — Test doubles (fakes) para repositórios
 
-**Story:** Como *atendente*, quero registrar a devolução de um empréstimo, para que o livro fique disponível novamente e o histórico do cliente seja atualizado.
+**Story:** Como *desenvolvedor*, preciso de implementações fake das interfaces de repositório dedicadas a teste, para isolar os usecases de qualquer estado real ou estrutura concorrente ao escrever testes unitários.
 
-**Pontos:** 5 · **Status:** ✅ Done (GitHub #16)
-**Depende de:** US-202
+**Depende de:** US-401 e do E3/US-305 (interfaces já sem prefixo `I`)
 
 ### Cenários (BDD)
 
 ```gherkin
-Scenario: Devolver um empréstimo ativo existente
-  Given um empréstimo ACTIVE existe para o cliente "C1" e o livro ISBN "X"
-  When o atendente registra a devolução informando cliente "C1" e ISBN "X"
-  Then o status do empréstimo deve mudar para FINISHED
-  And o livro deve voltar ao status AVAILABLE
+Scenario: Fake de LoanRepository permite popular estado manualmente
+  Given um FakeLoanRepository vazio
+  When um Loan é adicionado diretamente via método de apoio do fake
+  Then uma busca subsequente deve retornar esse Loan
 
-Scenario: Tentar devolver um empréstimo inexistente
-  Given não existe empréstimo ACTIVE para o cliente "C2" e o livro ISBN "Y"
-  When o atendente tenta registrar a devolução dessa combinação
-  Then o sistema deve informar "empréstimo não encontrado", sem lançar exceção não tratada
-
-Scenario: Tentar devolver um empréstimo já finalizado
-  Given um empréstimo para cliente "C1" e ISBN "X" já está FINISHED
-  When o atendente tenta devolvê-lo novamente
-  Then o sistema deve informar que não há empréstimo ativo para essa combinação
+Scenario: Fake de BookRepository isola o teste de qualquer estado global
+  Given dois testes distintos instanciam FakeBookRepository separadamente
+  When cada um popula seu próprio estado
+  Then o estado de um teste não deve vazar para o outro
 ```
 
 ### Tasks
-- [ ] Criar usecase `FinishLoan` (`application/loan/usecase/FinishLoan.java`), seguindo o padrão dos demais usecases (construtor resolve o repositório, `execute(...)` contém a regra)
-- [ ] Usecase busca o empréstimo `ACTIVE` por `customerId` + `ISBN` via `loanRepository.search(...)`; lança `NotFoundException` se não encontrar
-- [ ] Altera o status para `FINISHED` e persiste via `loanRepository.update(...)`
-- [ ] Aciona a liberação do livro (integração com US-202)
-- [ ] Implementar `LoanCli.finishLoan(scan)`: coletar `customerId` e `ISBN`, chamar o usecase, tratar exceções
-- [ ] Conectar a opção de devolução ao menu do `LoanCli.init()` (hoje só existe `[1] New`, `[2] Search`, `[3] List` — falta a opção de devolução)
 
-> ✅ **Implementado** como usecase `ReturnLoan`, com dois desvios da AC, ambos mantidos: (1) busca por **`loanId`** direto em vez de `customerId + ISBN` — evita ambiguidade se o cliente tiver o mesmo livro em datas diferentes; o `id` já é exposto no JSON de busca/listagem, então o fluxo funciona (busca/lista → pega o `id` → devolve); (2) se o empréstimo estiver atrasado no momento da devolução, o status vira `OVERDUE` em vez de `FINISHED` — antecipação inteligente do E10, mas gerou o bug crítico documentado em **US-206**.
+- [ ] Criar `FakeLoanRepository`, `FakeBookRepository`, `FakeCustomerRepository` em `src/test/java/.../infrastructure/repository/fake` (usando `HashMap`/`ArrayList` simples — sem `ConcurrentHashMap`, teste não precisa de thread-safety)
+- [ ] Adicionar métodos de apoio só de teste (ex: `seed(Loan loan)`) sem poluir a interface de produção
+- [ ] Javadoc curto em cada fake explicando que é exclusivo de teste, não usar em produção
+
+### Commits
+
+```
+test(fakes): US-406 adiciona FakeLoanRepository para uso em testes de usecase
+test(fakes): US-406 adiciona FakeBookRepository e FakeCustomerRepository
+```
 
 ---
 
-## US-204 — Buscar empréstimos por qualquer critério isolado
+## US-403 — Testes unitários dos usecases de Book
 
-**Story:** Como *atendente*, quero buscar empréstimos usando apenas um critério (cliente, livro ou status), para consultar o histórico sem precisar preencher todos os campos.
-
-**Pontos:** 2 · **Status:** ✅ Done (GitHub #17)
-**Independente** (pode ser feita em paralelo com US-202/203)
+**Depende de:** US-406
 
 ### Cenários (BDD)
 
 ```gherkin
-Scenario: Buscar somente por cliente
-  Given empréstimos existem para os clientes "C1" e "C2"
-  When a busca é feita apenas com customerId = "C1"
-  Then o resultado deve conter apenas empréstimos de "C1"
+Scenario: CreateBook persiste um livro válido
+  Given um FakeBookRepository vazio
+  When o usecase CreateBook é executado com dados válidos
+  Then o repositório deve conter exatamente 1 livro com status AVAILABLE
 
-Scenario: Buscar somente por status
-  Given existem empréstimos com status ACTIVE e status FINISHED
-  When a busca é feita apenas com status = ACTIVE
-  Then o resultado deve conter apenas os empréstimos ACTIVE
-
-Scenario: Buscar sem nenhum critério
-  Given qualquer estado do sistema
-  When a busca é feita sem nenhum critério preenchido
-  Then o sistema deve lançar IllegalArgumentException "At least one search criteria must be provided"
-
-Scenario: Buscar com status nulo mas outro critério preenchido
-  Given empréstimos existem para o cliente "C1"
-  When a busca é feita com customerId = "C1" e status nulo
-  Then o resultado não deve lançar NullPointerException
-  And deve retornar os empréstimos de "C1"
+Scenario: SearchBooks filtra corretamente por ISBN e status
+  Given um FakeBookRepository com 2 livros de status diferentes
+  When SearchBooks é executado filtrando por status AVAILABLE
+  Then o resultado deve conter apenas o livro com esse status
 ```
 
 ### Tasks
-- [ ] Corrigir `hasAnyCriteria` em `SearchLoans`: trocar os `&&` por `||` entre os três critérios
-- [ ] Corrigir a chamada `loanRepository.search(...)`: hoje monta sempre `Set.of(filter.status())`, que lança NPE se `status` for nulo — ajustar para passar `null` (ou conjunto vazio) quando o status não for informado
-- [ ] Implementar `LoanCli.searchLoan(scan)`: coletar os critérios de forma opcional e chamar o usecase
-- [ ] Validar manualmente os 4 cenários acima
+
+- [ ] `CreateBookTest`, `SearchBooksTest` (e demais usecases de Book existentes) usando `FakeBookRepository` injetado via construtor
+- [ ] Cobrir fluxo feliz e pelo menos um cenário de erro/edge por usecase
+
+### Commits
+
+```
+test(create-book): US-403 cobre fluxo de criacao de livro com fake repository
+test(search-books): US-403 cobre filtros de busca com fake repository
+```
 
 ---
 
-## US-205 — Formalizar regra do limite de empréstimos ativos
+## US-404 — Testes unitários dos usecases de Loan
 
-**Story:** Como *sistema*, preciso aplicar corretamente o limite de empréstimos ativos por cliente, para manter a regra de negócio clara, nomeada e testável.
+**Depende de:** US-406
 
-**Pontos:** 1 · **Status:** ✅ Done (GitHub #18)
-**Independente**
+> Maior pontuação do épico: `Loan` concentra a maior parte das regras de negócio do MVP (elegibilidade, sincronização de status do livro, devolução, reversão de OVERDUE).
 
 ### Cenários (BDD)
 
 ```gherkin
-Scenario: Cliente sem empréstimos ativos
-  Given o cliente "C1" não possui empréstimos ACTIVE ou OVERDUE
-  When um novo empréstimo é solicitado
-  Then a validação deve passar
+Scenario: CreateLoan bloqueia cliente que atingiu o limite de empréstimos ativos
+  Given um FakeLoanRepository com 2 empréstimos ACTIVE para o cliente "C1"
+  When CreateLoan é executado para o cliente "C1"
+  Then deve lançar RuleViolationException
 
-Scenario: Cliente com 1 empréstimo ativo
-  Given o cliente "C1" possui 1 empréstimo ACTIVE
-  When um novo empréstimo é solicitado
-  Then a validação deve passar (limite de 2 ainda não atingido)
+Scenario: ReturnLoan finaliza empréstimo dentro do prazo
+  Given um Loan ACTIVE dentro do prazo no FakeLoanRepository
+  When ReturnLoan é executado para esse loan
+  Then o status deve mudar para FINISHED
+  And o BookRepository fake deve refletir o livro como AVAILABLE
 
-Scenario: Cliente com 2 empréstimos ativos
-  Given o cliente "C1" possui 2 empréstimos ACTIVE
-  When um novo empréstimo é solicitado
-  Then deve lançar RuleViolationException "Customer has reached the maximum of 2 active loans"
+Scenario: ReturnLoan marca como OVERDUE quando fora do prazo
+  Given um Loan ACTIVE com startDate anterior ao limite, e um Clock fixo simulando a data atual
+  When ReturnLoan é executado
+  Then o status deve mudar para OVERDUE
 
-Scenario: Cliente com empréstimo em atraso
-  Given o cliente "C1" possui 1 empréstimo OVERDUE
-  When um novo empréstimo é solicitado
-  Then deve lançar RuleViolationException informando pendência de devolução em atraso
+Scenario: CloseOverdueLoan reverte apenas empréstimos OVERDUE
+  Given um Loan com status ACTIVE
+  When CloseOverdueLoan é executado para esse loan
+  Then deve rejeitar a operação, informando que só se aplica a OVERDUE
 ```
 
 ### Tasks
-- [ ] Criar constante nomeada `MAX_ACTIVE_LOANS = 2` (sugestão: em `infrastructure/config/Constant.java`, que já existe)
-- [ ] Atualizar `LoanEligibilityValidator` para usar a constante em vez do número mágico atual
-- [ ] Corrigir a mensagem de erro para refletir o valor real do limite (hoje o texto diz "more than one", mas a regra permite 2)
-- [ ] Validar manualmente os 4 cenários acima
 
-> ✅ **Implementado** — código real usa `Loan.MAX_ACTIVE_LOANS = 2` (constante na própria entidade, em vez de `Constant.java` — decisão válida, mais coesa com DDD). Validação com `>=` correta.
+- [ ] `CreateLoanTest`: cobrir `LoanEligibilityValidator` integrado (limite de 2, bloqueio por OVERDUE)
+- [ ] `ReturnLoanTest`: cobrir os dois ramos (`FINISHED` vs `OVERDUE`), usando `Clock.fixed(...)` injetado — nunca `Clock` real em teste
+- [ ] `SearchLoansTest`: cobrir critério isolado, status nulo, nenhum critério
+- [ ] `CloseOverdueLoanTest`: cobrir reversão restrita a status OVERDUE
+
+### Commits
+
+```
+test(create-loan): US-404 cobre elegibilidade e limite de emprestimos ativos
+test(return-loan): US-404 cobre finalizacao no prazo e marcacao overdue com clock fixo
+test(search-loans): US-404 cobre criterios isolados e status nulo
+test(close-overdue-loan): US-404 cobre reversao restrita a status overdue
+```
 
 ---
 
-## US-206 — Reversão manual de empréstimo travado em atraso (paliativo até E10)
+## US-405 — Testes unitários dos validators
 
-**Story:** Como *atendente*, quero reverter manualmente o status de um empréstimo travado em `OVERDUE`, para desbloquear um cliente que já devolveu o livro fisicamente, enquanto o sistema de reputação (E10) não existe.
-
-**Pontos:** 2 · **Status:** ✅ Done
-
-**Origem:** `ReturnLoan` marca o empréstimo como `OVERDUE` (em vez de `FINISHED`) quando a devolução acontece fora do prazo — antecipando o E10. Mas `LoanEligibility.check()` bloqueia qualquer cliente com empréstimo `OVERDUE`, sem limite de tempo, e nada reverte esse status depois. Resultado: **um único atraso bloqueia o cliente permanentemente.** Isso é consequência direta de termos adiado o score/multa (E10) — essa US é o paliativo até lá, não a solução definitiva.
+**Depende de:** US-401
 
 ### Cenários (BDD)
 
 ```gherkin
-Scenario: Reverter empréstimo OVERDUE para FINISHED
-  Given um empréstimo existe com status OVERDUE
-  When o atendente aciona a reversão manual desse empréstimo
-  Then o status muda para FINISHED
-  And o cliente deixa de estar bloqueado por esse empréstimo na próxima tentativa de novo empréstimo
+Scenario: LoanEligibilityValidator aprova cliente elegível
+  Given um cliente sem empréstimos ACTIVE ou OVERDUE
+  When a validação é executada
+  Then nenhuma exceção deve ser lançada
 
-Scenario: Tentar reverter empréstimo que não está OVERDUE
-  Given um empréstimo está com status ACTIVE ou FINISHED
-  When o atendente tenta aplicar a reversão manual
-  Then o sistema deve rejeitar, informando que a ação só se aplica a empréstimos OVERDUE
-
-Scenario: Tentar reverter empréstimo inexistente
-  Given não existe empréstimo com o ID informado
-  When o atendente tenta reverter
-  Then o sistema deve informar "empréstimo não encontrado"
+Scenario: SearchLoanValidator rejeita busca sem nenhum critério
+  Given um filtro de busca totalmente vazio
+  When a validação é executada
+  Then deve lançar IllegalArgumentException
 ```
 
 ### Tasks
-- [ ] Criar usecase restrito à transição `OVERDUE` → `FINISHED` apenas (não um editor de status genérico — evita reativar/corromper empréstimos por engano)
-- [ ] Implementar ação no `LoanCli` (nova opção de menu, com rótulo claro, ex: "Clear overdue flag")
-- [ ] Comentário no código explícito: `// Paliativo até E10 (reputação) existir — remover quando o bloqueio por tempo determinado for implementado`
-- [ ] Validar manualmente os 3 cenários
 
----
+- [ ] `LoanEligibilityValidatorTest`: cobrir limite ativo e bloqueio por OVERDUE
+- [ ] `SearchLoanValidatorTest`: cobrir `hasAnyCriteria` com `||`
 
-## US-207 — Corrigir NPE latente e permitir busca de empréstimo por critério único na CLI
+### Commits
 
-**Story:** Como *atendente*, quero buscar empréstimos informando apenas um critério, sem ser obrigado a preencher todos os campos, e sem risco do sistema quebrar quando um campo não for informado.
-
-**Pontos:** 2 · **Status:** ✅ Done
-
-**Origem:** US-204 corrigiu o `hasAnyCriteria` (agora usa `||` corretamente, em `SearchLoanValidator`), mas dois problemas persistem: (1) `SearchLoans.execute()` ainda envolve `filter.status()` em `Set.of(...)` sempre — se `status` for nulo, `Set.of(null)` lança `NullPointerException`; (2) `LoanCli.searchLoan()` obriga o atendente a digitar os 3 campos sempre, então o bug do item 1 nunca aparece em teste manual, mas o objetivo original da US-204 (buscar por critério isolado) não está de fato disponível pra quem usa o sistema.
-
-### Cenários (BDD)
-
-```gherkin
-Scenario: Buscar deixando o status em branco na CLI
-  Given o atendente está no fluxo de busca de empréstimos
-  When ele pressiona Enter sem digitar um status
-  Then a busca ocorre normalmente, sem lançar NullPointerException, tratando como "sem filtro de status"
-
-Scenario: Buscar deixando ISBN ou customerId em branco
-  Given o atendente deixa o ISBN ou o customerId vazio
-  When a busca é executada
-  Then esse campo não restringe o resultado
-
-Scenario: Buscar sem preencher nenhum campo
-  Given todos os campos são deixados em branco
-  When a busca é executada
-  Then o sistema rejeita com "At least one search criteria must be provided" (comportamento já existente, preservado)
-
-Scenario: Informar um status inválido
-  Given o atendente digita um valor que não corresponde a nenhum LoanStatus
-  When a busca é executada
-  Then o sistema informa um erro tratado, sem quebrar a aplicação (hoje IllegalArgumentException não é capturada)
+```
+test(loan-eligibility-validator): US-405 cobre limite ativo e bloqueio por overdue
+test(search-loan-validator): US-405 cobre criterio ausente e criterio isolado
 ```
 
-### Tasks
-- [ ] Corrigir `SearchLoans.execute()`: parar de envolver `filter.status()` sempre em `Set.of(...)`; tratar nulo como "sem filtro"
-- [ ] Ajustar `LoanCli.searchLoan()` pra aceitar Enter vazio em cada campo, tratando entrada vazia como "não informado"
-- [ ] Capturar `IllegalArgumentException` de `LoanStatus.valueOf()` quando o atendente digitar um status inválido
-- [ ] Corrigir rótulo confuso no menu do `LoanCli`: opção `[6] - Return` hoje só sai do submenu (`loop = false`) — renomear pra "Back"/"Voltar", já que a devolução real está na opção `[3] - Devolution`
-- [ ] Validar manualmente os cenários acima
+---
+
+## Definition of Done do épico E4
+
+- [ ] JUnit 5 configurado e `mvn test` roda via CLI padrão
+- [ ] Entidades de domínio (`Book`, `Customer`, `Loan`) com cobertura de testes de contrato e regras próprias
+- [ ] Fakes de repositório disponíveis e usados por todos os testes de usecase
+- [ ] Usecases de `Book` e `Loan` cobertos, incluindo fluxo feliz e principais exceções de regra de negócio
+- [ ] Validators (`LoanEligibilityValidator`, `SearchLoanValidator`) cobertos
+- [ ] Nenhum teste depende de `Clock` real, estado global, ou ordem de execução entre testes
+- [ ] Todas as 6 sub-tasks em status Done
 
 ---
 
-## Backlog de Débito Técnico (E2 — pós-MVP, não bloqueante)
+## Backlog de Débito Técnico
 
-| ID | Item | Descrição | Pontos (estimativa) |
-|----|------|-----------|----------------------|
-| TD-01 | Contrato `equals`/`hashCode` quebrado | `Book`: `hashCode` usa `year`, `equals` usa `ISBN` (campos diferentes = contrato violado). `Customer`: `equals` usa OR entre ID e e-mail, o que quebra transitividade | 3 |
-| TD-02 | `WaitingList` é código morto | Entidade existe, mas sem repository, usecase ou CLI — decidir: implementar a feature ou remover | 3 |
-| TD-03 | `BookUnavailableException` não utilizada | Existe mas `RuleViolationException` já cobre esse caso — avaliar remoção ou uso correto | 1 |
-| TD-04 | ~~Ausência de Inversão de Dependência~~ | Usecases instanciam `BookRepository.DB` / `LoanRepository.DB` direto no construtor, mesmo dependendo da interface — dificulta testes unitários isolados. **Redundante com o E3 (em andamento)** — remover esta linha quando o E3 for concluído | 5 |
-| TD-05 | Nenhuma cobertura de testes automatizados | Introduzir JUnit 5 e cobrir as usecases principais (merece sprint próprio, dedicado a aprender a ferramenta) — escopo do **E4** | 8 |
+| ID | Item | Descrição | Pontos | Status |
+| --- | --- | --- | --- | --- |
+| TD-01 | Contrato `equals`/`hashCode` quebrado | `Book`, `Customer`, `Loan` — resolvido via US-304 | 3 | ✅ Resolvido (E3) |
+| TD-02 | `WaitingList` é código morto | Entidade existe, mas sem repository, usecase ou CLI — decidir: implementar a feature ou remover | 3 | ⏳ Backlog |
+| TD-03 | `BookUnavailableException` não utilizada | Existe mas `RuleViolationException` já cobre esse caso — avaliar remoção ou uso correto | 1 | ⏳ Backlog |
 
 ---
 
 ## Convenção de commits
 
-Segue [Conventional Commits](https://www.conventionalcommits.org/), commits de linha única (sem corpo/rodapé — fluxo via terminal), com o ID da US logo após os dois-pontos:
+Segue Conventional Commits, commits de linha única (sem corpo/rodapé — fluxo via terminal), com o ID da US logo após os dois-pontos:
 
 ```
 <tipo>(<escopo>): <ID> <descrição no imperativo, minúsculo, sem ponto final>
@@ -425,38 +418,20 @@ Segue [Conventional Commits](https://www.conventionalcommits.org/), commits de l
 - Sem fluxo de Pull Request ainda (ver E8 no roadmap), o commit vai direto pra `develop` — não há auto-close de Issue. Ao concluir uma US, feche a Issue manualmente no board.
 - Múltiplos commits na mesma US: todos repetem o mesmo ID (`US-XXX`) no início da descrição.
 
-**Mapeamento de tipo por história (Sprint 2):**
-
-| US | Tipo | Escopo sugerido |
-|----|------|------------------|
-| US-201 | `fix` | `book-repository` |
-| US-202 | `fix` | `loan` |
-| US-203 | `feat` | `loan` |
-| US-204 | `fix` | `loan-repository` |
-| US-205 | `fix` | `loan-validator` |
-
-**Exemplos:**
-```
-fix(book-repository): US-201 implementa filtro de busca por isbn e status
-fix(loan): US-202 sincroniza status do livro ao criar e finalizar emprestimo
-feat(loan): US-203 implementa devolucao de emprestimo
-fix(loan-repository): US-204 corrige criterio de busca opcional e npe de status nulo
-fix(loan-validator): US-205 formaliza limite de emprestimos ativos
-```
-
 ---
 
 ## Convenção de versionamento
 
-Segue [SemVer](https://semver.org/) (`MAJOR.MINOR.PATCH`):
+Segue SemVer (`MAJOR.MINOR.PATCH`):
 
 - **`0.y.z`** enquanto o projeto está em desenvolvimento inicial — contratos internos (arquitetura, persistência, framework) ainda podem mudar sem aviso. `1.0.0` fica reservado pra quando o sistema estabilizar (por volta da Fase 3).
-- **Sufixos `alpha`/`beta`/`rc`** só fazem sentido a partir do **Marco 2** (quando a API REST existir) — eles qualificam a estabilidade de uma interface que outros consomem; um CLI local não tem esse tipo de "consumidor" externo, então o rótulo ficaria sem função antes disso.
-- **`-SNAPSHOT`** no `pom.xml` durante desenvolvimento contínuo; a tag/release usa a versão limpa.
+- **Sufixos `alpha`/`beta`/`rc`** só fazem sentido a partir do **Marco 2** (quando a API REST existir).
+- **`SNAPSHOT`** no `pom.xml` durante desenvolvimento contínuo; a tag/release usa a versão limpa.
 
 **Tags:**
+
 | Tag | Marco | Data |
-|-----|-------|------|
+| --- | --- | --- |
 | `v0.1.1` | Marco 1 — MVP (Épico E2 concluído) | ver histórico do Git |
 
 ---
@@ -465,10 +440,10 @@ Segue [SemVer](https://semver.org/) (`MAJOR.MINOR.PATCH`):
 
 - **Pontos:** escala Fibonacci simplificada (1, 2, 3, 5, 8)
 - **Status:** 🔲 To Do · 🟡 In Progress · 🔵 In Review · ✅ Done
-- **Numeração de história:** `US-{sprint}{sequencial}` (ex: US-201 = Sprint 2, item 1)
+- **Numeração de história:** `US-{sprint}{sequencial}` (ex: US-401 = Sprint 4, item 1)
 - **Numeração de débito técnico:** `TD-{sequencial}`, sem vínculo fixo a sprint até ser priorizado
 - **Cenários BDD:** formato Gherkin (Given/When/Then), usados como critério de aceite formal de cada história
 
 ---
 
-*Última atualização (25/07): repriorização da Fase 2 — épicos E3–E10 renumerados para refletir a nova sequência de execução; prioridade de E8 (Go Live) elevada; escopo do Marco 2 passa a incluir persistência real (E6/JDBC). Épico E2 concluído — Marco 1 (MVP) alcançado. Validado via testes manuais no terminal.*
+*Última atualização: Épico E3 concluído (19 pts, incluindo US-305 e TD-01). Épico E4 detalhado e iniciado (18 pts, Sprint 4). Detalhamento completo de épicos concluídos (E0–E3) removido deste arquivo — histórico vive nas Issues do GitHub Projects, para evitar duas fontes de verdade.*
