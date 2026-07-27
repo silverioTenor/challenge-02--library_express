@@ -14,9 +14,9 @@ public class UpdateCustomerEmail {
     private final ICustomerRepository customerRepository;
     private final CustomerMapper mapper;
 
-    public UpdateCustomerEmail() {
-        this.customerRepository = CustomerRepository.DB;
-        this.mapper = CustomerMapper.INSTANCE;
+    public UpdateCustomerEmail(ICustomerRepository customerRepository, CustomerMapper mapper) {
+        this.customerRepository = customerRepository;
+        this.mapper = mapper;
     }
 
     public void execute(UpdateCustomerEmailDto updateCustomerEmailDto) throws NotFoundException {

@@ -18,10 +18,10 @@ public class SearchLoans {
     private final LoanMapper mapper;
     private final SearchLoanValidator searchLoanValidator;
 
-    public SearchLoans() {
-        this.loanRepository = LoanRepository.DB;
-        this.mapper = LoanMapper.INSTANCE;
-        this.searchLoanValidator = new SearchLoanValidator();
+    public SearchLoans(ILoanRepository loanRepository, LoanMapper mapper, SearchLoanValidator searchLoanValidator) {
+        this.loanRepository = loanRepository;
+        this.mapper = mapper;
+        this.searchLoanValidator = searchLoanValidator;
     }
 
     public Set<LoanDto> execute(FilterLoansDto filter) throws RuleViolationException {

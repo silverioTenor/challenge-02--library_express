@@ -17,8 +17,8 @@ public class CloseOverdueLoan {
 
     private final ILoanRepository loanRepository;
 
-    public CloseOverdueLoan() {
-        this.loanRepository = LoanRepository.DB;
+    public CloseOverdueLoan(ILoanRepository loanRepository) {
+        this.loanRepository = loanRepository;
     }
 
     public void execute(String loanId) throws NotFoundException, RuleViolationException {

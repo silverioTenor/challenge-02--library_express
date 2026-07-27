@@ -8,6 +8,7 @@ import org.libraryexpress.application.loan.dto.request.FilterLoansDto;
 import org.libraryexpress.application.loan.dto.response.LoanDto;
 import org.libraryexpress.application.loan.usecase.*;
 import org.libraryexpress.domain.enums.LoanStatus;
+import org.libraryexpress.infrastructure.config.AppContext;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
 import org.libraryexpress.infrastructure.exception.RuleViolationException;
 import org.libraryexpress.infrastructure.util.JsonPrinter;
@@ -24,13 +25,13 @@ class LoanCli {
     private final ReturnLoan returnLoan;
     private final CloseOverdueLoan closeOverdueLoan;
 
-    public LoanCli() {
-        this.findCustomer = new FindCustomer();
-        this.createLoan = new CreateLoan();
-        this.searchLoans = new SearchLoans();
-        this.listLoans = new ListLoans();
-        this.returnLoan = new ReturnLoan();
-        this.closeOverdueLoan = new CloseOverdueLoan();
+    public LoanCli(AppContext context) {
+        this.findCustomer = context.getFindCustomer();
+        this.createLoan = context.getCreateLoan();
+        this.searchLoans = context.getSearchLoans();
+        this.listLoans = context.getListLoans();
+        this.returnLoan = context.getReturnLoan();
+        this.closeOverdueLoan = context.getCloseOverdueLoan();
     }
 
     public void init(Scanner scan) {

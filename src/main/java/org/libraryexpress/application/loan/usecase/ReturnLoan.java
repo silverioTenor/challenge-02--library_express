@@ -20,9 +20,9 @@ public class ReturnLoan {
     private final ILoanRepository loanRepository;
     private final IBookRepository bookRepository;
 
-    public ReturnLoan() {
-        this.loanRepository = LoanRepository.DB;
-        this.bookRepository = BookRepository.DB;
+    public ReturnLoan(ILoanRepository loanRepository, IBookRepository bookRepository) {
+        this.loanRepository = loanRepository;
+        this.bookRepository = bookRepository;
     }
 
     public void execute(String loanId) throws NotFoundException, RuleViolationException {

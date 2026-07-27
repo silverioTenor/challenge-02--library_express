@@ -2,15 +2,14 @@ package org.libraryexpress.infrastructure.cli;
 
 import org.libraryexpress.application.book.dto.request.RegisterBookDto;
 import org.libraryexpress.application.book.dto.response.BookDto;
-import org.libraryexpress.application.book.mapper.BookMapper;
 import org.libraryexpress.application.book.usecase.FindBook;
 import org.libraryexpress.application.book.usecase.ListBooks;
 import org.libraryexpress.application.book.usecase.RegisterBook;
 import org.libraryexpress.domain.enums.BookStatus;
 import org.libraryexpress.domain.helper.Generator;
+import org.libraryexpress.infrastructure.config.AppContext;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
 import org.libraryexpress.infrastructure.exception.RuleViolationException;
-import org.libraryexpress.infrastructure.repository.BookRepository;
 
 import java.util.Scanner;
 
@@ -20,10 +19,10 @@ public class BookCli {
     private final FindBook findBook;
     private final ListBooks listBooks;
 
-    public BookCli() {
-        this.registerBook = new RegisterBook(BookRepository.DB, BookMapper.INSTANCE);
-        this.findBook = new FindBook(BookRepository.DB, BookMapper.INSTANCE);
-        this.listBooks = new ListBooks(BookRepository.DB);
+    public BookCli(AppContext context) {
+        this.registerBook = context.getRegisterBook();
+        this.findBook = context.getFindBook();
+        this.listBooks = context.getListBooks();
     }
 
     public void init(Scanner scan) {

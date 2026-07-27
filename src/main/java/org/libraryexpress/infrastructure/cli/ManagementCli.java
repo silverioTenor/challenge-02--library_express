@@ -1,5 +1,7 @@
 package org.libraryexpress.infrastructure.cli;
 
+import org.libraryexpress.infrastructure.config.AppContext;
+
 import java.util.Scanner;
 
 public class ManagementCli {
@@ -9,9 +11,11 @@ public class ManagementCli {
     private final LoanCli loanCli;
 
     public ManagementCli() {
-        this.customerCli = new CustomerCli();
-        this.bookCli = new BookCli();
-        this.loanCli = new LoanCli();
+        AppContext context = new AppContext();
+
+        this.customerCli = new CustomerCli(context);
+        this.bookCli = new BookCli(context);
+        this.loanCli = new LoanCli(context);
     }
 
     public void app() {
