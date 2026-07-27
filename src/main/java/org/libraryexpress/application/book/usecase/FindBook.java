@@ -14,9 +14,9 @@ public class FindBook {
     private final IBookRepository bookRepository;
     private final BookMapper mapper;
 
-    public FindBook() {
-        this.bookRepository = BookRepository.DB;
-        this.mapper = BookMapper.INSTANCE;
+    public FindBook(IBookRepository bookRepository, BookMapper mapper) {
+        this.bookRepository = bookRepository;
+        this.mapper = mapper;
     }
 
     public BookDto execute(String ISBN) throws NotFoundException {

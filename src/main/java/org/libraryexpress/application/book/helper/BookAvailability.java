@@ -13,8 +13,8 @@ public class BookAvailability {
 
     private final IBookRepository bookRepository;
 
-    public BookAvailability() {
-        this.bookRepository = BookRepository.DB;
+    public BookAvailability(IBookRepository bookRepository) {
+        this.bookRepository = bookRepository;
     }
 
     public void check(String ISBN) throws NotFoundException, RuleViolationException {

@@ -12,9 +12,9 @@ public class RegisterBook {
     private final IBookRepository bookRepository;
     private final BookMapper mapper;
 
-    public RegisterBook() {
-        this.bookRepository = BookRepository.DB;
-        this.mapper = BookMapper.INSTANCE;
+    public RegisterBook(IBookRepository bookRepository, BookMapper mapper) {
+        this.bookRepository = bookRepository;
+        this.mapper = mapper;
     }
 
     public void execute(RegisterBookDto registerBookDto) throws RuleViolationException {

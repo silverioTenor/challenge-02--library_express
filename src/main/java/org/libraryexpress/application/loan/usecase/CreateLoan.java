@@ -27,7 +27,7 @@ public class CreateLoan {
         this.loanRepository = LoanRepository.DB;
         this.bookRepository = BookRepository.DB;
         this.loanEligibility = new LoanEligibility();
-        this.bookAvailability = new BookAvailability();
+        this.bookAvailability = new BookAvailability(BookRepository.DB);
     }
 
     public void execute(CreateLoanDto createLoanDto) throws RuleViolationException, NotFoundException {
