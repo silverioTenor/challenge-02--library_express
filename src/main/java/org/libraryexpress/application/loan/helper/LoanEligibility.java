@@ -2,23 +2,22 @@ package org.libraryexpress.application.loan.helper;
 
 import org.libraryexpress.domain.entity.Loan;
 import org.libraryexpress.domain.enums.LoanStatus;
-import org.libraryexpress.domain.repository.ILoanRepository;
+import org.libraryexpress.domain.repository.LoanRepository;
 import org.libraryexpress.infrastructure.exception.RuleViolationException;
-import org.libraryexpress.infrastructure.repository.LoanRepository;
 
 import java.util.Set;
 
 public class LoanEligibility {
 
-    private final ILoanRepository loanRepository;
+    private final LoanRepository loanRepository;
 
-    public LoanEligibility(ILoanRepository loanRepository) {
+    public LoanEligibility(LoanRepository loanRepository) {
         this.loanRepository = loanRepository;
     }
 
     public void check(String customerId) throws RuleViolationException {
 
-        Set<Loan> loans = this.loanRepository.find(
+        Set<Loan> loans = this.loanRepository.search(
                 customerId,
                 null,
                 Set.of(LoanStatus.ACTIVE, LoanStatus.OVERDUE)

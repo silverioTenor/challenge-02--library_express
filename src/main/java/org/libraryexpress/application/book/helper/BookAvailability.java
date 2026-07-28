@@ -2,18 +2,17 @@ package org.libraryexpress.application.book.helper;
 
 import org.libraryexpress.domain.entity.Book;
 import org.libraryexpress.domain.enums.BookStatus;
-import org.libraryexpress.domain.repository.IBookRepository;
+import org.libraryexpress.domain.repository.BookRepository;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
 import org.libraryexpress.infrastructure.exception.RuleViolationException;
-import org.libraryexpress.infrastructure.repository.BookRepository;
 
 import java.util.Set;
 
 public class BookAvailability {
 
-    private final IBookRepository bookRepository;
+    private final BookRepository bookRepository;
 
-    public BookAvailability(IBookRepository bookRepository) {
+    public BookAvailability(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 

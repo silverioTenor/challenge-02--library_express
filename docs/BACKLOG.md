@@ -103,8 +103,8 @@ Detalhe completo (Gherkin, tasks, desvios de implementação): ver Issues #13–
 
 | US | Descrição | Pontos | Status |
 | --- | --- | --- | --- |
-| US-301 | Injetar `BookRepository` via construtor nos usecases de Book | 3 | ✅ Done |
-| US-302 | Injetar `LoanRepository` via construtor nos usecases de Loan | 3 | ✅ Done |
+| US-301 | Injetar `InMemoryBookRepository` via construtor nos usecases de Book | 3 | ✅ Done |
+| US-302 | Injetar `InMemoryLoanRepository` via construtor nos usecases de Loan | 3 | ✅ Done |
 | US-303 | Composition Root para montagem manual dos usecases | 5 | ✅ Done |
 | US-304 | Corrigir contrato `equals`/`hashCode` de Book, Customer e Loan (TD-01) | 3 | ✅ Done |
 | US-305 | Padronizar nomenclatura de repositórios (remover prefixo `I`), converter enum→classe, reorganizar pastas para JDBC | 5 | ✅ Done |

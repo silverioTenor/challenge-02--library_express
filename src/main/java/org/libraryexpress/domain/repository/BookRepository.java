@@ -6,11 +6,10 @@ import org.libraryexpress.domain.enums.BookStatus;
 import java.util.Optional;
 import java.util.Set;
 
-public interface IBookRepository {
-
+public interface BookRepository {
     void create(Book book);
     void update(String ISBN, BookStatus status);
     Set<Book> search(String ISBN, Set<BookStatus> statuses);
     Optional<Book> getByIsbn(String isbn);
-    Optional<Set<Book>> all();
+    Set<Book> all();
 }

@@ -2,10 +2,9 @@ package org.libraryexpress.application.loan.usecase;
 
 import org.libraryexpress.domain.entity.Loan;
 import org.libraryexpress.domain.enums.LoanStatus;
-import org.libraryexpress.domain.repository.ILoanRepository;
+import org.libraryexpress.domain.repository.LoanRepository;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
 import org.libraryexpress.infrastructure.exception.RuleViolationException;
-import org.libraryexpress.infrastructure.repository.LoanRepository;
 
 /**
  * TODO - Temporary/palliative use case.
@@ -15,9 +14,9 @@ import org.libraryexpress.infrastructure.repository.LoanRepository;
  */
 public class CloseOverdueLoan {
 
-    private final ILoanRepository loanRepository;
+    private final LoanRepository loanRepository;
 
-    public CloseOverdueLoan(ILoanRepository loanRepository) {
+    public CloseOverdueLoan(LoanRepository loanRepository) {
         this.loanRepository = loanRepository;
     }
 

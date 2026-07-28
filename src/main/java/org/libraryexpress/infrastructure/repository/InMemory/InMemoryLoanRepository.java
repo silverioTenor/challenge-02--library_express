@@ -1,44 +1,36 @@
-package org.libraryexpress.infrastructure.repository;
+package org.libraryexpress.infrastructure.repository.InMemory;
 
 import org.libraryexpress.domain.entity.Loan;
-import org.libraryexpress.domain.repository.ILoanRepository;
 import org.libraryexpress.domain.enums.LoanStatus;
+import org.libraryexpress.domain.repository.LoanRepository;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public enum LoanRepository implements ILoanRepository {
-    DB;
+public class InMemoryLoanRepository implements LoanRepository {
 
-    private final Set<Loan> group = new HashSet<>();
+    private final Map<String, Loan> group = new ConcurrentHashMap<>();
 
     @Override
     public void create(Loan loan) {
-        group.add(loan);
+        group.put(loan.getId(), loan);
     }
 
     @Override
-    public boolean update(Loan loanToUpdate) {
-        return group.stream()
-                .filter(loan -> loan.getId().equals(loanToUpdate.getId()))
-                .findFirst()
-                .map(loan -> {
-                    loan.changeStatus(loanToUpdate.getStatus());
-                    return true;
-                })
-                .orElse(false);
+    public void update(Loan loanToUpdate) {
+        Optional.ofNullable(group.get(loanToUpdate.getISBN()))
+                .ifPresent(loan -> loan.changeStatus(loanToUpdate.getStatus()));
     }
 
     @Override
     public Optional<Loan> findById(String loanId) {
-        return group.stream()
-                .filter(loan -> loan.getId().equals(loanId))
-                .findFirst();
+        return Optional.ofNullable(group.get(loanId));
     }
 
     @Override
-    public Set<Loan> find(String customerId, String ISBN, Set<LoanStatus> statuses) {
+    public Set<Loan> search(String customerId, String ISBN, Set<LoanStatus> statuses) {
 
         Predicate<Loan> criteria = loan -> true;
 
@@ -54,13 +46,13 @@ public enum LoanRepository implements ILoanRepository {
             criteria = criteria.and(loan -> statuses.contains(loan.getStatus()));
         }
 
-        return group.stream()
+        return group.values().stream()
                 .filter(criteria)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
     public Set<Loan> all() {
-        return Set.copyOf(group);
+        return Set.copyOf(group.values());
     }
 }

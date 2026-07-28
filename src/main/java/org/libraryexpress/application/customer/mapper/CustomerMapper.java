@@ -13,7 +13,6 @@ public interface CustomerMapper {
 
     CustomerMapper INSTANCE = Mappers.getMapper(CustomerMapper.class);
 
-    @Mapping(source = "ID", target = "id")
     CustomerDto toResponseDto(Customer customer);
 
     Customer.Builder toEntity(CreateCustomerDto dto);

@@ -10,6 +10,7 @@ import org.libraryexpress.domain.helper.Generator;
 import org.libraryexpress.infrastructure.config.AppContext;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
 import org.libraryexpress.infrastructure.exception.RuleViolationException;
+import org.libraryexpress.infrastructure.util.JsonPrinter;
 
 import java.util.Scanner;
 
@@ -95,7 +96,7 @@ public class BookCli {
         try {
             BookDto bookDto = this.findBook.execute(ISBN);
 
-            System.out.println(bookDto);
+            System.out.println(JsonPrinter.print(bookDto));
         } catch (NotFoundException e) {
             System.out.println(e.getMessage());
         }
@@ -108,7 +109,7 @@ public class BookCli {
         if (books.isEmpty()) {
             System.out.println("No books found.");
         } else {
-            books.forEach(System.out::println);
+            System.out.println(JsonPrinter.print(books));
         }
     }
 }

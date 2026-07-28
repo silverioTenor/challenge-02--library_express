@@ -169,7 +169,7 @@ class LoanCli {
         try {
             this.closeOverdueLoan.execute(loanId);
             System.out.println("  ");
-            System.out.println("Loan finished successfully!");
+            System.out.println("Loan closed!");
 
         } catch (NotFoundException | RuleViolationException e) {
             System.out.println(e.getMessage());

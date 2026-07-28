@@ -3,12 +3,10 @@ package org.libraryexpress.application.loan.usecase;
 import org.libraryexpress.domain.entity.Loan;
 import org.libraryexpress.domain.enums.BookStatus;
 import org.libraryexpress.domain.enums.LoanStatus;
-import org.libraryexpress.domain.repository.IBookRepository;
-import org.libraryexpress.domain.repository.ILoanRepository;
+import org.libraryexpress.domain.repository.BookRepository;
+import org.libraryexpress.domain.repository.LoanRepository;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
 import org.libraryexpress.infrastructure.exception.RuleViolationException;
-import org.libraryexpress.infrastructure.repository.BookRepository;
-import org.libraryexpress.infrastructure.repository.LoanRepository;
 
 import java.time.Clock;
 import java.util.Set;
@@ -17,10 +15,10 @@ public class ReturnLoan {
 
     private static final Set<LoanStatus> ALLOWED_STATUSES = Set.of(LoanStatus.ACTIVE, LoanStatus.OVERDUE);
 
-    private final ILoanRepository loanRepository;
-    private final IBookRepository bookRepository;
+    private final LoanRepository loanRepository;
+    private final BookRepository bookRepository;
 
-    public ReturnLoan(ILoanRepository loanRepository, IBookRepository bookRepository) {
+    public ReturnLoan(LoanRepository loanRepository, BookRepository bookRepository) {
         this.loanRepository = loanRepository;
         this.bookRepository = bookRepository;
     }

@@ -3,18 +3,17 @@ package org.libraryexpress.application.customer.usecase;
 import org.libraryexpress.application.customer.dto.response.CustomerDto;
 import org.libraryexpress.application.customer.mapper.CustomerMapper;
 import org.libraryexpress.domain.entity.Customer;
-import org.libraryexpress.domain.repository.ICustomerRepository;
+import org.libraryexpress.domain.repository.CustomerRepository;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
-import org.libraryexpress.infrastructure.repository.CustomerRepository;
 
 import java.util.Optional;
 
 public class FindCustomer {
 
-    private final ICustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
     private final CustomerMapper mapper;
 
-    public FindCustomer(ICustomerRepository customerRepository, CustomerMapper mapper) {
+    public FindCustomer(CustomerRepository customerRepository, CustomerMapper mapper) {
         this.customerRepository = customerRepository;
         this.mapper = mapper;
     }

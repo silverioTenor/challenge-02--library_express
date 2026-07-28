@@ -14,9 +14,9 @@ import org.libraryexpress.application.loan.helper.LoanEligibility;
 import org.libraryexpress.application.loan.mapper.LoanMapper;
 import org.libraryexpress.application.loan.usecase.*;
 import org.libraryexpress.application.loan.validator.SearchLoanValidator;
-import org.libraryexpress.infrastructure.repository.BookRepository;
-import org.libraryexpress.infrastructure.repository.CustomerRepository;
-import org.libraryexpress.infrastructure.repository.LoanRepository;
+import org.libraryexpress.infrastructure.repository.InMemory.InMemoryBookRepository;
+import org.libraryexpress.infrastructure.repository.InMemory.InMemoryCustomerRepository;
+import org.libraryexpress.infrastructure.repository.InMemory.InMemoryLoanRepository;
 
 public class AppContext {
 
@@ -41,31 +41,31 @@ public class AppContext {
     public AppContext() {
 
         // CUSTOMER
-        CustomerRepository customerRepository = CustomerRepository.DB;
+        InMemoryCustomerRepository inMemoryCustomerRepository = new InMemoryCustomerRepository();
 
-        this.createCustomer = new CreateCustomer(customerRepository, CustomerMapper.INSTANCE);
-        this.findCustomer = new FindCustomer(customerRepository, CustomerMapper.INSTANCE);
-        this.listCustomers = new ListCustomers(customerRepository, CustomerMapper.INSTANCE);
-        this.updateCustomerEmail = new UpdateCustomerEmail(customerRepository, CustomerMapper.INSTANCE);
+        this.createCustomer = new CreateCustomer(inMemoryCustomerRepository, CustomerMapper.INSTANCE);
+        this.findCustomer = new FindCustomer(inMemoryCustomerRepository, CustomerMapper.INSTANCE);
+        this.listCustomers = new ListCustomers(inMemoryCustomerRepository, CustomerMapper.INSTANCE);
+        this.updateCustomerEmail = new UpdateCustomerEmail(inMemoryCustomerRepository, CustomerMapper.INSTANCE);
 
         // BOOK
-        BookRepository bookRepository = BookRepository.DB;
-        BookAvailability bookAvailability = new BookAvailability(bookRepository);
+        InMemoryBookRepository inMemoryBookRepository = new InMemoryBookRepository();
+        BookAvailability bookAvailability = new BookAvailability(inMemoryBookRepository);
 
-        this.registerBook = new RegisterBook(bookRepository, BookMapper.INSTANCE);
-        this.findBook = new FindBook(bookRepository, BookMapper.INSTANCE);
-        this.listBooks = new ListBooks(bookRepository, BookMapper.INSTANCE);
+        this.registerBook = new RegisterBook(inMemoryBookRepository, BookMapper.INSTANCE);
+        this.findBook = new FindBook(inMemoryBookRepository, BookMapper.INSTANCE);
+        this.listBooks = new ListBooks(inMemoryBookRepository, BookMapper.INSTANCE);
 
         // LOAN
-        LoanRepository loanRepository = LoanRepository.DB;
-        LoanEligibility loanEligibility = new LoanEligibility(loanRepository);
+        InMemoryLoanRepository inMemoryLoanRepository = new InMemoryLoanRepository();
+        LoanEligibility loanEligibility = new LoanEligibility(inMemoryLoanRepository);
         SearchLoanValidator searchLoanValidator = new SearchLoanValidator();
 
-        this.createLoan = new CreateLoan(loanRepository, bookRepository, loanEligibility, bookAvailability);
-        this.searchLoans = new SearchLoans(loanRepository, LoanMapper.INSTANCE, searchLoanValidator);
-        this.listLoans = new ListLoans(loanRepository, LoanMapper.INSTANCE);
-        this.returnLoan = new ReturnLoan(loanRepository, bookRepository);
-        this.closeOverdueLoan = new CloseOverdueLoan(loanRepository);
+        this.createLoan = new CreateLoan(inMemoryLoanRepository, inMemoryBookRepository, loanEligibility, bookAvailability);
+        this.searchLoans = new SearchLoans(inMemoryLoanRepository, LoanMapper.INSTANCE, searchLoanValidator);
+        this.listLoans = new ListLoans(inMemoryLoanRepository, LoanMapper.INSTANCE);
+        this.returnLoan = new ReturnLoan(inMemoryLoanRepository, inMemoryBookRepository);
+        this.closeOverdueLoan = new CloseOverdueLoan(inMemoryLoanRepository);
     }
 
     public CreateCustomer getCreateCustomer() {

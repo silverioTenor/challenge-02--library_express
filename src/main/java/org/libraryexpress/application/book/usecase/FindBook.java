@@ -3,18 +3,17 @@ package org.libraryexpress.application.book.usecase;
 import org.libraryexpress.application.book.dto.response.BookDto;
 import org.libraryexpress.application.book.mapper.BookMapper;
 import org.libraryexpress.domain.entity.Book;
-import org.libraryexpress.domain.repository.IBookRepository;
+import org.libraryexpress.domain.repository.BookRepository;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
-import org.libraryexpress.infrastructure.repository.BookRepository;
 
 import java.util.Optional;
 
 public class FindBook {
 
-    private final IBookRepository bookRepository;
+    private final BookRepository bookRepository;
     private final BookMapper mapper;
 
-    public FindBook(IBookRepository bookRepository, BookMapper mapper) {
+    public FindBook(BookRepository bookRepository, BookMapper mapper) {
         this.bookRepository = bookRepository;
         this.mapper = mapper;
     }
