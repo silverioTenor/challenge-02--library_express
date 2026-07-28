@@ -402,8 +402,8 @@ test(search-loan-validator): US-405 cobre criterio ausente e criterio isolado
 | ID | Item | Descrição | Pontos | Status |
 | --- | --- | --- | --- | --- |
 | TD-01 | Contrato `equals`/`hashCode` quebrado | `Book`, `Customer`, `Loan` — resolvido via US-304 | 3 | ✅ Resolvido (E3) |
-| TD-02 | `WaitingList` é código morto | Entidade existe, mas sem repository, usecase ou CLI — decidir: implementar a feature ou remover | 3 | ⏳ Backlog |
-| TD-03 | `BookUnavailableException` não utilizada | Existe mas `RuleViolationException` já cobre esse caso — avaliar remoção ou uso correto | 1 | ⏳ Backlog |
+| TD-02 | `WaitingList` é código morto | Entidade existe, mas sem repository, usecase ou CLI — decidir: implementar a feature ou remover | 3 | ✅ Resolvido (E3) |
+| TD-03 | `BookUnavailableException` não utilizada | Existe mas `RuleViolationException` já cobre esse caso — avaliar remoção ou uso correto | 1 | ✅ Resolvido (E3) |
 
 ---
 
