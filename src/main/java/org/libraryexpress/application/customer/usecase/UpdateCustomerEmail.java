@@ -23,7 +23,7 @@ public class UpdateCustomerEmail {
         String id = updateCustomerEmailDto.id();
         String email = updateCustomerEmailDto.email();
 
-        Optional<Customer> customer = this.customerRepository.getById(updateCustomerEmailDto.id());
+        Optional<Customer> customer = this.customerRepository.getById(id);
 
         if (customer.isEmpty()) {
             throw new NotFoundException("Customer not found!");
