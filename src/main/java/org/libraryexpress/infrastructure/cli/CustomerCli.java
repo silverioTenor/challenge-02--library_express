@@ -10,6 +10,7 @@ import org.libraryexpress.application.customer.dto.request.CreateCustomerDto;
 import org.libraryexpress.infrastructure.config.AppContext;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
 import org.libraryexpress.infrastructure.exception.RuleViolationException;
+import org.libraryexpress.infrastructure.util.JsonPrinter;
 
 import java.util.Scanner;
 
@@ -89,7 +90,7 @@ class CustomerCli {
 
         try {
             CustomerDto customerDto = this.findCustomer.execute(dataToSearch);
-            System.out.println(customerDto);
+            System.out.println(JsonPrinter.print(customerDto));
 
         } catch (NotFoundException e) {
             System.out.println(e.getMessage());
@@ -102,17 +103,14 @@ class CustomerCli {
         String id = scan.next();
 
         try {
-            CustomerDto customerDto = this.findCustomer.execute(id);
-            System.out.println(customerDto);
-
             System.out.println("Enter the new client's e-mail");
             String newEmail = scan.next();
 
-            UpdateCustomerEmailDto updateEmail = new UpdateCustomerEmailDto(customerDto.id(), newEmail);
+            UpdateCustomerEmailDto updateEmail = new UpdateCustomerEmailDto(id, newEmail);
 
             this.updateEmail.execute(updateEmail);
 
-            System.out.println("Update success!");
+            System.out.println("Updated successfully!");
 
         } catch (NotFoundException e) {
             System.out.println(e.getMessage());
@@ -124,12 +122,12 @@ class CustomerCli {
     }
 
     private void list() {
-        var clients = this.listCustomers.execute();
+        var customers = this.listCustomers.execute();
 
-        if (clients.isEmpty()) {
+        if (customers.isEmpty()) {
             System.out.println("No clients found.");
         } else {
-            clients.forEach(System.out::println);
+            System.out.println(JsonPrinter.print(customers));
         }
     }
 }

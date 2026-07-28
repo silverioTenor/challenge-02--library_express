@@ -103,8 +103,8 @@ Detalhe completo (Gherkin, tasks, desvios de implementação): ver Issues #13–
 
 | US | Descrição | Pontos | Status |
 | --- | --- | --- | --- |
-| US-301 | Injetar `BookRepository` via construtor nos usecases de Book | 3 | ✅ Done |
-| US-302 | Injetar `LoanRepository` via construtor nos usecases de Loan | 3 | ✅ Done |
+| US-301 | Injetar `InMemoryBookRepository` via construtor nos usecases de Book | 3 | ✅ Done |
+| US-302 | Injetar `InMemoryLoanRepository` via construtor nos usecases de Loan | 3 | ✅ Done |
 | US-303 | Composition Root para montagem manual dos usecases | 5 | ✅ Done |
 | US-304 | Corrigir contrato `equals`/`hashCode` de Book, Customer e Loan (TD-01) | 3 | ✅ Done |
 | US-305 | Padronizar nomenclatura de repositórios (remover prefixo `I`), converter enum→classe, reorganizar pastas para JDBC | 5 | ✅ Done |
@@ -402,8 +402,8 @@ test(search-loan-validator): US-405 cobre criterio ausente e criterio isolado
 | ID | Item | Descrição | Pontos | Status |
 | --- | --- | --- | --- | --- |
 | TD-01 | Contrato `equals`/`hashCode` quebrado | `Book`, `Customer`, `Loan` — resolvido via US-304 | 3 | ✅ Resolvido (E3) |
-| TD-02 | `WaitingList` é código morto | Entidade existe, mas sem repository, usecase ou CLI — decidir: implementar a feature ou remover | 3 | ⏳ Backlog |
-| TD-03 | `BookUnavailableException` não utilizada | Existe mas `RuleViolationException` já cobre esse caso — avaliar remoção ou uso correto | 1 | ⏳ Backlog |
+| TD-02 | `WaitingList` é código morto | Entidade existe, mas sem repository, usecase ou CLI — decidir: implementar a feature ou remover | 3 | ✅ Resolvido (E3) |
+| TD-03 | `BookUnavailableException` não utilizada | Existe mas `RuleViolationException` já cobre esse caso — avaliar remoção ou uso correto | 1 | ✅ Resolvido (E3) |
 
 ---
 

@@ -7,25 +7,23 @@ import org.libraryexpress.domain.entity.Loan;
 import org.libraryexpress.domain.enums.BookStatus;
 import org.libraryexpress.domain.enums.LoanStatus;
 import org.libraryexpress.domain.helper.Generator;
-import org.libraryexpress.domain.repository.IBookRepository;
-import org.libraryexpress.domain.repository.ILoanRepository;
+import org.libraryexpress.domain.repository.BookRepository;
+import org.libraryexpress.domain.repository.LoanRepository;
 import org.libraryexpress.infrastructure.exception.NotFoundException;
 import org.libraryexpress.infrastructure.exception.RuleViolationException;
-import org.libraryexpress.infrastructure.repository.BookRepository;
-import org.libraryexpress.infrastructure.repository.LoanRepository;
 
 import java.time.LocalDate;
 
 public class CreateLoan {
 
-    private final ILoanRepository loanRepository;
-    private final IBookRepository bookRepository;
+    private final LoanRepository loanRepository;
+    private final BookRepository bookRepository;
     private final LoanEligibility loanEligibility;
     private final BookAvailability bookAvailability;
 
     public CreateLoan(
-            ILoanRepository loanRepository,
-            IBookRepository bookRepository,
+            LoanRepository loanRepository,
+            BookRepository bookRepository,
             LoanEligibility loanEligibility,
             BookAvailability bookAvailability
     ) {

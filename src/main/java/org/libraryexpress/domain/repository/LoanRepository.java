@@ -6,11 +6,10 @@ import org.libraryexpress.domain.enums.LoanStatus;
 import java.util.Optional;
 import java.util.Set;
 
-public interface ILoanRepository {
-
+public interface LoanRepository {
     void create(Loan loan);
-    boolean update(Loan loanToUpdate);
+    void update(Loan loanToUpdate);
     Optional<Loan> findById(String loanId);
-    Set<Loan> find(String customerId, String ISBN, Set<LoanStatus> statuses);
+    Set<Loan> search(String customerId, String ISBN, Set<LoanStatus> statuses);
     Set<Loan> all();
 }
