@@ -80,7 +80,7 @@ public class Loan implements Comparable<Loan> {
     @Override
     public String toString() {
         return "{\n" +
-                " ID: " + id + ",\n" +
+                " id: " + id + ",\n" +
                 " ISBN: " + ISBN + ",\n" +
                 " customerId: " + customerId + ",\n" +
                 " statuses: " + status.toString() + ",\n" +
@@ -92,12 +92,12 @@ public class Loan implements Comparable<Loan> {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Loan loan)) return false;
-        return Objects.equals(ISBN, loan.ISBN) && Objects.equals(startDate, loan.startDate);
+        return Objects.equals(id, loan.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ISBN, startDate);
+        return Objects.hash(id);
     }
 
     @Override
