@@ -1,0 +1,16 @@
+package org.libraryexpress.application.loan.validator;
+
+import org.libraryexpress.application.loan.dto.request.FilterLoansDto;
+import org.libraryexpress.application.loan.exception.SearchLoanValidationException;
+
+public class SearchLoanValidation {
+
+    public void validate(FilterLoansDto filter) throws SearchLoanValidationException {
+
+        boolean hasAnyCriteria = filter.statuses() != null
+                || (filter.customerId() != null && !filter.customerId().isBlank())
+                || (filter.ISBN() != null && !filter.ISBN().isBlank());
+
+        if (!hasAnyCriteria) throw new SearchLoanValidationException();
+    }
+}
