@@ -1,20 +1,19 @@
 package org.libraryexpress.infrastructure.config;
 
-import org.libraryexpress.application.book.helper.BookAvailability;
+import org.libraryexpress.domain.book.validator.BookAvailabilityValidator;
 import org.libraryexpress.application.book.mapper.BookMapper;
 import org.libraryexpress.application.book.usecase.FindBook;
 import org.libraryexpress.application.book.usecase.ListBooks;
 import org.libraryexpress.application.book.usecase.RegisterBook;
-import org.libraryexpress.application.book.validator.IsbnValidation;
 import org.libraryexpress.application.customer.mapper.CustomerMapper;
 import org.libraryexpress.application.customer.usecase.CreateCustomer;
 import org.libraryexpress.application.customer.usecase.FindCustomer;
 import org.libraryexpress.application.customer.usecase.ListCustomers;
 import org.libraryexpress.application.customer.usecase.UpdateCustomerEmail;
-import org.libraryexpress.application.loan.helper.LoanEligibility;
+import org.libraryexpress.domain.loan.validator.LoanEligibilityValidator;
 import org.libraryexpress.application.loan.mapper.LoanMapper;
 import org.libraryexpress.application.loan.usecase.*;
-import org.libraryexpress.application.loan.validator.SearchLoanValidation;
+import org.libraryexpress.application.loan.validator.SearchLoanValidator;
 import org.libraryexpress.infrastructure.repository.InMemory.InMemoryBookRepository;
 import org.libraryexpress.infrastructure.repository.InMemory.InMemoryCustomerRepository;
 import org.libraryexpress.infrastructure.repository.InMemory.InMemoryLoanRepository;
@@ -51,8 +50,7 @@ public class AppContext {
 
         // BOOK
         InMemoryBookRepository inMemoryBookRepository = new InMemoryBookRepository();
-        IsbnValidation isbnValidation = new IsbnValidation();
-        BookAvailability bookAvailability = new BookAvailability(inMemoryBookRepository, isbnValidation);
+        BookAvailabilityValidator bookAvailabilityValidator = new BookAvailabilityValidator(inMemoryBookRepository);
 
         this.registerBook = new RegisterBook(inMemoryBookRepository, BookMapper.INSTANCE);
         this.findBook = new FindBook(inMemoryBookRepository, BookMapper.INSTANCE);
@@ -60,11 +58,11 @@ public class AppContext {
 
         // LOAN
         InMemoryLoanRepository inMemoryLoanRepository = new InMemoryLoanRepository();
-        LoanEligibility loanEligibility = new LoanEligibility(inMemoryLoanRepository);
-        SearchLoanValidation searchLoanValidation = new SearchLoanValidation();
+        LoanEligibilityValidator loanEligibilityValidator = new LoanEligibilityValidator(inMemoryLoanRepository);
+        SearchLoanValidator searchLoanValidator = new SearchLoanValidator();
 
-        this.createLoan = new CreateLoan(inMemoryLoanRepository, inMemoryBookRepository, loanEligibility, bookAvailability);
-        this.searchLoans = new SearchLoans(inMemoryLoanRepository, LoanMapper.INSTANCE, searchLoanValidation);
+        this.createLoan = new CreateLoan(inMemoryLoanRepository, inMemoryBookRepository, loanEligibilityValidator, bookAvailabilityValidator);
+        this.searchLoans = new SearchLoans(inMemoryLoanRepository, LoanMapper.INSTANCE, searchLoanValidator);
         this.listLoans = new ListLoans(inMemoryLoanRepository, LoanMapper.INSTANCE);
         this.returnLoan = new ReturnLoan(inMemoryLoanRepository, inMemoryBookRepository);
         this.closeOverdueLoan = new CloseOverdueLoan(inMemoryLoanRepository);

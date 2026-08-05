@@ -2,7 +2,7 @@ package org.libraryexpress.application.book.mapper;
 
 import org.libraryexpress.application.book.dto.request.RegisterBookDto;
 import org.libraryexpress.application.book.dto.response.BookDto;
-import org.libraryexpress.domain.entity.Book;
+import org.libraryexpress.domain.book.entity.Book;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;

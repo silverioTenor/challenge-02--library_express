@@ -5,11 +5,11 @@ import org.libraryexpress.application.book.dto.response.BookDto;
 import org.libraryexpress.application.book.usecase.FindBook;
 import org.libraryexpress.application.book.usecase.ListBooks;
 import org.libraryexpress.application.book.usecase.RegisterBook;
-import org.libraryexpress.domain.enums.BookStatus;
-import org.libraryexpress.domain.helper.Generator;
+import org.libraryexpress.domain.book.enums.BookStatus;
+import org.libraryexpress.domain.book.exception.BookNotFoundException;
+import org.libraryexpress.domain.book.exception.UniqueIsbnViolationException;
+import org.libraryexpress.domain.core.util.RandomGenerator;
 import org.libraryexpress.infrastructure.config.AppContext;
-import org.libraryexpress.domain.exception.NotFoundException;
-import org.libraryexpress.domain.exception.RuleViolationException;
 import org.libraryexpress.infrastructure.util.JsonPrinter;
 
 import java.util.Scanner;
@@ -54,7 +54,7 @@ public class BookCli {
 
     private void register(Scanner scan) {
 
-        String ISBN = Generator.genISBN();
+        String ISBN = RandomGenerator.ISBN();
 
         scan.nextLine();
 
@@ -82,7 +82,7 @@ public class BookCli {
 
             System.out.println("Book registered successfully");
 
-        } catch (RuleViolationException e) {
+        } catch (UniqueIsbnViolationException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -97,7 +97,7 @@ public class BookCli {
             BookDto bookDto = this.findBook.execute(ISBN);
 
             System.out.println(JsonPrinter.print(bookDto));
-        } catch (NotFoundException e) {
+        } catch (BookNotFoundException e) {
             System.out.println(e.getMessage());
         }
     }

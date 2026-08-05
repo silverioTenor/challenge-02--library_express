@@ -1,6 +1,6 @@
 package org.libraryexpress.application.loan.dto.request;
 
-import org.libraryexpress.domain.enums.LoanStatus;
+import org.libraryexpress.domain.loan.enums.LoanStatus;
 
 import java.util.Set;
 

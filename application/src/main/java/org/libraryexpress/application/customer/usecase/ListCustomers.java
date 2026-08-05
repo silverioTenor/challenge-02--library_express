@@ -1,8 +1,8 @@
 package org.libraryexpress.application.customer.usecase;
 
 import org.libraryexpress.application.customer.mapper.CustomerMapper;
-import org.libraryexpress.domain.entity.Customer;
-import org.libraryexpress.domain.repository.CustomerRepository;
+import org.libraryexpress.domain.customer.entity.Customer;
+import org.libraryexpress.domain.customer.repository.CustomerRepository;
 
 import java.util.Set;
 

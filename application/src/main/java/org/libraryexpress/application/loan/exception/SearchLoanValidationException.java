@@ -1,8 +1,6 @@
 package org.libraryexpress.application.loan.exception;
 
-import org.libraryexpress.domain.exception.RuleViolationException;
-
-public class SearchLoanValidationException extends RuleViolationException {
+public class SearchLoanValidationException extends Exception {
 
     public SearchLoanValidationException() {
         super("At least one search criteria must be provided");

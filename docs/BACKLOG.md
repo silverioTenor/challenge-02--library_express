@@ -391,7 +391,7 @@ test(search-loan-validator): US-405 cobre criterio ausente e criterio isolado
 - [ ] Entidades de domínio (`Book`, `Customer`, `Loan`) com cobertura de testes de contrato e regras próprias
 - [ ] Fakes de repositório disponíveis e usados por todos os testes de usecase
 - [ ] Usecases de `Book` e `Loan` cobertos, incluindo fluxo feliz e principais exceções de regra de negócio
-- [ ] Validators (`LoanEligibilityValidator`, `SearchLoanValidation`) cobertos
+- [ ] Validators (`LoanEligibilityValidator`, `SearchLoanValidator`) cobertos
 - [ ] Nenhum teste depende de `Clock` real, estado global, ou ordem de execução entre testes
 - [ ] Todas as 6 sub-tasks em status Done
 

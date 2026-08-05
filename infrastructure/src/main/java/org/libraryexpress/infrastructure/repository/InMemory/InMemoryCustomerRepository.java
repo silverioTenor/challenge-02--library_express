@@ -1,7 +1,7 @@
 package org.libraryexpress.infrastructure.repository.InMemory;
 
-import org.libraryexpress.domain.entity.Customer;
-import org.libraryexpress.domain.repository.CustomerRepository;
+import org.libraryexpress.domain.customer.entity.Customer;
+import org.libraryexpress.domain.customer.repository.CustomerRepository;
 
 import java.util.Map;
 import java.util.Optional;

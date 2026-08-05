@@ -6,11 +6,17 @@ import org.libraryexpress.application.customer.usecase.FindCustomer;
 import org.libraryexpress.application.loan.dto.request.CreateLoanDto;
 import org.libraryexpress.application.loan.dto.request.FilterLoansDto;
 import org.libraryexpress.application.loan.dto.response.LoanDto;
+import org.libraryexpress.application.loan.exception.SearchLoanValidationException;
 import org.libraryexpress.application.loan.usecase.*;
-import org.libraryexpress.domain.enums.LoanStatus;
+import org.libraryexpress.domain.book.exception.BookNotFoundException;
+import org.libraryexpress.domain.book.exception.BookUnavailableException;
+import org.libraryexpress.domain.customer.exception.CustomerNotFoundException;
+import org.libraryexpress.domain.loan.enums.LoanStatus;
+import org.libraryexpress.domain.loan.exception.InvalidLoanStatusException;
+import org.libraryexpress.domain.loan.exception.LoanLimitReachedException;
+import org.libraryexpress.domain.loan.exception.LoanNotFoundException;
+import org.libraryexpress.domain.loan.exception.OverdueLoanException;
 import org.libraryexpress.infrastructure.config.AppContext;
-import org.libraryexpress.domain.exception.NotFoundException;
-import org.libraryexpress.domain.exception.RuleViolationException;
 import org.libraryexpress.infrastructure.util.JsonPrinter;
 
 import java.util.Scanner;
@@ -78,7 +84,7 @@ class LoanCli {
 
         try {
             this.findCustomer.execute(customerId);
-        } catch (NotFoundException e) {
+        } catch (CustomerNotFoundException e) {
             System.out.println(e.getMessage());
             return;
         }
@@ -91,7 +97,7 @@ class LoanCli {
             System.out.println("  ");
             System.out.println("Loan realized!");
 
-        } catch (RuleViolationException | NotFoundException e) {
+        } catch (LoanLimitReachedException | OverdueLoanException | BookUnavailableException | BookNotFoundException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -138,7 +144,7 @@ class LoanCli {
 
             System.out.println(JsonPrinter.print(loans));
 
-        } catch (RuleViolationException e) {
+        } catch (SearchLoanValidationException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -155,7 +161,7 @@ class LoanCli {
             System.out.println("  ");
             System.out.println("Loan successfully completed!");
 
-        } catch (RuleViolationException | NotFoundException e) {
+        } catch (LoanNotFoundException | InvalidLoanStatusException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -171,7 +177,7 @@ class LoanCli {
             System.out.println("  ");
             System.out.println("Loan closed!");
 
-        } catch (NotFoundException | RuleViolationException e) {
+        } catch (LoanNotFoundException | OverdueLoanException e) {
             System.out.println(e.getMessage());
         }
     }

@@ -1,7 +1,7 @@
 package org.libraryexpress.application.loan.mapper;
 
 import org.libraryexpress.application.loan.dto.response.LoanDto;
-import org.libraryexpress.domain.entity.Loan;
+import org.libraryexpress.domain.loan.entity.Loan;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;

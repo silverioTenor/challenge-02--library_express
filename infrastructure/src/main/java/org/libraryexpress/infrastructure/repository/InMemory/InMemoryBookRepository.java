@@ -1,12 +1,11 @@
 package org.libraryexpress.infrastructure.repository.InMemory;
 
-import org.libraryexpress.domain.entity.Book;
-import org.libraryexpress.domain.enums.BookStatus;
-import org.libraryexpress.domain.repository.BookRepository;
+import org.libraryexpress.domain.book.entity.Book;
+import org.libraryexpress.domain.book.enums.BookStatus;
+import org.libraryexpress.domain.book.repository.BookRepository;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class InMemoryBookRepository implements BookRepository {

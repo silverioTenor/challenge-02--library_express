@@ -1,10 +1,10 @@
 package org.libraryexpress.application.customer.usecase;
 
 import org.libraryexpress.application.customer.dto.response.CustomerDto;
-import org.libraryexpress.application.customer.exception.CustomerNotFoundException;
+import org.libraryexpress.domain.customer.exception.CustomerNotFoundException;
 import org.libraryexpress.application.customer.mapper.CustomerMapper;
-import org.libraryexpress.domain.entity.Customer;
-import org.libraryexpress.domain.repository.CustomerRepository;
+import org.libraryexpress.domain.customer.entity.Customer;
+import org.libraryexpress.domain.customer.repository.CustomerRepository;
 
 import java.util.Optional;
 

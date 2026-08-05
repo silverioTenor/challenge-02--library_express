@@ -7,9 +7,9 @@ import org.libraryexpress.application.customer.usecase.FindCustomer;
 import org.libraryexpress.application.customer.usecase.ListCustomers;
 import org.libraryexpress.application.customer.usecase.UpdateCustomerEmail;
 import org.libraryexpress.application.customer.dto.request.CreateCustomerDto;
+import org.libraryexpress.domain.customer.exception.CustomerNotFoundException;
+import org.libraryexpress.domain.customer.exception.UniqueEmailViolationException;
 import org.libraryexpress.infrastructure.config.AppContext;
-import org.libraryexpress.domain.exception.NotFoundException;
-import org.libraryexpress.domain.exception.RuleViolationException;
 import org.libraryexpress.infrastructure.util.JsonPrinter;
 
 import java.util.Scanner;
@@ -72,7 +72,7 @@ class CustomerCli {
             System.out.println(" ");
             System.out.println("Customer registered successfully!");
 
-        } catch (RuleViolationException e) {
+        } catch (UniqueEmailViolationException e) {
 
             System.out.println(e.getMessage());
 
@@ -92,7 +92,7 @@ class CustomerCli {
             CustomerDto customerDto = this.findCustomer.execute(dataToSearch);
             System.out.println(JsonPrinter.print(customerDto));
 
-        } catch (NotFoundException e) {
+        } catch (CustomerNotFoundException e) {
             System.out.println(e.getMessage());
         }
 
@@ -112,7 +112,7 @@ class CustomerCli {
 
             System.out.println("Updated successfully!");
 
-        } catch (NotFoundException e) {
+        } catch (CustomerNotFoundException e) {
             System.out.println(e.getMessage());
         } catch (Exception e) {
             System.out.println(" ");

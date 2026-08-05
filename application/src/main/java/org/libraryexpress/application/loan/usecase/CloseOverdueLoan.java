@@ -1,10 +1,10 @@
 package org.libraryexpress.application.loan.usecase;
 
-import org.libraryexpress.application.loan.exception.LoanNotFoundException;
-import org.libraryexpress.application.loan.exception.OverdueLoanException;
-import org.libraryexpress.domain.entity.Loan;
-import org.libraryexpress.domain.enums.LoanStatus;
-import org.libraryexpress.domain.repository.LoanRepository;
+import org.libraryexpress.domain.loan.exception.LoanNotFoundException;
+import org.libraryexpress.domain.loan.exception.OverdueLoanException;
+import org.libraryexpress.domain.loan.entity.Loan;
+import org.libraryexpress.domain.loan.enums.LoanStatus;
+import org.libraryexpress.domain.loan.repository.LoanRepository;
 
 /**
  * TODO - Temporary/palliative use case.

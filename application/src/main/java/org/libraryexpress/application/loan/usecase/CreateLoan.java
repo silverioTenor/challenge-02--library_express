@@ -1,16 +1,18 @@
 package org.libraryexpress.application.loan.usecase;
 
-import org.libraryexpress.application.book.helper.BookAvailability;
+import org.libraryexpress.domain.book.exception.BookNotFoundException;
+import org.libraryexpress.domain.book.exception.BookUnavailableException;
+import org.libraryexpress.domain.book.validator.BookAvailabilityValidator;
 import org.libraryexpress.application.loan.dto.request.CreateLoanDto;
-import org.libraryexpress.application.loan.helper.LoanEligibility;
-import org.libraryexpress.domain.entity.Loan;
-import org.libraryexpress.domain.enums.BookStatus;
-import org.libraryexpress.domain.enums.LoanStatus;
-import org.libraryexpress.domain.helper.Generator;
-import org.libraryexpress.domain.repository.BookRepository;
-import org.libraryexpress.domain.repository.LoanRepository;
-import org.libraryexpress.domain.exception.NotFoundException;
-import org.libraryexpress.domain.exception.RuleViolationException;
+import org.libraryexpress.domain.loan.exception.LoanLimitReachedException;
+import org.libraryexpress.domain.loan.exception.OverdueLoanException;
+import org.libraryexpress.domain.loan.validator.LoanEligibilityValidator;
+import org.libraryexpress.domain.loan.entity.Loan;
+import org.libraryexpress.domain.book.enums.BookStatus;
+import org.libraryexpress.domain.loan.enums.LoanStatus;
+import org.libraryexpress.domain.core.util.RandomGenerator;
+import org.libraryexpress.domain.book.repository.BookRepository;
+import org.libraryexpress.domain.loan.repository.LoanRepository;
 
 import java.time.LocalDate;
 
@@ -18,27 +20,28 @@ public class CreateLoan {
 
     private final LoanRepository loanRepository;
     private final BookRepository bookRepository;
-    private final LoanEligibility loanEligibility;
-    private final BookAvailability bookAvailability;
+    private final LoanEligibilityValidator loanEligibilityValidator;
+    private final BookAvailabilityValidator bookAvailabilityValidator;
 
     public CreateLoan(
             LoanRepository loanRepository,
             BookRepository bookRepository,
-            LoanEligibility loanEligibility,
-            BookAvailability bookAvailability
+            LoanEligibilityValidator loanEligibilityValidator,
+            BookAvailabilityValidator bookAvailabilityValidator
     ) {
         this.loanRepository = loanRepository;
         this.bookRepository = bookRepository;
-        this.loanEligibility = loanEligibility;
-        this.bookAvailability = bookAvailability;
+        this.loanEligibilityValidator = loanEligibilityValidator;
+        this.bookAvailabilityValidator = bookAvailabilityValidator;
     }
 
-    public void execute(CreateLoanDto createLoanDto) throws RuleViolationException, NotFoundException {
+    public void execute(CreateLoanDto createLoanDto)
+            throws LoanLimitReachedException, OverdueLoanException, BookUnavailableException, BookNotFoundException {
 
-        this.loanEligibility.check(createLoanDto.customerId());
-        this.bookAvailability.check(createLoanDto.ISBN());
+        this.loanEligibilityValidator.validate(createLoanDto.customerId());
+        this.bookAvailabilityValidator.validate(createLoanDto.ISBN());
 
-        String id = Generator.genUUID();
+        String id = RandomGenerator.UUID();
 
         Loan loan = new Loan.Builder()
                 .setId(id)

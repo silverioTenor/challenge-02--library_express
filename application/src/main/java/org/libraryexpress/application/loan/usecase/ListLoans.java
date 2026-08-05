@@ -2,7 +2,7 @@ package org.libraryexpress.application.loan.usecase;
 
 import org.libraryexpress.application.loan.dto.response.LoanDto;
 import org.libraryexpress.application.loan.mapper.LoanMapper;
-import org.libraryexpress.domain.repository.LoanRepository;
+import org.libraryexpress.domain.loan.repository.LoanRepository;
 
 import java.util.Set;
 import java.util.stream.Collectors;

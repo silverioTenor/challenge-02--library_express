@@ -1,8 +1,8 @@
 package org.libraryexpress.application.book.usecase;
 
 import org.libraryexpress.application.book.mapper.BookMapper;
-import org.libraryexpress.domain.entity.Book;
-import org.libraryexpress.domain.repository.BookRepository;
+import org.libraryexpress.domain.book.entity.Book;
+import org.libraryexpress.domain.book.repository.BookRepository;
 
 import java.util.Set;
 
