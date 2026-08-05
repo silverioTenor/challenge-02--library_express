@@ -18,17 +18,13 @@ public class UpdateCustomerEmail {
         this.mapper = mapper;
     }
 
-    public void execute(UpdateCustomerEmailDto updateCustomerEmailDto) throws CustomerNotFoundException {
+    public void execute(UpdateCustomerEmailDto updateCustomerEmailDto) {
 
-        String id = updateCustomerEmailDto.id();
-        String email = updateCustomerEmailDto.email();
+        Customer customer = this.customerRepository.getById(updateCustomerEmailDto.id())
+                .orElseThrow(CustomerNotFoundException::new);
 
-        Optional<Customer> customer = this.customerRepository.getById(id);
+        customer.changeEmail(updateCustomerEmailDto.email());
 
-        if (customer.isEmpty()) {
-            throw new CustomerNotFoundException();
-        }
-
-        this.customerRepository.update(id, email);
+        this.customerRepository.update(customer);
     }
 }

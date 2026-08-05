@@ -16,7 +16,7 @@ public class BookAvailabilityValidator {
         this.bookRepository = bookRepository;
     }
 
-    public void validate(String ISBN) throws BookNotFoundException, BookUnavailableException {
+    public Book validate(String ISBN) {
 
         Set<Book> books = this.bookRepository.search(ISBN, null);
 
@@ -27,5 +27,7 @@ public class BookAvailabilityValidator {
         if (book.getStatus() != BookStatus.AVAILABLE) {
             throw new BookUnavailableException();
         }
+
+        return book;
     }
 }

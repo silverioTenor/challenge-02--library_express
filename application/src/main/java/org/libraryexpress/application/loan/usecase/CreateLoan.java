@@ -1,5 +1,6 @@
 package org.libraryexpress.application.loan.usecase;
 
+import org.libraryexpress.domain.book.entity.Book;
 import org.libraryexpress.domain.book.exception.BookNotFoundException;
 import org.libraryexpress.domain.book.exception.BookUnavailableException;
 import org.libraryexpress.domain.book.validator.BookAvailabilityValidator;
@@ -35,11 +36,10 @@ public class CreateLoan {
         this.bookAvailabilityValidator = bookAvailabilityValidator;
     }
 
-    public void execute(CreateLoanDto createLoanDto)
-            throws LoanLimitReachedException, OverdueLoanException, BookUnavailableException, BookNotFoundException {
+    public void execute(CreateLoanDto createLoanDto) {
 
         this.loanEligibilityValidator.validate(createLoanDto.customerId());
-        this.bookAvailabilityValidator.validate(createLoanDto.ISBN());
+        Book book = this.bookAvailabilityValidator.validate(createLoanDto.ISBN());
 
         String id = RandomGenerator.UUID();
 
@@ -51,8 +51,9 @@ public class CreateLoan {
                 .setStartDate(LocalDate.now())
                 .build();
 
-        this.bookRepository.update(createLoanDto.ISBN(), BookStatus.BORROWED);
+        book.changeStatus(BookStatus.BORROWED);
 
+        this.bookRepository.update(book);
         this.loanRepository.create(loan);
     }
 }

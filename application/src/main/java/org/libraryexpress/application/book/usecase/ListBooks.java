@@ -1,5 +1,6 @@
 package org.libraryexpress.application.book.usecase;
 
+import org.libraryexpress.application.book.dto.response.BookDto;
 import org.libraryexpress.application.book.mapper.BookMapper;
 import org.libraryexpress.domain.book.entity.Book;
 import org.libraryexpress.domain.book.repository.BookRepository;
@@ -16,7 +17,9 @@ public class ListBooks {
         this.mapper = mapper;
     }
 
-    public Set<Book> execute() {
-        return this.bookRepository.all();
+    public Set<BookDto> execute() {
+        var books = this.bookRepository.all();
+
+        return mapper.toResponseListDto(books);
     }
 }

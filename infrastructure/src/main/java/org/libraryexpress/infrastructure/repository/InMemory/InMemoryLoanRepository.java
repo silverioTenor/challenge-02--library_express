@@ -20,7 +20,7 @@ public class InMemoryLoanRepository implements LoanRepository {
 
     @Override
     public void update(Loan loanToUpdate) {
-        Optional.ofNullable(group.get(loanToUpdate.getISBN()))
+        Optional.ofNullable(group.get(loanToUpdate.getISBN().value()))
                 .ifPresent(loan -> loan.changeStatus(loanToUpdate.getStatus()));
     }
 
@@ -39,7 +39,7 @@ public class InMemoryLoanRepository implements LoanRepository {
         }
 
         if (Objects.nonNull(ISBN) && !ISBN.isBlank()) {
-            criteria = criteria.and(loan -> loan.getISBN().equals(ISBN));
+            criteria = criteria.and(loan -> loan.getISBN().value().equals(ISBN));
         }
 
         if (Objects.nonNull(statuses)) {

@@ -1,5 +1,6 @@
 package org.libraryexpress.domain.loan.entity;
 
+import org.libraryexpress.domain.book.valueobject.Isbn;
 import org.libraryexpress.domain.loan.enums.LoanStatus;
 
 import java.time.Clock;
@@ -15,7 +16,7 @@ public class Loan implements Comparable<Loan> {
 
     private final String id;
 
-    private final String ISBN;
+    private final Isbn ISBN;
 
     private final String customerId;
 
@@ -27,7 +28,7 @@ public class Loan implements Comparable<Loan> {
 
     private Loan(
             String id,
-            String ISBN,
+            Isbn ISBN,
             String customerId,
             LoanStatus status,
             LocalDate startDate,
@@ -45,7 +46,7 @@ public class Loan implements Comparable<Loan> {
         return id;
     }
 
-    public String getISBN() {
+    public Isbn getISBN() {
         return ISBN;
     }
 
@@ -150,7 +151,7 @@ public class Loan implements Comparable<Loan> {
         }
 
         public Loan build() {
-            return new Loan(id, ISBN, customerId, status, startDate, endDate);
+            return new Loan(id, new Isbn(ISBN), customerId, status, startDate, endDate);
         }
     }
 }

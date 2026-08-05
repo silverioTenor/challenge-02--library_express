@@ -18,9 +18,9 @@ public class InMemoryCustomerRepository implements CustomerRepository {
     }
 
     @Override
-    public void update(String id, String email) {
-        Optional.ofNullable(group.get(id))
-                .ifPresent(customer -> customer.changeEmail(email));
+    public void update(Customer customerToUpdate) {
+        Optional.ofNullable(group.get(customerToUpdate.getId()))
+                .ifPresent(customer -> customer.changeEmail(customerToUpdate.getEmail().value()));
     }
 
     @Override
@@ -31,7 +31,7 @@ public class InMemoryCustomerRepository implements CustomerRepository {
     @Override
     public Optional<Customer> getByEmail(String email) {
         return group.values().stream()
-                .filter(client -> client.getEmail().equals(email))
+                .filter(client -> client.getEmail().value().equals(email))
                 .findFirst();
     }
 

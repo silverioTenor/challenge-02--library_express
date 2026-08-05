@@ -14,13 +14,13 @@ public class InMemoryBookRepository implements BookRepository {
 
     @Override
     public void create(Book book) {
-        group.put(book.getISBN(), book);
+        group.put(book.getISBN().value(), book);
     }
 
     @Override
-    public void update(String ISBN, BookStatus status) {
-        Optional.ofNullable(group.get(ISBN))
-                .ifPresent(book -> book.changeStatus(status));
+    public void update(Book bookToUpdate) {
+        Optional.ofNullable(group.get(bookToUpdate.getISBN().value()))
+                .ifPresent(book -> book.changeStatus(bookToUpdate.getStatus()));
     }
 
     @Override
@@ -40,8 +40,8 @@ public class InMemoryBookRepository implements BookRepository {
     }
 
     @Override
-    public Optional<Book> getByIsbn(String isbn) {
-        return Optional.ofNullable(group.get(isbn));
+    public Optional<Book> getByIsbn(String ISBN) {
+        return Optional.ofNullable(group.get(ISBN));
     }
 
     @Override

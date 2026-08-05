@@ -18,7 +18,7 @@ public class CreateCustomer {
         this.mapper = mapper;
     }
 
-    public void execute(CreateCustomerDto createCustomerDto) throws UniqueEmailViolationException {
+    public void execute(CreateCustomerDto createCustomerDto) {
 
         Optional<Customer> hasClient = this.customerRepository.getByEmail(createCustomerDto.email());
 

@@ -55,12 +55,14 @@ class CustomerCli {
     }
 
     private void create(Scanner scan) {
-        System.out.println("Enter the first name:"); // TODO - change to allow full name
-        String name = scan.next();
+        scan.nextLine();
+
+        System.out.println("Enter the customer name:");
+        String name = scan.nextLine().trim();
         System.out.println("  ");
 
-        System.out.println("Enter with email:");
-        String email = scan.next();
+        System.out.println("Enter the customer e-mail:");
+        String email = scan.nextLine().trim();
         System.out.println("  ");
 
         CreateCustomerDto createCustomerDto = new CreateCustomerDto(name, email);
@@ -85,7 +87,7 @@ class CustomerCli {
 
     private void show(Scanner scan) {
 
-        System.out.println("Enter the customer's mail or ID");
+        System.out.println("Enter the customer e-mail or ID");
         String dataToSearch = scan.next();
 
         try {
@@ -99,11 +101,11 @@ class CustomerCli {
     }
 
     private void update(Scanner scan) {
-        System.out.println("Enter the client's ID");
+        System.out.println("Enter the customer ID");
         String id = scan.next();
 
         try {
-            System.out.println("Enter the new client's e-mail");
+            System.out.println("Enter the new customer e-mail");
             String newEmail = scan.next();
 
             UpdateCustomerEmailDto updateEmail = new UpdateCustomerEmailDto(id, newEmail);

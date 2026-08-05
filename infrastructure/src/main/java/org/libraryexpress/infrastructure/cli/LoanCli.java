@@ -6,7 +6,6 @@ import org.libraryexpress.application.customer.usecase.FindCustomer;
 import org.libraryexpress.application.loan.dto.request.CreateLoanDto;
 import org.libraryexpress.application.loan.dto.request.FilterLoansDto;
 import org.libraryexpress.application.loan.dto.response.LoanDto;
-import org.libraryexpress.application.loan.exception.SearchLoanValidationException;
 import org.libraryexpress.application.loan.usecase.*;
 import org.libraryexpress.domain.book.exception.BookNotFoundException;
 import org.libraryexpress.domain.book.exception.BookUnavailableException;
@@ -95,7 +94,7 @@ class LoanCli {
             this.createLoan.execute(createLoanDto);
 
             System.out.println("  ");
-            System.out.println("Loan realized!");
+            System.out.println("Loan successfully processed!");
 
         } catch (LoanLimitReachedException | OverdueLoanException | BookUnavailableException | BookNotFoundException e) {
             System.out.println(e.getMessage());
@@ -144,7 +143,7 @@ class LoanCli {
 
             System.out.println(JsonPrinter.print(loans));
 
-        } catch (SearchLoanValidationException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -175,7 +174,7 @@ class LoanCli {
         try {
             this.closeOverdueLoan.execute(loanId);
             System.out.println("  ");
-            System.out.println("Loan closed!");
+            System.out.println("Operation successfully completed!");
 
         } catch (LoanNotFoundException | OverdueLoanException e) {
             System.out.println(e.getMessage());

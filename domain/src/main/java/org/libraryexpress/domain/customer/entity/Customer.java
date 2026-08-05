@@ -1,24 +1,20 @@
 package org.libraryexpress.domain.customer.entity;
 
 import org.libraryexpress.domain.core.util.RandomGenerator;
+import org.libraryexpress.domain.customer.valueobject.Email;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class Customer implements Comparable<Customer> {
 
-    private final String EMAIL_REGEX =
-            "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-
-    private final Pattern pattern = Pattern.compile(EMAIL_REGEX);
-
     private final String id;
 
     private final String name;
 
-    private String email;
+    private Email email;
 
-    private Customer(String id, String name, String email) {
+    private Customer(String id, String name, Email email) {
         this.id = id != null ? id : RandomGenerator.UUID();
         this.name = name;
         this.email = email;
@@ -32,14 +28,12 @@ public class Customer implements Comparable<Customer> {
         return name;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
-    public void changeEmail(String email) {
-
-        if (email == null || email.isBlank()) return;
-        this.email = email;
+    public void changeEmail(String newEmail) {
+        this.email = new Email(newEmail);
     }
 
     @Override
@@ -91,7 +85,7 @@ public class Customer implements Comparable<Customer> {
         }
 
         public Customer build() {
-            return new Customer(id, name, email);
+            return new Customer(id, name, new Email(email));
         }
     }
 }

@@ -20,7 +20,7 @@ public class CloseOverdueLoan {
         this.loanRepository = loanRepository;
     }
 
-    public void execute(String loanId) throws LoanNotFoundException, OverdueLoanException {
+    public void execute(String loanId) {
 
         Loan loan = this.loanRepository.findById(loanId)
                 .orElseThrow(LoanNotFoundException::new);

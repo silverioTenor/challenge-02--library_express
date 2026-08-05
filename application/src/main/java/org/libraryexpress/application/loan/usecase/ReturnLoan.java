@@ -1,5 +1,7 @@
 package org.libraryexpress.application.loan.usecase;
 
+import org.libraryexpress.domain.book.entity.Book;
+import org.libraryexpress.domain.book.exception.BookNotFoundException;
 import org.libraryexpress.domain.loan.exception.InvalidLoanStatusException;
 import org.libraryexpress.domain.loan.exception.LoanNotFoundException;
 import org.libraryexpress.domain.loan.entity.Loan;
@@ -23,7 +25,7 @@ public class ReturnLoan {
         this.bookRepository = bookRepository;
     }
 
-    public void execute(String loanId) throws LoanNotFoundException, InvalidLoanStatusException {
+    public void execute(String loanId) {
 
         Loan loan = this.loanRepository.findById(loanId)
                 .orElseThrow(() -> new LoanNotFoundException("No loan found matching the provided parameters."));
@@ -32,14 +34,18 @@ public class ReturnLoan {
             throw new InvalidLoanStatusException("The Loan cannot be completed with the current status.");
         }
 
+        Book book = this.bookRepository.getByIsbn(loan.getISBN().value())
+                .orElseThrow(BookNotFoundException::new);
+
         // TODO - v2 - use JOB to change LOAN status and then send e-mail/notification
         LoanStatus updatedStatus = loan.isOverdue(Clock.systemDefaultZone())
                 ? LoanStatus.OVERDUE
                 : LoanStatus.FINISHED;
 
         loan.changeStatus(updatedStatus);
-        this.loanRepository.update(loan);
+        book.changeStatus(BookStatus.AVAILABLE);
 
-        this.bookRepository.update(loan.getISBN(), BookStatus.AVAILABLE);
+        this.loanRepository.update(loan);
+        this.bookRepository.update(book);
     }
 }

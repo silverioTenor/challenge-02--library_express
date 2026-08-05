@@ -8,7 +8,7 @@ import java.util.Set;
 
 public interface BookRepository {
     void create(Book book);
-    void update(String ISBN, BookStatus status);
+    void update(Book bookToUpdate);
     Set<Book> search(String ISBN, Set<BookStatus> statuses);
     Optional<Book> getByIsbn(String isbn);
     Set<Book> all();

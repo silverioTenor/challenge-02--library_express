@@ -1,6 +1,6 @@
 package org.libraryexpress.domain.core;
 
-public class DomainException extends Exception {
+public class DomainException extends RuntimeException {
 
     public DomainException() {
     }

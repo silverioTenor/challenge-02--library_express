@@ -1,12 +1,13 @@
 package org.libraryexpress.domain.book.entity;
 
 import org.libraryexpress.domain.book.enums.BookStatus;
+import org.libraryexpress.domain.book.valueobject.Isbn;
 
 import java.util.Objects;
 
 public class Book implements Comparable<Book> {
 
-    private final String ISBN;
+    private final Isbn ISBN;
 
     private final String title;
 
@@ -16,7 +17,7 @@ public class Book implements Comparable<Book> {
 
     private BookStatus status;
 
-    private Book(String ISBN, String title, String author, int year, BookStatus status) {
+    private Book(Isbn ISBN, String title, String author, int year, BookStatus status) {
         this.ISBN = ISBN;
         this.title = title;
         this.author = author;
@@ -24,7 +25,7 @@ public class Book implements Comparable<Book> {
         this.status = status;
     }
 
-    public String getISBN() {
+    public Isbn getISBN() {
         return ISBN;
     }
 
@@ -44,8 +45,10 @@ public class Book implements Comparable<Book> {
         return status;
     }
 
-    public void changeStatus(BookStatus status) {
-        this.status = status;
+    public void changeStatus(BookStatus newStatus) {
+        if (this.status == newStatus) return;
+
+        this.status = newStatus;
     }
 
     @Override
@@ -113,7 +116,7 @@ public class Book implements Comparable<Book> {
         }
 
         public Book build() {
-            return new Book(ISBN, title, author, year, status);
+            return new Book(new Isbn(ISBN), title, author, year, status);
         }
     }
 }

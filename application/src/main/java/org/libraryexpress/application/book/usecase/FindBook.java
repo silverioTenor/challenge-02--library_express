@@ -18,7 +18,7 @@ public class FindBook {
         this.mapper = mapper;
     }
 
-    public BookDto execute(String ISBN) throws BookNotFoundException {
+    public BookDto execute(String ISBN) {
 
         Optional<Book> book = this.bookRepository.getByIsbn(ISBN);
 

@@ -16,7 +16,7 @@ public class RegisterBook {
         this.mapper = mapper;
     }
 
-    public void execute(RegisterBookDto registerBookDto) throws UniqueIsbnViolationException {
+    public void execute(RegisterBookDto registerBookDto) {
 
         var hasRegistered = this.bookRepository.getByIsbn(registerBookDto.ISBN());
 

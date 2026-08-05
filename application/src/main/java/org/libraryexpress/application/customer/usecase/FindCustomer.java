@@ -18,7 +18,7 @@ public class FindCustomer {
         this.mapper = mapper;
     }
 
-    public CustomerDto execute(String emailOrId) throws CustomerNotFoundException {
+    public CustomerDto execute(String emailOrId) {
 
         Optional<Customer> customer = emailOrId.contains("@")
                 ? this.customerRepository.getByEmail(emailOrId)

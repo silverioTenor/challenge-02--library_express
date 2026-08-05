@@ -2,7 +2,6 @@ package org.libraryexpress.application.loan.usecase;
 
 import org.libraryexpress.application.loan.dto.request.FilterLoansDto;
 import org.libraryexpress.application.loan.dto.response.LoanDto;
-import org.libraryexpress.application.loan.exception.SearchLoanValidationException;
 import org.libraryexpress.application.loan.mapper.LoanMapper;
 import org.libraryexpress.application.loan.validator.SearchLoanValidator;
 import org.libraryexpress.domain.loan.entity.Loan;
@@ -23,7 +22,7 @@ public class SearchLoans {
         this.searchLoanValidator = searchLoanValidator;
     }
 
-    public Set<LoanDto> execute(FilterLoansDto filter) throws SearchLoanValidationException {
+    public Set<LoanDto> execute(FilterLoansDto filter) {
 
         this.searchLoanValidator.validate(filter);
 

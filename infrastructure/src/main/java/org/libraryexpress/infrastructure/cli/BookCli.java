@@ -8,6 +8,7 @@ import org.libraryexpress.application.book.usecase.RegisterBook;
 import org.libraryexpress.domain.book.enums.BookStatus;
 import org.libraryexpress.domain.book.exception.BookNotFoundException;
 import org.libraryexpress.domain.book.exception.UniqueIsbnViolationException;
+import org.libraryexpress.domain.book.valueobject.Isbn;
 import org.libraryexpress.domain.core.util.RandomGenerator;
 import org.libraryexpress.infrastructure.config.AppContext;
 import org.libraryexpress.infrastructure.util.JsonPrinter;
@@ -54,19 +55,19 @@ public class BookCli {
 
     private void register(Scanner scan) {
 
-        String ISBN = RandomGenerator.ISBN();
+        String ISBN = Isbn.generate().value();
 
         scan.nextLine();
 
-        System.out.println("Enter with title:");
+        System.out.println("Enter the title:");
         String title = scan.nextLine();
         System.out.println("  ");
 
-        System.out.println("Enter with author:");
+        System.out.println("Enter the author:");
         String author = scan.nextLine();
         System.out.println("  ");
 
-        System.out.println("Enter with year:");
+        System.out.println("Enter the year:");
         int year;
         try {
             year = Integer.parseInt(scan.nextLine().trim());
@@ -90,7 +91,7 @@ public class BookCli {
     private void show(Scanner scan) {
 
         System.out.println("  ");
-        System.out.println("Enter with ISBN:");
+        System.out.println("Enter the ISBN:");
         String ISBN = scan.next();
 
         try {
