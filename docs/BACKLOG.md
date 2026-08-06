@@ -33,6 +33,13 @@
 
 ---
 
+| ID | Item | Descrição | Pontos | Status |
+|---|---|---|---|---|
+| TD04 | Registro retroativo da modularização Maven | Estrutura multi-módulo (domain/application/infrastructure) já implementada direto em `develop`; ADR e C4 criados retroativamente, BACKLOG realinhado aos novos caminhos de teste do E4 | 2 | ✅ Resolvido |
+| TD05 | Empacotamento executável (fat jar) pendente | `mvn package` não gera jar autocontido — falta `Main-Class` no manifest e shade/assembly plugin para embutir dependências; necessário antes do E8 (Go Live) | 3 | 🔲 To Do (vinculado a E8) |
+
+---
+
 ## Roadmap — Fases e Marcos
 
 ### 🌱 Fase 1 — Foundation
