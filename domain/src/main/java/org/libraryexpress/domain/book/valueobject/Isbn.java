@@ -13,7 +13,7 @@ public record Isbn(String value) {
     public Isbn {
         if (value == null || value.isBlank()) throw new InvalidIsbnException();
 
-        if (!ISBN_PATTERN.matcher(value).matches()) throw new InvalidIsbnException();
+        if (!ISBN_PATTERN.matcher(value).matches()) throw new InvalidIsbnException("The provided ISBN is invalid.");
     }
 
     public static Isbn generate() {

@@ -1,7 +1,8 @@
-package org.libraryexpress.domain;
+package org.libraryexpress.domain.book;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.libraryexpress.domain.UnitTest;
 import org.libraryexpress.domain.book.entity.Book;
 import org.libraryexpress.domain.book.enums.BookStatus;
 import org.libraryexpress.domain.book.valueobject.Isbn;
