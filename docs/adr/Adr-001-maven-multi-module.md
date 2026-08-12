@@ -19,7 +19,7 @@ Essa organização era suficiente enquanto não havia suíte de testes automatiz
 Com a entrada do Épico E4 (Fundação de Testes Automatizados JUnit 5), surgiu a necessidade
 prática de isolar testes por camada:
 
-- Testes de **domínio** (`BookTest`, `CustomerTest`, `LoanTest`) precisam validar regras de
+- Testes de **domínio** (`BookTest`, `CustomerUnitTest`, `LoanTest`) precisam validar regras de
   negócio e contratos (`equals`/`hashCode`) sem qualquer acesso a implementações de
   infraestrutura.
 - Testes de **usecase** (`application`) precisam de test doubles (fakes) de repositório, mas

@@ -230,7 +230,7 @@ Scenario: Loan — isOverdue() retorna false dentro do prazo
 ### Tasks
 
 - [ ] `BookTest`: equals/hashCode, `compareTo` por título, `changeStatus`
-- [ ] `CustomerTest`: equals/hashCode (incluindo cenário de reconstituição via `setID`), `compareTo` por nome
+- [ ] `CustomerUnitTest`: equals/hashCode (incluindo cenário de reconstituição via `setID`), `compareTo` por nome
 - [ ] `LoanTest`: equals/hashCode por `id`, `isOverdue()` com `Clock.fixed(...)` (nunca `Clock.systemDefaultZone()` em teste — não determinístico), cálculo de `dueDate()` via `endDate` nulo no builder
 - [ ] Cobrir os cenários de `HashSet` (dedup por identidade) para as três entidades
 

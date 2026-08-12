@@ -13,6 +13,7 @@
         <module>domain</module>
         <module>application</module>
         <module>infrastructure</module>
+        <module>coverage-report</module>
     </modules>
 
     <properties>
@@ -21,6 +22,9 @@
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <org.jackson.version>2.22.1</org.jackson.version>
         <junit.version>5.10.2</junit.version>
+        <mockito.version>5.23.0</mockito.version>
+        <maven-dependency-plugin>3.6.1</maven-dependency-plugin>
+        <jacoco.version>0.8.15</jacoco.version>
 
         <exec.skip>true</exec.skip>
     </properties>
@@ -38,9 +42,28 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.libraryexpress</groupId>
+                <artifactId>coverage-report</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
                 <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -79,11 +102,63 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <!-- The @{argLine} ensures compatibility with plugins like JaCoCo in the future. -->
+                    <!-- The -Xshare:off option disables the feature that is generating the alert. -->
+                    <!--suppress UnresolvedMavenProperty -->
+                    <argLine>@{argLine} @{argLineJaCoCo} -javaagent:${org.mockito:mockito-core:jar} -Xshare:off</argLine>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <!-- We tell JaCoCo to save its agent in this specific variable. -->
+                            <propertyName>argLineJaCoCo</propertyName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
 
                 <configuration>
-                    <release>${maven.compiler.release}</release>
+                    <source>${maven.compiler.release}</source>
+                    <target>${maven.compiler.release}</target>
 
                     <annotationProcessorPaths>
                         <path>
@@ -108,13 +183,6 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
-            </plugin>
-
         </plugins>
     </build>
 
