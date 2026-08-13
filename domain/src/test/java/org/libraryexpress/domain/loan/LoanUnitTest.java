@@ -3,6 +3,7 @@ package org.libraryexpress.domain.loan;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.libraryexpress.domain.UnitTest;
+import org.libraryexpress.domain.book.exception.InvalidIsbnException;
 import org.libraryexpress.domain.loan.entity.Loan;
 import org.libraryexpress.domain.loan.enums.LoanStatus;
 
@@ -60,6 +61,112 @@ public class LoanUnitTest {
         // Assert
         assertEquals(customEndDate, loan.getEndDate());
     }
+
+    @Test
+    @DisplayName("Should throw IllegalArgumentException when mandatory fields are missing, empty, or blank")
+    void shouldThrowException_whenMandatoryFieldsAreInvalid() {
+        LocalDate now = LocalDate.of(2026, 8, 12);
+
+        // 1. Validating Loan ID (Null, Empty, and Blank)
+        assertThrows(IllegalArgumentException.class, () ->
+                        new Loan.Builder()
+                                .setId(null)
+                                .setISBN(VALID_ISBN)
+                                .setCustomerId(CUSTOMER_ID)
+                                .setStatus(LoanStatus.ACTIVE)
+                                .setStartDate(now)
+                                .build(),
+                "Should throw exception for null Loan ID"
+        );
+        assertThrows(IllegalArgumentException.class, () ->
+                        new Loan.Builder()
+                                .setId("").setISBN(VALID_ISBN)
+                                .setCustomerId(CUSTOMER_ID)
+                                .setStatus(LoanStatus.ACTIVE)
+                                .setStartDate(now)
+                                .build(),
+                "Should throw exception for empty Loan ID"
+        );
+        assertThrows(IllegalArgumentException.class, () ->
+                        new Loan.Builder()
+                                .setId("   ")
+                                .setISBN(VALID_ISBN)
+                                .setCustomerId(CUSTOMER_ID)
+                                .setStatus(LoanStatus.ACTIVE)
+                                .setStartDate(now)
+                                .build(),
+                "Should throw exception for blank Loan ID"
+        );
+
+        // 2. Validating Customer ID (Null, Empty, and Blank)
+        assertThrows(IllegalArgumentException.class, () ->
+                        new Loan.Builder()
+                                .setId("loan-1")
+                                .setISBN(VALID_ISBN)
+                                .setCustomerId(null)
+                                .setStatus(LoanStatus.ACTIVE)
+                                .setStartDate(now)
+                                .build(),
+                "Should throw exception for null Customer ID"
+        );
+        assertThrows(IllegalArgumentException.class, () ->
+                        new Loan.Builder()
+                                .setId("loan-1")
+                                .setISBN(VALID_ISBN)
+                                .setCustomerId("")
+                                .setStatus(LoanStatus.ACTIVE)
+                                .setStartDate(now)
+                                .build(),
+                "Should throw exception for empty Customer ID"
+        );
+        assertThrows(IllegalArgumentException.class, () ->
+                        new Loan.Builder()
+                                .setId("loan-1")
+                                .setISBN(VALID_ISBN)
+                                .setCustomerId("   ")
+                                .setStatus(LoanStatus.ACTIVE)
+                                .setStartDate(now)
+                                .build(),
+                "Should throw exception for blank Customer ID"
+        );
+
+        // 3. Validating Loan Status (Null)
+        assertThrows(NullPointerException.class, () ->
+                        new Loan.Builder()
+                                .setId("loan-1")
+                                .setISBN(VALID_ISBN)
+                                .setCustomerId(CUSTOMER_ID)
+                                .setStatus(null)
+                                .setStartDate(now)
+                                .build(),
+                "Should throw exception for null Loan Status"
+        );
+
+        // 4. Validating Book ISBN (Null)
+        assertThrows(InvalidIsbnException.class, () ->
+                        new Loan.Builder()
+                                .setId("loan-1")
+                                .setISBN(null)
+                                .setCustomerId(CUSTOMER_ID)
+                                .setStatus(LoanStatus.ACTIVE)
+                                .setStartDate(now)
+                                .build(),
+                "Should throw exception for null ISBN"
+        );
+
+        // 5. Validating startDate (Null)
+        assertThrows(NullPointerException.class, () ->
+                        new Loan.Builder()
+                                .setId("loan-1")
+                                .setISBN(VALID_ISBN)
+                                .setCustomerId(CUSTOMER_ID)
+                                .setStatus(LoanStatus.ACTIVE)
+                                .setStartDate(null)
+                                .build(),
+                "Should throw exception for null ISBN"
+        );
+    }
+
 
     @Test
     @DisplayName("Should return false for isOverdue when current date is within the 15 days limit")
