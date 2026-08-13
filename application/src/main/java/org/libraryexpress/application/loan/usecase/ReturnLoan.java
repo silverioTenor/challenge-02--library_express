@@ -19,10 +19,12 @@ public class ReturnLoan {
 
     private final LoanRepository loanRepository;
     private final BookRepository bookRepository;
+    private final Clock clock;
 
-    public ReturnLoan(LoanRepository loanRepository, BookRepository bookRepository) {
+    public ReturnLoan(LoanRepository loanRepository, BookRepository bookRepository, Clock clock) {
         this.loanRepository = loanRepository;
         this.bookRepository = bookRepository;
+        this.clock = clock;
     }
 
     public void execute(String loanId) {
@@ -38,7 +40,7 @@ public class ReturnLoan {
                 .orElseThrow(BookNotFoundException::new);
 
         // TODO - v2 - use JOB to change LOAN status and then send e-mail/notification
-        LoanStatus updatedStatus = loan.isOverdue(Clock.systemDefaultZone())
+        LoanStatus updatedStatus = loan.isOverdue(this.clock)
                 ? LoanStatus.OVERDUE
                 : LoanStatus.FINISHED;
 
