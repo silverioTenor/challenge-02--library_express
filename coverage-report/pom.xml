@@ -58,6 +58,8 @@
                             <excludes>
                                 <exclude>**/dto/*</exclude>
                                 <exclude>**/mapper/*</exclude>
+                                <exclude>**/mapper/*</exclude>
+                                <exclude>**/exception/*</exclude>
                             </excludes>
                         </configuration>
                     </execution>
