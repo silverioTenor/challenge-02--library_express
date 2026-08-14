@@ -18,6 +18,8 @@ import org.libraryexpress.infrastructure.repository.InMemory.InMemoryBookReposit
 import org.libraryexpress.infrastructure.repository.InMemory.InMemoryCustomerRepository;
 import org.libraryexpress.infrastructure.repository.InMemory.InMemoryLoanRepository;
 
+import java.time.Clock;
+
 public class AppContext {
 
     // CUSTOMER
@@ -64,7 +66,7 @@ public class AppContext {
         this.createLoan = new CreateLoan(inMemoryLoanRepository, inMemoryBookRepository, loanEligibilityValidator, bookAvailabilityValidator);
         this.searchLoans = new SearchLoans(inMemoryLoanRepository, LoanMapper.INSTANCE, searchLoanValidator);
         this.listLoans = new ListLoans(inMemoryLoanRepository, LoanMapper.INSTANCE);
-        this.returnLoan = new ReturnLoan(inMemoryLoanRepository, inMemoryBookRepository);
+        this.returnLoan = new ReturnLoan(inMemoryLoanRepository, inMemoryBookRepository, Clock.systemDefaultZone());
         this.closeOverdueLoan = new CloseOverdueLoan(inMemoryLoanRepository);
     }
 

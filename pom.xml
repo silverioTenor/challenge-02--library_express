@@ -180,6 +180,9 @@
                         <arg>
                             -Amapstruct.verbose=true
                         </arg>
+                        <arg>
+                            -Amapstruct.addGeneratedAnnotation=true
+                        </arg>
                     </compilerArgs>
                 </configuration>
             </plugin>
