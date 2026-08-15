@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.libraryexpress</groupId>
         <artifactId>LibraryExpress</artifactId>
-        <version>0.1.2-SNAPSHOT</version>
+        <version>0.1.3</version>
     </parent>
 
     <artifactId>infrastructure</artifactId>
