@@ -1,9 +1,7 @@
 # Library Express
-
 A backend application for library management built in Java.
 
 > **Note on language:** this README is in English (public-facing documentation). Planning documents (`BACKLOG.md`, `VISION.md`) are in Portuguese — the working language used to think through and discuss the project's evolution. This split is intentional, not an inconsistency.
-
 
 This project is part of my **Java Journey**, a long-term learning path focused on mastering Java and software engineering by evolving a real-world application through incremental development, guided by a real agile process (epics, sprints, user stories, tasks).
 
@@ -23,70 +21,100 @@ This project is part of my **Java Journey**, a long-term learning path focused o
 
 ## 🏗️ Current Architecture
 
+The project is organized as a **Maven multi-module** build. Each layer of the Clean Architecture is its own Maven module, with its own `pom.xml` and its own `src/main` / `src/test` — not just a package convention. This isolates test scope per layer (domain tests never see infrastructure dependencies, for example) and keeps compile-time boundaries between layers enforced by Maven itself, not just by discipline.
+
 ```
-src
-└── main
-    └── java
-        └── org.libraryexpress
-            ├── domain
-            │   ├── entity
-            │   ├── enums
-            │   ├── helper
-            │   ├── repository       (interfaces)
-            │   └── validator        (interfaces)
-            │
-            ├── application
-            │   ├── book
-            │   │   ├── dto
-            │   │   ├── mapper
-            │   │   ├── usecase
-            │   │   └── validator
-            │   ├── customer
-            │   │   ├── dto
-            │   │   ├── mapper
-            │   │   └── usecase
-            │   └── loan
-            │       ├── dto
-            │       ├── usecase
-            │       └── validator
-            │
-            └── infrastructure
-                ├── cli               (current entrypoint/UI)
-                ├── config
-                ├── exception
-                └── repository        (in-memory implementations)
+library_express--api
+├── pom.xml                    (parent/aggregator — packaging: pom)
+│
+├── domain
+│   ├── pom.xml
+│   └── src
+│       ├── main/java/org.libraryexpress.domain
+│       │   ├── book
+│       │   ├── customer
+│       │   ├── loan
+│       │   └── core            (shared entities, enums, helpers, repository/validator interfaces)
+│       └── test/java/org.libraryexpress.domain   (JUnit 5 — entity/contract tests)
+│
+├── application
+│   ├── pom.xml
+│   └── src
+│       ├── main/java/org.libraryexpress.application
+│       │   ├── book             (dto, mapper, usecase, validator)
+│       │   ├── customer         (dto, mapper, usecase)
+│       │   └── loan             (dto, usecase, validator)
+│       └── test/java/org.libraryexpress.application   (JUnit 5 + Mockito — usecase tests, mocked repositories)
+│
+├── infrastructure
+│   ├── pom.xml
+│   └── src
+│       ├── main/java/org.libraryexpress.infrastructure
+│       │   ├── cli               (current entrypoint/UI)
+│       │   ├── config
+│       │   ├── exception
+│       │   └── repository        (in-memory implementations)
+│       └── test/java/org.libraryexpress.infrastructure
+│
+└── coverage-report
+    └── pom.xml                (packaging: pom — no src; aggregates JaCoCo reports from the 3 modules above)
 ```
 
-The project follows a Clean Architecture-inspired layering: `domain` holds entities and contracts, `application` holds use cases (business logic, framework-agnostic), and `infrastructure` holds concrete implementations (currently CLI + in-memory repositories).
+Dependency direction between modules: `infrastructure → application → domain`. `domain` has no dependency on the other two — it's pure business logic and contracts. `coverage-report` depends on all three, but only to aggregate their test coverage data — it contains no production code.
 
-It currently uses plain Java, without dependency injection or application frameworks. This is deliberate: new technologies (a web framework, a real database, etc.) are introduced only when they solve a real problem the project has reached — not upfront. As the project evolves, new interfaces may be introduced without coupling them to the business logic.
+It currently uses plain Java, without dependency injection or application frameworks. This is deliberate: new technologies (a web framework, a real database, etc.) are introduced only when they solve a real problem the project has reached — not upfront.
+
+Architectural decisions (like the module split above) are recorded as ADRs in [`docs/adr/`](./docs/adr/). A high-level C4 view of the modules lives in [`docs/architecture/`](./docs/architecture/).
 
 ## 🚀 Tech Stack
 - Java 21
-- Maven
+- Maven (multi-module)
+- JUnit 5 (Jupiter)
+- Mockito
 - MapStruct (DTO ↔ entity mapping)
+- JaCoCo (test coverage)
 
 ## Getting Started
-
 ```bash
 git clone https://github.com/silverioTenor/library_express--api.git
-
 cd library_express--api
-
 mvn clean install
-
-mvn exec:java
 ```
 
-## 📚 Learning Purpose & Agile Process
+Run the CLI:
+```bash
+mvn exec:java
+```
+The entrypoint lives in the `infrastructure` module. `exec-maven-plugin` is skipped by default (`exec.skip=true` in the parent POM) and only re-enabled (`exec.skip=false`) in `infrastructure` — so even though the reactor visits all three modules, it only actually executes there. No `-pl` needed.
 
+## ✅ Running Tests
+```bash
+mvn test
+```
+Runs tests across all modules. To run a single module's tests only:
+```bash
+mvn test -pl domain
+mvn test -pl application
+```
+
+## 📊 Test Coverage
+Each module (`domain`, `application`, `infrastructure`) generates its own JaCoCo report on `mvn test`, at `<module>/target/site/jacoco/index.html`.
+
+For a single consolidated report across all modules:
+```bash
+mvn clean verify
+```
+The aggregated report is generated by the `coverage-report` module at `coverage-report/target/site/jacoco-aggregate/index.html`. It has no source code of its own — it exists solely to depend on the three modules and run JaCoCo's `report-aggregate` goal after they've all been tested.
+
+## 📚 Learning Purpose & Agile Process
 Rather than building everything at once, this project evolves through iterative sprints, planned and tracked as a real agile backlog — epics, sprints, user stories (with BDD-style acceptance criteria), and tasks.
 
 Instead of introducing frameworks and architectural patterns from the beginning, each sprint solves a real problem found in the application. New technologies are adopted only when they provide clear value to the project's evolution.
 
 - **[BACKLOG.md](./docs/BACKLOG.md)** — active engineering roadmap: current epic, sprint backlog, BDD acceptance criteria, technical debt, commit conventions.
 - **[VISION.md](./docs/VISION.md)** — long-term product vision (not yet in execution): future expansions such as a self-service platform, marketplace, payments, and eventual microservices/event-driven evolution.
+- **[docs/adr/](./docs/adr/)** — Architecture Decision Records.
+- **[docs/architecture/](./docs/architecture/)** — C4 diagrams and structural documentation.
 
 ## 📄 License
-
 MIT

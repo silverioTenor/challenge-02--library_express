@@ -1,0 +1,25 @@
+package org.libraryexpress.application.customer.usecase;
+
+import org.libraryexpress.application.customer.dto.response.CustomerDto;
+import org.libraryexpress.application.customer.mapper.CustomerMapper;
+import org.libraryexpress.domain.customer.entity.Customer;
+import org.libraryexpress.domain.customer.repository.CustomerRepository;
+
+import java.util.Set;
+
+public class ListCustomers {
+
+    private final CustomerRepository customerRepository;
+    private final CustomerMapper mapper;
+
+    public ListCustomers(CustomerRepository customerRepository, CustomerMapper mapper) {
+        this.customerRepository = customerRepository;
+        this.mapper = mapper;
+    }
+
+    public Set<CustomerDto> execute() {
+        var customers = this.customerRepository.all();
+
+        return mapper.toResponseListDto(customers);
+    }
+}

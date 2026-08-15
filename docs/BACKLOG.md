@@ -1,13 +1,14 @@
+📚 Backlog
 # Library Express — Backlog Ágil
 
-> Projeto de estudo em Java, evoluído de forma incremental via sprints reais.
-> PO/Scrum Master: Claude · Dev: Silvério
->
-> Para a visão de produto de longo prazo (expansões futuras: marketplace, pagamentos, clube do livro, audiobook), ver `VISION.md`. Este arquivo trata só do que é executável.
->
-> **Nota sobre idioma:** este documento está em português (língua de trabalho do planejamento). O `README.md` do repositório está em inglês, por ser a documentação voltada ao público — a divisão é intencional.
+Projeto de estudo em Java, evoluído de forma incremental via sprints reais.
+PO/Scrum Master: Claude · Dev: Silvério
 
----
+Para a visão de produto de longo prazo (expansões futuras: marketplace, pagamentos, clube do livro, audiobook), ver `VISION.md`. Este arquivo trata só do que é executável.
+
+**Nota sobre idioma:** este documento está em português (língua de trabalho do planejamento). O `README.md` do repositório está em inglês, por ser a documentação voltada ao público — a divisão é intencional.
+
+**Nota sobre nível de detalhe:** épicos concluídos ficam registrados apenas como resumo (status, pontos, sprint). O detalhamento completo (Gherkin, tasks, desvios de implementação) vive no histórico do Git e nos comentários de encerramento das Issues no GitHub — não é duplicado aqui, para evitar duas fontes de verdade divergentes.
 
 ## Épicos
 
@@ -16,60 +17,63 @@
 | E0 | Organização e limpeza inicial | ✅ Concluído (Sprint 0 e 1) |
 | E1 | Foundation — desacoplar I/O das Services, centralizar interação na CLI | ✅ Concluído |
 | E2 | MVP — Ciclo de vida do empréstimo | ✅ Concluído (Sprint 2) |
-| E9 | Débito técnico e qualidade | ⏳ Backlog (pós-MVP) |
-| E10 | Containerização (Docker) | ⏳ Backlog |
-| E3 | Inversão de dependência manual | ⏳ Backlog |
-| E6 | CD — Pipeline de entrega + API mínima (**Marco 2 — Go Live**, com E10, na AWS) | ⏳ Próximo após E2 |
-| E7 | CI real — testes automatizados rodando no pipeline | ⏳ Backlog |
-| E4 | Persistência real (JDBC/JPA) | ⏳ Backlog |
-| E5 | Evolução arquitetural completa (migração da API mínima pra Spring) | ⏳ Backlog |
-| E8 | Reputação do cliente e bloqueio por atraso | ⏳ Backlog (sem prioridade definida) |
+| E3 | Inversão de dependência manual + padronização de repositórios + TD01 | ✅ Concluído (Sprint 3) |
+| E4 | Fundação de testes automatizados — JUnit 5 + Mockito | ✅ Concluído (Sprint 4), com ressalva — ver TD06 |
+| E5 | ~~Containerização (Docker)~~ | ⛔ Descontinuado — escopo absorvido pelo E6 |
+| E6 | Persistência Real (JDBC/PostgreSQL) + Containerização Docker | 🔵 Refinado, pronto para execução (Sprint 5) |
+| E7 | CI real — testes automatizados rodando no pipeline | ⏳ Backlog (recebe TD06 — testes de infraestrutura com Testcontainers) |
+| E8 | CD — Pipeline de entrega + API mínima (Marco 2 — Go Live, com E6, na AWS) | ⏳ Backlog |
+| E9 | Evolução arquitetural completa (migração da API mínima pra Spring) | ⏳ Backlog |
+| E10 | Reputação do cliente e bloqueio por atraso | ⏳ Backlog (sem prioridade definida) |
 
-> **E6 e E7 não são a mesma coisa.** E6 entrega só build automático + deploy — chamamos de "CD", não "CI/CD", porque sem testes não há integração *verificada*, só entrega automatizada. E7 é quando isso vira CI de verdade: testes (TD-05) passam a rodar a cada push, como gate do pipeline.
+E7 e E8 não são a mesma coisa. E8 entrega o build automático + deploy — chamamos de "CD", não "CI/CD", porque sem testes rodando como gate não há integração verificada, só entrega automatizada. E7 é quando isso vira CI de verdade: testes (E4) passam a rodar a cada push, como gate do pipeline, antes do E8 existir. É também em E7 que o débito técnico TD06 (testes de infraestrutura com Testcontainers) será resolvido, aproveitando o JDBC já entregue em E6.
 
-> **E8** nasceu de uma discussão durante o Sprint 2, sobre o fluxo de devolução (US-203): quando um empréstimo está em atraso, o cliente perde pontos de score; após 3 atrasos é "marcado" (conceito ainda a refinar); após 5, é bloqueado por tempo determinado. Não é débito técnico — é escopo novo. Sem multa/dinheiro envolvido (alinhado ao sequenciamento de pagamentos do `VISION.md`). Sem prioridade definida ainda; será refinado em BDD quando entrar na fila, seguindo a regra de "um épico por vez". Questões técnicas já identificadas: (1) como detectar atraso sem scheduler — provavelmente cálculo *lazy* na devolução/validação, não job em background; (2) `Customer` vai precisar de campos novos (score, contagem de atrasos, `blockedUntil`).
-
-### Histórico — épicos já concluídos (registrado a partir do board do GitHub)
-
-**E0 — Preparação do Projeto** · Iteration 1 (Jul 07–Jul 20) · Done
-
-**E1 — Foundation** · Done
-Objetivo: preparar a base da aplicação para suportar novas interfaces sem alterar as regras de negócio. Tarefas: remover `Scanner` e `System.out.println()` das Services; alterar Services para receber apenas parâmetros e retornar apenas resultados; centralizar toda interação com o usuário na camada CLI; revisar nomenclatura de variáveis; atualizar documentação da arquitetura. Critérios de aceite: nenhuma Service conhece a CLI; toda interação ocorre na camada de interface; a aplicação continua funcionando normalmente.
-> É esse épico que explica por que as usecases já nasceram desacopladas de I/O quando auditei o código pela primeira vez — não foi acidente.
-
----
+E10 nasceu de uma discussão durante o Sprint 2, sobre o fluxo de devolução: quando um empréstimo está em atraso, o cliente perde pontos de score; após 3 atrasos é "marcado" (conceito ainda a refinar); após 5, é bloqueado por tempo determinado. Não é débito técnico — é escopo novo. Sem multa/dinheiro envolvido (alinhado ao sequenciamento de pagamentos do `VISION.md`). Sem prioridade definida ainda; será refinado em BDD quando entrar na fila, seguindo a regra de "um épico por vez". Questões técnicas já identificadas: (1) como detectar atraso sem scheduler — provavelmente cálculo lazy na devolução/validação, não job em background; (2) `Customer` vai precisar de campos novos (score, contagem de atrasos, `blockedUntil`).
 
 ## Roadmap — Fases e Marcos
 
 ### 🌱 Fase 1 — Foundation
-**Objetivo:** construir uma base sólida, consolidando o domínio e eliminando problemas arquiteturais antes de introduzir novas tecnologias.
-**Escopo:** E0, E1, E2, E3.
+
+Objetivo: construir uma base sólida, consolidando o domínio e eliminando problemas arquiteturais antes de introduzir novas tecnologias.
+
+Escopo: E0, E1, E2, E3.
 
 ### 🚀 Marco 1 — MVP ✅ Alcançado
-O sistema atende aos requisitos funcionais essenciais de uma biblioteca, via CLI. Fecha com E2.
 
-### 🏗️ Fase 2 — Software Maturity
-**Objetivo:** aumentar qualidade e confiabilidade do sistema, guiado pelas necessidades reais do projeto — agora também calibrado para gerar valor de portfólio em processos seletivos internacionais (EUA/Canadá).
-**Sequência de temas:**
-1. Testes automatizados (TD-05) — JUnit puro
-2. CI real — testes como gate do pipeline (E7)
-3. Containerização — Docker (E10)
-4. **Marco 2 — Go Live** (E6 + E10)
-5. Persistência real (E4) — JDBC puro
-6. Evolução arquitetural — migração pra Spring (E5)
+O sistema atende aos requisitos funcionais essenciais de uma biblioteca, via CLI. Fecha com E2. Tag `v0.1.1`.
+
+### 🏗 Fase 2 — Software Maturity
+
+Objetivo: aumentar qualidade e confiabilidade do sistema, guiado pelas necessidades reais do projeto — agora também calibrado para gerar valor de portfólio em processos seletivos internacionais (EUA/Canadá).
+
+Sequência de temas:
+
+1. Fundação de testes automatizados — JUnit 5 + Mockito (E4) ✅ concluído
+2. Persistência real (JDBC/PostgreSQL) + Containerização Docker (E6) 🔵 atual
+3. CI real — testes como gate do pipeline, incluindo testes de infraestrutura via Testcontainers/TD06 (E7)
+4. Marco 2 — Go Live (E8, empacotando CD + API mínima, já com Docker e JDBC prontos)
+5. Evolução arquitetural — migração pra Spring (E9)
+
+**Fusão E5 + E6 (decisão registrada):** o Épico E5 (Docker isolado) foi descontinuado como bloco próprio. Justificativa: containerização só gera valor de negócio real quando integrada à persistência de verdade — "containerizar um CLI com repositório em memória" é fraco como narrativa de portfólio comparado a "containerizar uma aplicação com PostgreSQL real, HikariCP e migrations versionadas". O E5 permanece visível na tabela de Épicos (não removido do mapa), marcado como descontinuado, para preservar rastreabilidade. Todo o escopo de containerização foi absorvido pelo E6, que assume o nome **Persistência Real (JDBC/PostgreSQL) + Containerização Docker**.
+
+Banco definido: **PostgreSQL** (via JDBC puro, sem ORM), alinhado ao RDS free tier da AWS.
 
 ### 🚀 Marco 2 — Go Live
-Primeira subida real pra produção — na **AWS** (free tier: ECS/Fargate ou Elastic Beanstalk com Docker; substituiu o plano original de Heroku, que tem pouca relevância no mercado que estamos mirando). Fecha **junto**: pipeline de CD (E6), imagem Docker (E10) e API mínima sem framework (`com.sun.net.httpserver.HttpServer`, sem Spring ainda — evita reescrever esforço quando a migração acontecer em E5). O deploy só "vale" quando há um serviço HTTP de verdade recebendo tráfego — antes disso, CD sozinho seria só teatro de automação sem produto real por trás.
 
-> **Por que Go Live agora vem depois de testes/CI/Docker, e não antes?** Reordenado a pedido do foco em mercado internacional: subir pra produção sem testes, sem gate de CI e sem containerização não é uma boa história de portfólio. A sequência revisada conta uma narrativa mais forte: testei → automatizei → containerizei → só então fui pra produção — que é como equipes reais operam.
+Primeira subida real pra produção — na AWS (free tier: ECS/Fargate ou Elastic Beanstalk com Docker; substituiu o plano original de Heroku, que tem pouca relevância no mercado que estamos mirando). Fecha junto: pipeline de CD (E8), persistência real via JDBC + imagem Docker (E6, escopo fundido) e API mínima sem framework (`com.sun.net.httpserver.HttpServer`, sem Spring ainda — evita reescrever esforço quando a migração acontecer em E9). O deploy só "vale" quando há um serviço HTTP de verdade recebendo tráfego, com dado persistido de verdade.
 
-> **Por que testes e persistência crus antes do Spring, e não o contrário?** `@SpringBootTest`/Mockito e Spring Data JPA são abstrações sobre JUnit puro e JDBC puro. Fazer o caminho manual primeiro é deliberado: força entender o mecanismo por baixo (DI, transação, `Connection`/`PreparedStatement`) antes da conveniência do framework escondê-lo. Refazer com Spring depois em E5 não é retrabalho desperdiçado — é o próprio exercício que revela o que a abstração compra. Essa é uma escolha pedagógica, não a única correta; um time sob prazo real provavelmente iria direto pro Spring Data e aprenderia os internals sob demanda.
+Por que Go Live vem depois de testes/Docker/persistência/CI? A sequência conta uma narrativa forte de portfólio: testei → containerizei → persisti → automatizei → só então fui pra produção — como equipes reais operam.
+
+Por que testes e persistência crus antes do Spring? `@SpringBootTest`/Mockito e Spring Data JPA são abstrações sobre JUnit puro e JDBC puro. Fazer o caminho manual primeiro é deliberado: força entender o mecanismo por baixo antes da conveniência do framework escondê-lo. Refazer com Spring depois em E9 não é retrabalho desperdiçado — é o próprio exercício que revela o que a abstração compra.
 
 ### ⚙️ Fase 3 — Professional Software Engineering
-**Objetivo:** aprofundar práticas de engenharia em um sistema que já está em produção desde o Marco 2 — segurança, observabilidade, performance, escalabilidade, documentação.
-**Escopo:** ainda sem épicos formais (backlog futuro).
 
-### Princípios (mantidos do roadmap original)
+Objetivo: aprofundar práticas de engenharia em um sistema que já está em produção desde o Marco 2 — segurança, observabilidade, performance, escalabilidade, documentação.
+
+Escopo: ainda sem épicos formais (backlog futuro).
+
+## Princípios
+
 - O domínio é sempre a prioridade.
 - Novas tecnologias são introduzidas apenas quando resolvem problemas reais.
 - Cada Sprint deve gerar uma entrega funcional.
@@ -78,393 +82,336 @@ Primeira subida real pra produção — na **AWS** (free tier: ECS/Fargate ou El
 
 **Regra de trabalho:** um épico por vez, refinado em detalhe (BDD + tasks) apenas quando entra em andamento. Épicos futuros ficam só com título até chegar a vez deles (backlog grooming just-in-time).
 
----
+**Regra de processo (a partir do E4):** antes de gerar qualquer artefato formal de backlog (quebra de épico, User Story, tasks) para uma nova decisão de implementação ou mudança de arquitetura, o alinhamento com o Dev deve ser debatido e fechado em conversa primeiro. A geração de Markdown formal (pontos, Gherkin, tasks, commits) só acontece depois do alinhamento — nunca antes. Evita retrabalho por scope drift descoberto depois do fato.
 
-# 🔵 Épico E2 — MVP: Ciclo de vida do empréstimo
+## Débito Técnico
+
+| ID | Descrição | Pontos | Status |
+|----|-----------|--------|--------|
+| TD01 | Contrato `equals`/`hashCode` de Book, Customer e Loan | 3 | ✅ Resolvido (US-304, E3) |
+| TD05 | Empacotamento em Fat JAR (`maven-shade-plugin`, manifest com `Main-Class`) — congelado desde o E3, com resolução originalmente prevista só para o E8. **Decisão revisada:** a necessidade de Docker antecipa a razão de produção para um artefato único executável — congelar até E8 deixou de fazer sentido. Destravado e realocado para o E6. | 3 | 🔵 Destravado — resolução em US-503 (E6) |
+| TD06 | Camada de infraestrutura (repositórios in-memory) sem cobertura de teste automatizada desde o fechamento do E4. Adiamento intencional: testes de contrato e concorrência (originalmente US-404) serão reescritos usando Testcontainers com banco real (Postgres), após o E6 (JDBC) entregar a implementação definitiva — evita esforço duplicado em uma implementação in-memory que será substituída. Resolução alocada no E7. | — (a estimar no refinamento do E7) | 🟡 Aceito, aguardando E6 |
+
+## 🔵 Épico E6 — Persistência Real (JDBC/PostgreSQL) + Containerização Docker
+
+**Sprint:** 5
+**Pontos totais:** 18 (2 + 8 + 3 + 5)
+**Status:** 🔵 Refinado, pronto para execução
+
+### Decisões registradas nesta fusão
+- **E5 descontinuado como bloco isolado**, escopo absorvido integralmente pelo E6. Linha mantida na tabela de Épicos com status `Descontinuado — escopo absorvido pelo E6`, para preservar rastreabilidade histórica.
+- **TD05 destravado** e realocado para este épico (US-503). Justificativa atualizada: o congelamento original (até E8) partia da premissa de que só haveria razão de produção para empacotamento em artefato único no Go Live. A necessidade de containerizar via Docker antecipa essa razão.
+- **Docker Compose incluído no escopo**, tanto para ambiente de desenvolvimento local (Postgres solto, US-501) quanto para orquestração da aplicação completa no estágio final (US-504).
+- **Ordem de execução interna:** C (persistência JDBC) → A (Fat JAR) → B (Docker multi-stage) — a aplicação funciona com banco real localmente antes de qualquer esforço de empacotamento/containerização.
+- **Escopo de rede confirmado:** a aplicação continua rodando como **CLI batch/interativa** dentro do container, sem servidor HTTP — a API mínima fica reservada para o E8, mesmo sendo tecnicamente possível antecipá-la aqui.
+- **Versão do PostgreSQL:** `postgres:17-alpine`, acompanhando a versão estável mais recente disponível.
 
 ### Objetivo do épico
-Entregar a primeira versão **funcional e utilizável** do sistema: um usuário consegue, via CLI, cadastrar clientes e livros, realizar um empréstimo e devolvê-lo — respeitando as regras de negócio — sem bugs bloqueantes e sem exceções não tratadas.
+Migrar o armazenamento em memória para PostgreSQL real via JDBC puro, com pool de conexões gerenciado (HikariCP) e versionamento de schema (Flyway), entregando o ambiente 100% replicável via Docker — aplicação e banco.
 
 ### Valor de negócio
-Sem isso, o sistema não é uma biblioteca funcional: hoje um livro pode ser emprestado infinitas vezes em paralelo e não existe forma de encerrar um empréstimo. Este é o núcleo mínimo que torna o projeto "real".
+Sem persistência real, o sistema não sobrevive a um restart e não pode ir para produção (Marco 2 depende disso). Sem containerização, o ambiente não é replicável entre máquinas nem implantável na AWS. A combinação PostgreSQL + JDBC puro + HikariCP + Flyway + Docker multi-stage é o conjunto de competências mais cobrado em avaliação técnica de backend Java sênior no mercado internacional.
 
-### Definition of Done do épico
-- [x] Fluxo completo executável via CLI: cadastrar cliente → cadastrar livro → emprestar → devolver → emprestar novamente
-- [x] Regras de negócio (disponibilidade do livro, limite de empréstimos ativos) aplicadas corretamente
-- [x] Nenhuma exceção não tratada (`NullPointerException`, etc.) durante o fluxo feliz ou os fluxos de erro esperados
-- [x] Todas as histórias abaixo em status Done
-
-> ✅ **Épico E2 concluído.** Validado via testes manuais no terminal — todos os requisitos atendidos. Marco 1 (MVP) alcançado: a aplicação tem todas as funcionalidades básicas 100% funcionais.
-
-### Sprint
-Sprint 2 · Capacidade: ~20h/semana · Total: **17 pontos** (13 originais + 4 descobertos na revisão do épico: US-206 + US-207)
-
-### Mapeamento com o board do GitHub (Projects)
-| US | Issue | Status no board |
-|----|-------|------------------|
-| Epic E2 | #13 | Ready |
-| US-201 | #14 | In review |
-| US-202 | #15 | In review |
-| US-203 | #16 | In review |
-| US-204 | #17 | In progress |
-| US-205 | #18 | Ready |
-
-> Sincronizado manualmente a partir do board — este arquivo não é atualizado automaticamente pelo GitHub. Atualizar aqui sempre que o status mudar por lá.
-
-### Ordem de dependência
-```
-US-201 (busca de livro)
-└──> US-202 (sincronizar status do livro)
-└──> US-203 (devolução)
-└──> US-206 (reversão manual de OVERDUE — paliativo até E8)
-
-US-204 (busca de empréstimo) ── independente
-US-205 (limite de empréstimos) ── independente
-US-207 (fix NPE + busca por critério único na CLI) ── segue US-204
-```
+### Definition of Done do Épico E6
+- [ ] `docker-compose.dev.yml` sobe Postgres local, pronto para os repositórios JDBC (US-501)
+- [ ] Flyway aplica migrations versionadas e HikariCP gerencia o pool de conexões na inicialização (US-502)
+- [ ] `BookDbRepository`, `LoanDbRepository`, `CustomerDbRepository` implementam as interfaces de domínio via SQL puro, substituindo as implementações in-memory na Composition Root (US-502)
+- [ ] Fat JAR único e executável gerado via `maven-shade-plugin`, resolvendo TD05 (US-503)
+- [ ] Dockerfile multi-stage builda o Fat JAR e roda em imagem `eclipse-temurin:21-jre-alpine` (US-504)
+- [ ] `docker-compose.yml` de produção/integração sobe aplicação (CLI batch) + Postgres juntos, com a aplicação conectando ao banco via variáveis de ambiente (US-504)
+- [ ] Todas as 4 US em status Done
 
 ---
 
-## US-201 — Corrigir busca de livros disponíveis
+### US-501 — Ambiente de desenvolvimento local com Docker Compose (Postgres)
 
-**Story:** Como *sistema*, preciso localizar livros corretamente na busca, para que a validação de disponibilidade funcione e empréstimos possam ser criados.
+**Pontos:** 2
+**Depende de:** —
 
-**Pontos:** 2 · **Status:** ✅ Done (GitHub #14)
+**Story:** Como desenvolvedor, preciso de um `docker-compose.dev.yml` que suba um PostgreSQL local isolado, para poder implementar e testar manualmente os repositórios JDBC sem depender de instalação local do banco.
 
-### Cenários (BDD)
+**Cenários (BDD):**
 
 ```gherkin
-Scenario: Buscar livro existente por ISBN, sem filtro de status
-  Given um livro com ISBN "123-45-67890-12-3" e status AVAILABLE está cadastrado
-  When o sistema busca livros pelo ISBN "123-45-67890-12-3" sem filtro de status
-  Then o resultado deve conter exatamente esse livro
+Scenario: Postgres sobe via Docker Compose de desenvolvimento
+  Given o arquivo docker-compose.dev.yml na raiz do projeto
+  When o comando "docker compose -f docker-compose.dev.yml up -d" e executado
+  Then um container Postgres 17-alpine deve subir na porta configurada
+  And o banco deve aceitar conexoes com as credenciais definidas no compose
 
-Scenario: Buscar por ISBN filtrando por status que não corresponde
-  Given um livro com ISBN "X" está cadastrado com status UNAVAILABLE
-  When o sistema busca esse ISBN filtrando por status AVAILABLE
-  Then o resultado deve vir vazio
-
-Scenario: Buscar apenas por status, sem informar ISBN
-  Given existem livros com status AVAILABLE e status UNAVAILABLE cadastrados
-  When o sistema busca sem ISBN, filtrando por status AVAILABLE
-  Then o resultado deve conter apenas os livros com status AVAILABLE
-
-Scenario: Buscar ISBN inexistente
-  Given nenhum livro com ISBN "000-00-00000-00-0" está cadastrado
-  When o sistema busca por esse ISBN
-  Then o resultado deve vir vazio, sem lançar exceção
+Scenario: Dados do Postgres de desenvolvimento persistem entre restarts
+  Given o container Postgres de desenvolvimento em execucao com dados gravados
+  When o container e reiniciado (docker compose restart)
+  Then os dados gravados anteriormente devem continuar disponiveis
 ```
 
-### Tasks
-- [ ] Implementar composição de `Predicate<Book>` em `BookRepository.search()`, seguindo o mesmo padrão já usado em `LoanRepository.search()`
-- [ ] Tratar `ISBN` nulo/em branco como "sem filtro de ISBN"
-- [ ] Tratar `statuses` nulo ou vazio como "sem filtro de status"
-- [ ] Validar manualmente via CLI: cadastrar 2 livros com status diferentes, buscar por ISBN, buscar só por status
-- [ ] Documentar checklist de validação manual (ainda sem JUnit — isso é TD-05)
+**Tasks:**
+- Criar `docker-compose.dev.yml` com serviço `postgres:17-alpine`
+- Configurar volume nomeado para persistência de dados entre restarts
+- Configurar variáveis de ambiente via `.env` local (`.env.example` versionado, `.env` no `.gitignore`)
+- Documentar no README a seção "Local development"
+
+**Commits:**
+```
+build(docker): US-501 cria docker-compose de desenvolvimento com postgres 17-alpine
+docs(readme): US-501 documenta subida do ambiente de desenvolvimento local
+```
 
 ---
 
-## US-202 — Sincronizar status do livro com o empréstimo
+### US-502 — Persistência JDBC com HikariCP e Flyway
 
-**Story:** Como *sistema*, preciso sincronizar o status do livro com o ciclo do empréstimo, para impedir que o mesmo exemplar seja emprestado simultaneamente para mais de um cliente.
+**Pontos:** 8
+**Depende de:** US-501
 
-**Pontos:** 3 · **Status:** ✅ Done (GitHub #15)
-**Depende de:** US-201
+**Story:** Como desenvolvedor, preciso substituir os repositórios in-memory por implementações reais em PostgreSQL, usando JDBC puro, HikariCP para pool de conexões e Flyway para versionar o schema — plugando tudo nas interfaces de repositório já existentes no domínio, sem alterar contratos.
 
-### Cenários (BDD)
+**Cenários (BDD):**
 
 ```gherkin
-Scenario: Emprestar um livro disponível
-  Given um livro está com status AVAILABLE
-  When um empréstimo é criado para esse livro
-  Then o status do livro deve mudar para UNAVAILABLE
+Scenario: Flyway aplica migrations na inicializacao da aplicacao
+  Given scripts de migration em src/main/resources/db/migration (V1__..., V2__...)
+  When a aplicacao inicializa
+  Then o Flyway deve aplicar as migrations pendentes automaticamente
+  And o schema resultante deve refletir as tabelas book, customer e loan
 
-Scenario: Tentar emprestar um livro já emprestado
-  Given um livro está com status UNAVAILABLE
-  When um novo empréstimo é solicitado para o mesmo livro
-  Then o sistema deve lançar RuleViolationException informando indisponibilidade
-  And nenhum novo empréstimo deve ser criado
+Scenario: HikariCP gerencia o pool de conexoes
+  Given o HikariDataSource configurado no arranque da aplicacao
+  When multiplas operacoes de repositorio ocorrem em sequencia
+  Then as conexoes devem ser reaproveitadas do pool, sem esgotamento sob carga normal
 
-Scenario: Devolução libera o livro
-  Given um empréstimo ACTIVE existe para um livro com status UNAVAILABLE
-  When esse empréstimo é finalizado (US-203)
-  Then o status do livro deve voltar para AVAILABLE
+Scenario: BookDbRepository persiste e recupera livro corretamente
+  Given o banco Postgres com schema aplicado
+  When um Book e salvo via BookDbRepository.create()
+  Then getByIsbn() deve retornar o mesmo livro com todos os atributos integros
+
+Scenario: Constraint UNIQUE de email e respeitada pelo banco real
+  Given um Customer ja persistido com um email
+  When um segundo Customer e criado com o mesmo email
+  Then o banco deve rejeitar a operacao via constraint UNIQUE
+  And a excecao deve ser traduzida para excecao de dominio, nao vazar SQLException
+
+Scenario: LoanDbRepository.update() aplica mudanca de status via id
+  Given um Loan ja persistido no banco
+  When update() e chamado com o mesmo id e novo status
+  Then o registro persistido deve refletir o novo status
+  And nenhuma outra linha da tabela deve ser afetada
+
+Scenario: search() de Loan filtra corretamente via query SQL combinada
+  Given multiplos Loans persistidos com combinacoes distintas de customerId, ISBN e status
+  When search() e chamado com um subconjunto desses criterios
+  Then apenas os Loans que atendem a TODOS os criterios informados devem retornar
+
+Scenario: Composition Root troca repositorios in-memory por JDBC sem alterar usecases
+  Given o AppContext configurado para usar as implementacoes JDBC
+  When qualquer usecase de Book, Customer ou Loan e executado
+  Then o comportamento observavel deve ser identico ao das implementacoes in-memory
 ```
 
-### Tasks
-- [ ] Adicionar um método em `IBookRepository`/`BookRepository` para atualizar o status de um livro (ex: `changeStatus(String ISBN, BookStatus status)`) — ou reaproveitar `getByIsbn` + `book.changeStatus(...)` diretamente, já que `Book` é mutável
-- [ ] Em `CreateLoan.execute()`, após criar o empréstimo, acionar a mudança de status do livro para `UNAVAILABLE`
-- [ ] Nota técnica: como `Book.equals`/`hashCode` são baseados no ISBN (campo imutável), mutar o `status` de um `Book` já presente no `HashSet` é seguro — não corrompe a estrutura interna do `Set`
-- [ ] Validar manualmente: emprestar → tentar emprestar de novo (deve bloquear) → devolver → emprestar de novo (deve permitir)
+**Tasks:**
+- Adicionar dependências `org.postgresql:postgresql`, `com.zaxxer:HikariCP`, `org.flywaydb:flyway-core` (+ `flyway-database-postgresql`) ao módulo `infrastructure`
+- Criar scripts de migration Flyway (`V1__create_book_table.sql`, `V2__create_customer_table.sql`, `V3__create_loan_table.sql`), incluindo constraint `UNIQUE` em `customer.email`
+- Configurar `HikariDataSource` no arranque da aplicação (pool size e timeout conservadores para free tier)
+- Implementar `BookDbRepository`, `CustomerDbRepository`, `LoanDbRepository` no módulo `infrastructure`
+- Traduzir exceções de SQL (ex: violação de constraint) para exceções de domínio já existentes
+- Atualizar `AppContext` (Composition Root) para injetar as implementações JDBC no lugar das in-memory
+- Manter as implementações in-memory (uso futuro em testes), sem uso em produção
+- Atualizar README com variáveis de ambiente de conexão
 
-> ✅ **Implementado**, com um desvio da AC: usa `BookStatus.BORROWED` em vez de `UNAVAILABLE` — semanticamente melhor, mantido.
+**Commits:**
+```
+build(pom): US-502 adiciona postgresql, hikaricp e flyway ao modulo infrastructure
+build(flyway): US-502 cria migrations iniciais de book customer e loan
+feat(datasource): US-502 configura hikaricp no arranque da aplicacao
+feat(book-repository): US-502 implementa bookdbrepository via jdbc puro
+feat(customer-repository): US-502 implementa customerdbrepository via jdbc puro
+feat(loan-repository): US-502 implementa loandbrepository via jdbc puro
+fix(repositories): US-502 traduz sqlexception para excecoes de dominio
+refactor(composition-root): US-502 troca repositorios in-memory por jdbc no appcontext
+docs(readme): US-502 documenta variaveis de ambiente de conexao com o banco
+```
 
 ---
 
-## US-203 — Registrar devolução de empréstimo
+### US-503 — Empacotamento em Fat JAR (destrava TD05)
 
-**Story:** Como *atendente*, quero registrar a devolução de um empréstimo, para que o livro fique disponível novamente e o histórico do cliente seja atualizado.
+**Pontos:** 3
+**Depende de:** US-502
 
-**Pontos:** 5 · **Status:** ✅ Done (GitHub #16)
-**Depende de:** US-202
+**Story:** Como desenvolvedor, preciso de um artefato único e executável (Fat JAR) consolidando os módulos `domain`, `application` e `infrastructure`, para que a aplicação rode fora da IDE e possa ser empacotada em uma imagem Docker.
 
-### Cenários (BDD)
+**Cenários (BDD):**
 
 ```gherkin
-Scenario: Devolver um empréstimo ativo existente
-  Given um empréstimo ACTIVE existe para o cliente "C1" e o livro ISBN "X"
-  When o atendente registra a devolução informando cliente "C1" e ISBN "X"
-  Then o status do empréstimo deve mudar para FINISHED
-  And o livro deve voltar ao status AVAILABLE
+Scenario: Fat JAR e gerado com sucesso via Maven
+  Given o maven-shade-plugin configurado no pom.xml do modulo infrastructure
+  When o comando "mvn clean package" e executado na raiz
+  Then um jar unico executavel deve ser gerado em infrastructure/target/
 
-Scenario: Tentar devolver um empréstimo inexistente
-  Given não existe empréstimo ACTIVE para o cliente "C2" e o livro ISBN "Y"
-  When o atendente tenta registrar a devolução dessa combinação
-  Then o sistema deve informar "empréstimo não encontrado", sem lançar exceção não tratada
+Scenario: Fat JAR executa a aplicacao standalone
+  Given o fat jar gerado pelo build
+  When o comando "java -jar library-express.jar" e executado
+  Then a aplicacao deve iniciar corretamente, aplicando migrations e conectando ao banco
+  And nenhum erro de ClassNotFoundException ou NoClassDefFoundError deve ocorrer
 
-Scenario: Tentar devolver um empréstimo já finalizado
-  Given um empréstimo para cliente "C1" e ISBN "X" já está FINISHED
-  When o atendente tenta devolvê-lo novamente
-  Then o sistema deve informar que não há empréstimo ativo para essa combinação
+Scenario: Manifest aponta para a classe principal correta
+  Given o fat jar gerado
+  When o manifesto MANIFEST.MF e inspecionado
+  Then o atributo Main-Class deve apontar para a classe Application
 ```
 
-### Tasks
-- [ ] Criar usecase `FinishLoan` (`application/loan/usecase/FinishLoan.java`), seguindo o padrão dos demais usecases (construtor resolve o repositório, `execute(...)` contém a regra)
-- [ ] Usecase busca o empréstimo `ACTIVE` por `customerId` + `ISBN` via `loanRepository.search(...)`; lança `NotFoundException` se não encontrar
-- [ ] Altera o status para `FINISHED` e persiste via `loanRepository.update(...)`
-- [ ] Aciona a liberação do livro (integração com US-202)
-- [ ] Implementar `LoanCli.finishLoan(scan)`: coletar `customerId` e `ISBN`, chamar o usecase, tratar exceções
-- [ ] Conectar a opção de devolução ao menu do `LoanCli.init()` (hoje só existe `[1] New`, `[2] Search`, `[3] List` — falta a opção de devolução)
+**Tasks:**
+- Configurar `maven-shade-plugin` no `infrastructure/pom.xml`, consolidando classes dos módulos irmãos e dependências externas
+- Configurar `Main-Class` no manifest
+- Resolver conflitos de merge de recursos (ex: `META-INF/services`) via `ServicesResourceTransformer`, caso ocorram
+- Atualizar o registro do TD05: status "Destravado" → "Resolvido — US-503 (E6)"
+- Documentar comando de build e execução via `java -jar` no README
 
-> ✅ **Implementado** como usecase `ReturnLoan`, com dois desvios da AC, ambos mantidos: (1) busca por **`loanId`** direto em vez de `customerId + ISBN` — evita ambiguidade se o cliente tiver o mesmo livro em datas diferentes; o `id` já é exposto no JSON de busca/listagem, então o fluxo funciona (busca/lista → pega o `id` → devolve); (2) se o empréstimo estiver atrasado no momento da devolução, o status vira `OVERDUE` em vez de `FINISHED` — antecipação inteligente do E8, mas gerou o bug crítico documentado em **US-206**.
+**Commits:**
+```
+build(shade): US-503 configura maven-shade-plugin no modulo infrastructure
+build(manifest): US-503 aponta main-class para a classe application
+docs(td05): US-503 resolve TD05 registrando decisao atualizada no backlog
+docs(readme): US-503 documenta build e execucao via fat jar
+```
 
 ---
 
-## US-204 — Buscar empréstimos por qualquer critério isolado
+### US-504 — Containerização via Docker Multi-stage + Compose de Aplicação
 
-**Story:** Como *atendente*, quero buscar empréstimos usando apenas um critério (cliente, livro ou status), para consultar o histórico sem precisar preencher todos os campos.
+**Pontos:** 5
+**Depende de:** US-503
 
-**Pontos:** 2 · **Status:** ✅ Done (GitHub #17)
-**Independente** (pode ser feita em paralelo com US-202/203)
+**Story:** Como desenvolvedor, preciso de uma imagem Docker leve, construída em múltiplos estágios, e de um `docker-compose.yml` que suba a aplicação (CLI batch) e o PostgreSQL juntos, para entregar o ambiente 100% replicável necessário ao Marco 2.
 
-### Cenários (BDD)
+**Cenários (BDD):**
 
 ```gherkin
-Scenario: Buscar somente por cliente
-  Given empréstimos existem para os clientes "C1" e "C2"
-  When a busca é feita apenas com customerId = "C1"
-  Then o resultado deve conter apenas empréstimos de "C1"
+Scenario: Imagem Docker builda a aplicacao em estagio separado
+  Given o Dockerfile multi-stage na raiz do projeto
+  When "docker build" e executado
+  Then o estagio de build deve compilar os submodulos e gerar o fat jar
+  And o estagio de runtime deve conter apenas o jre e o jar, sem ferramentas de build
 
-Scenario: Buscar somente por status
-  Given existem empréstimos com status ACTIVE e status FINISHED
-  When a busca é feita apenas com status = ACTIVE
-  Then o resultado deve conter apenas os empréstimos ACTIVE
+Scenario: Imagem final e leve e nao contem Maven nem JDK completo
+  Given a imagem final gerada pelo multi-stage build
+  When o tamanho e conteudo da imagem sao inspecionados
+  Then a imagem deve ser baseada em eclipse-temurin:21-jre-alpine
+  And nao deve conter o Maven nem o JDK completo do estagio de build
 
-Scenario: Buscar sem nenhum critério
-  Given qualquer estado do sistema
-  When a busca é feita sem nenhum critério preenchido
-  Then o sistema deve lançar IllegalArgumentException "At least one search criteria must be provided"
+Scenario: Aplicacao conecta ao Postgres via variaveis de ambiente no container
+  Given a aplicacao rodando em container com variaveis de ambiente de conexao configuradas
+  When o container inicializa
+  Then a aplicacao deve conectar ao Postgres apontado pelas variaveis, sem valores hardcoded
 
-Scenario: Buscar com status nulo mas outro critério preenchido
-  Given empréstimos existem para o cliente "C1"
-  When a busca é feita com customerId = "C1" e status nulo
-  Then o resultado não deve lançar NullPointerException
-  And deve retornar os empréstimos de "C1"
+Scenario: Docker Compose sobe aplicacao e banco juntos
+  Given o docker-compose.yml na raiz do projeto com os servicos app e postgres
+  When "docker compose up" e executado
+  Then ambos os containers devem subir
+  And a aplicacao deve aguardar o banco estar saudavel antes de conectar (healthcheck/depends_on)
+  And a aplicacao deve executar corretamente como CLI batch apos a subida completa
 ```
 
-### Tasks
-- [ ] Corrigir `hasAnyCriteria` em `SearchLoans`: trocar os `&&` por `||` entre os três critérios
-- [ ] Corrigir a chamada `loanRepository.search(...)`: hoje monta sempre `Set.of(filter.status())`, que lança NPE se `status` for nulo — ajustar para passar `null` (ou conjunto vazio) quando o status não for informado
-- [ ] Implementar `LoanCli.searchLoan(scan)`: coletar os critérios de forma opcional e chamar o usecase
-- [ ] Validar manualmente os 4 cenários acima
+**Tasks:**
+- Criar `Dockerfile` multi-stage: estágio de build (Maven + Java 21) e estágio de runtime (`eclipse-temurin:21-jre-alpine`)
+- Parametrizar conexão com banco via variáveis de ambiente
+- Criar `docker-compose.yml` (produção/integração, distinto do `docker-compose.dev.yml` da US-501) com serviços `app` e `postgres:17-alpine`
+- Configurar `healthcheck` no serviço Postgres e `depends_on` com condição de saúde no serviço `app`
+- Validar tamanho final da imagem e ausência de ferramentas de build no runtime
+- Documentar seção "Running with Docker" no README
 
----
-
-## US-205 — Formalizar regra do limite de empréstimos ativos
-
-**Story:** Como *sistema*, preciso aplicar corretamente o limite de empréstimos ativos por cliente, para manter a regra de negócio clara, nomeada e testável.
-
-**Pontos:** 1 · **Status:** ✅ Done (GitHub #18)
-**Independente**
-
-### Cenários (BDD)
-
-```gherkin
-Scenario: Cliente sem empréstimos ativos
-  Given o cliente "C1" não possui empréstimos ACTIVE ou OVERDUE
-  When um novo empréstimo é solicitado
-  Then a validação deve passar
-
-Scenario: Cliente com 1 empréstimo ativo
-  Given o cliente "C1" possui 1 empréstimo ACTIVE
-  When um novo empréstimo é solicitado
-  Then a validação deve passar (limite de 2 ainda não atingido)
-
-Scenario: Cliente com 2 empréstimos ativos
-  Given o cliente "C1" possui 2 empréstimos ACTIVE
-  When um novo empréstimo é solicitado
-  Then deve lançar RuleViolationException "Customer has reached the maximum of 2 active loans"
-
-Scenario: Cliente com empréstimo em atraso
-  Given o cliente "C1" possui 1 empréstimo OVERDUE
-  When um novo empréstimo é solicitado
-  Then deve lançar RuleViolationException informando pendência de devolução em atraso
+**Commits:**
+```
+build(docker): US-504 cria dockerfile multi-stage para build e runtime
+build(docker): US-504 cria docker-compose de aplicacao com app e postgres 17-alpine
+feat(config): US-504 parametriza conexao com banco via variaveis de ambiente
+docs(readme): US-504 documenta build e execucao via docker compose
 ```
 
-### Tasks
-- [ ] Criar constante nomeada `MAX_ACTIVE_LOANS = 2` (sugestão: em `infrastructure/config/Constant.java`, que já existe)
-- [ ] Atualizar `LoanEligibilityValidator` para usar a constante em vez do número mágico atual
-- [ ] Corrigir a mensagem de erro para refletir o valor real do limite (hoje o texto diz "more than one", mas a regra permite 2)
-- [ ] Validar manualmente os 4 cenários acima
+## Histórico de épicos concluídos
 
-> ✅ **Implementado** — código real usa `Loan.MAX_ACTIVE_LOANS = 2` (constante na própria entidade, em vez de `Constant.java` — decisão válida, mais coesa com DDD). Validação com `>=` correta.
+### E0 — Organização e limpeza inicial
 
----
+✅ Concluído · Iteration 1 (Jul 07–Jul 20)
 
-## US-206 — Reversão manual de empréstimo travado em atraso (paliativo até E8)
+### E1 — Foundation
 
-**Story:** Como *atendente*, quero reverter manualmente o status de um empréstimo travado em `OVERDUE`, para desbloquear um cliente que já devolveu o livro fisicamente, enquanto o sistema de reputação (E8) não existe.
+✅ Concluído
 
-**Pontos:** 2 · **Status:** ✅ Done
+Objetivo: preparar a base da aplicação para suportar novas interfaces sem alterar as regras de negócio — Services desacopladas de I/O, interação centralizada na CLI.
 
-**Origem:** `ReturnLoan` marca o empréstimo como `OVERDUE` (em vez de `FINISHED`) quando a devolução acontece fora do prazo — antecipando o E8. Mas `LoanEligibility.check()` bloqueia qualquer cliente com empréstimo `OVERDUE`, sem limite de tempo, e nada reverte esse status depois. Resultado: **um único atraso bloqueia o cliente permanentemente.** Isso é consequência direta de termos adiado o score/multa (E8) — essa US é o paliativo até lá, não a solução definitiva.
+### E2 — MVP: Ciclo de vida do empréstimo
 
-### Cenários (BDD)
+✅ Concluído · Sprint 2 · 17 pontos (US-201 a US-207)
 
-```gherkin
-Scenario: Reverter empréstimo OVERDUE para FINISHED
-  Given um empréstimo existe com status OVERDUE
-  When o atendente aciona a reversão manual desse empréstimo
-  Then o status muda para FINISHED
-  And o cliente deixa de estar bloqueado por esse empréstimo na próxima tentativa de novo empréstimo
+Entregou o fluxo completo via CLI: cadastro de cliente/livro, empréstimo, devolução, respeitando regras de negócio (disponibilidade, limite de empréstimos ativos). Marco 1 (MVP) alcançado. Tag `v0.1.1`.
 
-Scenario: Tentar reverter empréstimo que não está OVERDUE
-  Given um empréstimo está com status ACTIVE ou FINISHED
-  When o atendente tenta aplicar a reversão manual
-  Then o sistema deve rejeitar, informando que a ação só se aplica a empréstimos OVERDUE
+Detalhe completo (Gherkin, tasks, desvios de implementação): ver Issues #13–#18 no GitHub Projects.
 
-Scenario: Tentar reverter empréstimo inexistente
-  Given não existe empréstimo com o ID informado
-  When o atendente tenta reverter
-  Then o sistema deve informar "empréstimo não encontrado"
-```
+### E3 — Inversão de dependência manual + padronização de repositórios
 
-### Tasks
-- [ ] Criar usecase restrito à transição `OVERDUE` → `FINISHED` apenas (não um editor de status genérico — evita reativar/corromper empréstimos por engano)
-- [ ] Implementar ação no `LoanCli` (nova opção de menu, com rótulo claro, ex: "Clear overdue flag")
-- [ ] Comentário no código explícito: `// Paliativo até E8 (reputação) existir — remover quando o bloqueio por tempo determinado for implementado`
-- [ ] Validar manualmente os 3 cenários
+✅ Concluído · Sprint 3 · 19 pontos
 
----
+| US | Descrição | Pontos | Status |
+|----|-----------|--------|--------|
+| US-301 | Injetar `InMemoryBookRepository` via construtor nos usecases de Book | 3 | ✅ Done |
+| US-302 | Injetar `InMemoryLoanRepository` via construtor nos usecases de Loan | 3 | ✅ Done |
+| US-303 | Composition Root para montagem manual dos usecases | 5 | ✅ Done |
+| US-304 | Corrigir contrato `equals`/`hashCode` de Book, Customer e Loan (TD01) | 3 | ✅ Done |
+| US-305 | Padronizar nomenclatura de repositórios (remover prefixo `I`), converter enum→classe, reorganizar pastas para JDBC | 5 | ✅ Done |
 
-## US-207 — Corrigir NPE latente e permitir busca de empréstimo por critério único na CLI
+Detalhe completo: ver Issues correspondentes no GitHub Projects.
 
-**Story:** Como *atendente*, quero buscar empréstimos informando apenas um critério, sem ser obrigado a preencher todos os campos, e sem risco do sistema quebrar quando um campo não for informado.
+### E4 — Fundação de Testes Automatizados (JUnit 5 + Mockito)
 
-**Pontos:** 2 · **Status:** ✅ Done
+✅ Concluído · Sprint 4 · **15 pontos** (2 + 5 + 8) — revisado de 20 pts após realocação de escopo
 
-**Origem:** US-204 corrigiu o `hasAnyCriteria` (agora usa `||` corretamente, em `SearchLoanValidator`), mas dois problemas persistem: (1) `SearchLoans.execute()` ainda envolve `filter.status()` em `Set.of(...)` sempre — se `status` for nulo, `Set.of(null)` lança `NullPointerException`; (2) `LoanCli.searchLoan()` obriga o atendente a digitar os 3 campos sempre, então o bug do item 1 nunca aparece em teste manual, mas o objetivo original da US-204 (buscar por critério isolado) não está de fato disponível pra quem usa o sistema.
+| US | Descrição | Pontos | Status |
+|----|-----------|--------|--------|
+| US-401 | Configuração do ambiente de testes: JUnit 5, Mockito, coverage-report (JaCoCo aggregate) | 2 | ✅ Done |
+| US-402 | Testes da camada Domain: Value Objects e entidades, zero dependência de mock/infra | 5 | ✅ Done |
+| US-403 | Testes de camada Application via Mockito: usecases de Book/Loan e validators, substituindo integralmente os Fakes manuais | 8 | ✅ Done |
 
-### Cenários (BDD)
+**Mudança de escopo registrada:**
+- Fakes manuais (`FakeBookRepository`, `FakeLoanRepository`, `FakeCustomerRepository`) substituídos por Mockito nativo (`@Mock` + `@InjectMocks`). Justificativa técnica em ADR (task da US-401).
+- US-404 (Testes de camada Infrastructure, 5 pts originais) **removida do E4 e realocada para o E7**, para execução com Testcontainers + banco real, alinhada à chegada do JDBC (E6) — ver TD06.
 
-```gherkin
-Scenario: Buscar deixando o status em branco na CLI
-  Given o atendente está no fluxo de busca de empréstimos
-  When ele pressiona Enter sem digitar um status
-  Then a busca ocorre normalmente, sem lançar NullPointerException, tratando como "sem filtro de status"
-
-Scenario: Buscar deixando ISBN ou customerId em branco
-  Given o atendente deixa o ISBN ou o customerId vazio
-  When a busca é executada
-  Then esse campo não restringe o resultado
-
-Scenario: Buscar sem preencher nenhum campo
-  Given todos os campos são deixados em branco
-  When a busca é executada
-  Then o sistema rejeita com "At least one search criteria must be provided" (comportamento já existente, preservado)
-
-Scenario: Informar um status inválido
-  Given o atendente digita um valor que não corresponde a nenhum LoanStatus
-  When a busca é executada
-  Then o sistema informa um erro tratado, sem quebrar a aplicação (hoje IllegalArgumentException não é capturada)
-```
-
-### Tasks
-- [ ] Corrigir `SearchLoans.execute()`: parar de envolver `filter.status()` sempre em `Set.of(...)`; tratar nulo como "sem filtro"
-- [ ] Ajustar `LoanCli.searchLoan()` pra aceitar Enter vazio em cada campo, tratando entrada vazia como "não informado"
-- [ ] Capturar `IllegalArgumentException` de `LoanStatus.valueOf()` quando o atendente digitar um status inválido
-- [ ] Corrigir rótulo confuso no menu do `LoanCli`: opção `[6] - Return` hoje só sai do submenu (`loop = false`) — renomear pra "Back"/"Voltar", já que a devolução real está na opção `[3] - Devolution`
-- [ ] Validar manualmente os cenários acima
-
----
-
-## Backlog de Débito Técnico (E2 — pós-MVP, não bloqueante)
-
-| ID | Item | Descrição | Pontos (estimativa) |
-|----|------|-----------|----------------------|
-| TD-01 | Contrato `equals`/`hashCode` quebrado | `Book`: `hashCode` usa `year`, `equals` usa `ISBN` (campos diferentes = contrato violado). `Customer`: `equals` usa OR entre ID e e-mail, o que quebra transitividade | 3 |
-| TD-02 | `WaitingList` é código morto | Entidade existe, mas sem repository, usecase ou CLI — decidir: implementar a feature ou remover | 3 |
-| TD-03 | `BookUnavailableException` não utilizada | Existe mas `RuleViolationException` já cobre esse caso — avaliar remoção ou uso correto | 1 |
-| TD-04 | Ausência de Inversão de Dependência | Usecases instanciam `BookRepository.DB` / `LoanRepository.DB` direto no construtor, mesmo dependendo da interface — dificulta testes unitários isolados | 5 |
-| TD-05 | Nenhuma cobertura de testes automatizados | Introduzir JUnit 5 e cobrir as usecases principais (merece sprint próprio, dedicado a aprender a ferramenta) | 8 |
-
----
+Detalhe completo (Gherkin, tasks, commits): ver Issues correspondentes no GitHub Projects.
 
 ## Convenção de commits
 
-Segue [Conventional Commits](https://www.conventionalcommits.org/), commits de linha única (sem corpo/rodapé — fluxo via terminal), com o ID da US logo após os dois-pontos:
+Segue Conventional Commits, commits de linha única (sem corpo/rodapé — fluxo via terminal), com o ID da US logo após os dois-pontos:
 
 ```
 <tipo>(<escopo>): <ID> <descrição no imperativo, minúsculo, sem ponto final>
 ```
 
-- Sem fluxo de Pull Request ainda (ver E6 no roadmap), o commit vai direto pra `develop` — não há auto-close de Issue. Ao concluir uma US, feche a Issue manualmente no board.
-- Múltiplos commits na mesma US: todos repetem o mesmo ID (`US-XXX`) no início da descrição.
+Sem fluxo de Pull Request ainda (ver E8 no roadmap), o commit vai direto pra `develop` — não há auto-close de Issue. Ao concluir uma US, feche a Issue manualmente no board.
 
-**Mapeamento de tipo por história (Sprint 2):**
-
-| US | Tipo | Escopo sugerido |
-|----|------|------------------|
-| US-201 | `fix` | `book-repository` |
-| US-202 | `fix` | `loan` |
-| US-203 | `feat` | `loan` |
-| US-204 | `fix` | `loan-repository` |
-| US-205 | `fix` | `loan-validator` |
-
-**Exemplos:**
-```
-fix(book-repository): US-201 implementa filtro de busca por isbn e status
-fix(loan): US-202 sincroniza status do livro ao criar e finalizar emprestimo
-feat(loan): US-203 implementa devolucao de emprestimo
-fix(loan-repository): US-204 corrige criterio de busca opcional e npe de status nulo
-fix(loan-validator): US-205 formaliza limite de emprestimos ativos
-```
-
----
+Múltiplos commits na mesma US: todos repetem o mesmo ID (`US-XXX`) no início da descrição.
 
 ## Convenção de versionamento
 
-Segue [SemVer](https://semver.org/) (`MAJOR.MINOR.PATCH`):
+Segue SemVer (`MAJOR.MINOR.PATCH`):
 
-- **`0.y.z`** enquanto o projeto está em desenvolvimento inicial — contratos internos (arquitetura, persistência, framework) ainda podem mudar sem aviso. `1.0.0` fica reservado pra quando o sistema estabilizar (por volta da Fase 3).
-- **Sufixos `alpha`/`beta`/`rc`** só fazem sentido a partir do **Marco 2** (quando a API REST existir) — eles qualificam a estabilidade de uma interface que outros consomem; um CLI local não tem esse tipo de "consumidor" externo, então o rótulo ficaria sem função antes disso.
-- **`-SNAPSHOT`** no `pom.xml` durante desenvolvimento contínuo; a tag/release usa a versão limpa.
+- `0.y.z` enquanto o projeto está em desenvolvimento inicial — contratos internos (arquitetura, persistência, framework) ainda podem mudar sem aviso. `1.0.0` fica reservado pra quando o sistema estabilizar (por volta da Fase 3).
+- Sufixos `alpha`/`beta`/`rc` só fazem sentido a partir do Marco 2 (quando a API REST existir).
+- `SNAPSHOT` no `pom.xml` durante desenvolvimento contínuo; a tag/release usa a versão limpa.
 
 **Tags:**
+
 | Tag | Marco | Data |
 |-----|-------|------|
-| `v0.1.0` | Marco 1 — MVP (Épico E2 concluído) | ver histórico do Git |
-
----
+| v0.1.1 | Marco 1 — MVP (Épico E2 concluído) | ver histórico do Git |
 
 ## Convenções do board
 
 - **Pontos:** escala Fibonacci simplificada (1, 2, 3, 5, 8)
 - **Status:** 🔲 To Do · 🟡 In Progress · 🔵 In Review · ✅ Done
-- **Numeração de história:** `US-{sprint}{sequencial}` (ex: US-201 = Sprint 2, item 1)
+- **Numeração de história:** `US-{sprint}{sequencial}` (ex: US-401 = Sprint 4, item 1)
 - **Numeração de débito técnico:** `TD-{sequencial}`, sem vínculo fixo a sprint até ser priorizado
 - **Cenários BDD:** formato Gherkin (Given/When/Then), usados como critério de aceite formal de cada história
 
 ---
 
-*Última atualização: Épico E2 concluído — Marco 1 (MVP) alcançado. Validado via testes manuais no terminal.*
+**Última atualização:** Épico E6 (fusão E5+E6 — Persistência Real JDBC/PostgreSQL + Containerização Docker) refinado e pronto para execução: 18 pts (2+8+3+5), Sprint 5, US-501 a US-504. E5 descontinuado como bloco isolado, escopo absorvido pelo E6 — linha mantida na tabela de Épicos para rastreabilidade. TD05 (Fat JAR) destravado e realocado para US-503, revertendo o congelamento até E8 registrado no E3. Postgres fixado em `17-alpine`; aplicação permanece CLI batch neste épico (servidor HTTP fica reservado para o E8). Épico E4 concluído (15 pts — 2+5+8; US-401 a US-403), histórico completo movido para as Issues do GitHub Projects.
