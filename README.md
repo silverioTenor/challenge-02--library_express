@@ -44,7 +44,7 @@ library_express--api
 │       │   ├── book             (dto, mapper, usecase, validator)
 │       │   ├── customer         (dto, mapper, usecase)
 │       │   └── loan             (dto, usecase, validator)
-│       └── test/java/org.libraryexpress.application   (JUnit 5 — usecase tests, fake repositories)
+│       └── test/java/org.libraryexpress.application   (JUnit 5 + Mockito — usecase tests, mocked repositories)
 │
 ├── infrastructure
 │   ├── pom.xml
