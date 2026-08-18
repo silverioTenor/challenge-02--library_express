@@ -1,6 +1,7 @@
 package org.libraryexpress.infrastructure;
 
 import org.libraryexpress.infrastructure.cli.ManagementCli;
+import org.libraryexpress.infrastructure.config.AppContext;
 import org.libraryexpress.infrastructure.config.database.ConnectionProvider;
 import org.libraryexpress.infrastructure.config.database.MigrationRunner;
 
@@ -15,6 +16,21 @@ public class Application {
 
         System.out.println("Starting LibraryExpress infrastructure pipeline...");
 
+        ConnectionProvider connectionProvider = prepareDatabaseConnection();
+
+        AppContext context = new AppContext(connectionProvider);
+
+        System.out.println("Application booted successfully! Ready for executions.");
+
+        initCLI(context, connectionProvider);
+    }
+
+    private static void initCLI(AppContext context, ConnectionProvider connectionProvider) {
+        var mgmt = new ManagementCli(context, connectionProvider);
+        mgmt.app();
+    }
+
+    private static ConnectionProvider prepareDatabaseConnection() {
         // 1. Initialize the managed connection pool resource
         ConnectionProvider connectionProvider = new ConnectionProvider();
 
@@ -33,15 +49,12 @@ public class Application {
                 System.out.println("Database resources released safely.");
             }));
 
-            System.out.println("Application booted successfully! Ready for usecase executions.");
-
         } catch (Exception e) {
             System.err.println("FATAL: Application startup failed dynamically: " + e.getMessage());
             connectionProvider.close();
             System.exit(1);
         }
 
-        var mgmt = new ManagementCli(connectionProvider);
-        mgmt.app();
+        return connectionProvider;
     }
 }

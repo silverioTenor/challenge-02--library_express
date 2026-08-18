@@ -12,9 +12,7 @@ public class ManagementCli {
     private final BookCli bookCli;
     private final LoanCli loanCli;
 
-    public ManagementCli(ConnectionProvider connectionProvider) {
-        AppContext context = new AppContext();
-
+    public ManagementCli(AppContext context, ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
         this.customerCli = new CustomerCli(context);
         this.bookCli = new BookCli(context);

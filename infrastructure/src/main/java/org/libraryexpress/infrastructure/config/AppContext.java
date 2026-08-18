@@ -14,10 +14,12 @@ import org.libraryexpress.domain.loan.validator.LoanEligibilityValidator;
 import org.libraryexpress.application.loan.mapper.LoanMapper;
 import org.libraryexpress.application.loan.usecase.*;
 import org.libraryexpress.application.loan.validator.SearchLoanValidator;
-import org.libraryexpress.infrastructure.repository.InMemory.InMemoryBookRepository;
-import org.libraryexpress.infrastructure.repository.InMemory.InMemoryCustomerRepository;
-import org.libraryexpress.infrastructure.repository.InMemory.InMemoryLoanRepository;
+import org.libraryexpress.infrastructure.config.database.ConnectionProvider;
+import org.libraryexpress.infrastructure.repository.jdbc.BookDbRepository;
+import org.libraryexpress.infrastructure.repository.jdbc.CustomerDbRepository;
+import org.libraryexpress.infrastructure.repository.jdbc.LoanDbRepository;
 
+import javax.sql.DataSource;
 import java.time.Clock;
 
 public class AppContext {
@@ -40,34 +42,35 @@ public class AppContext {
     private final ReturnLoan returnLoan;
     private final CloseOverdueLoan closeOverdueLoan;
 
-    public AppContext() {
+    public AppContext(ConnectionProvider connectionProvider) {
+        DataSource dataSource = connectionProvider.getDataSource();
 
         // CUSTOMER
-        InMemoryCustomerRepository inMemoryCustomerRepository = new InMemoryCustomerRepository();
+        CustomerDbRepository customerRepository = new CustomerDbRepository(dataSource);
 
-        this.createCustomer = new CreateCustomer(inMemoryCustomerRepository, CustomerMapper.INSTANCE);
-        this.findCustomer = new FindCustomer(inMemoryCustomerRepository, CustomerMapper.INSTANCE);
-        this.listCustomers = new ListCustomers(inMemoryCustomerRepository, CustomerMapper.INSTANCE);
-        this.updateCustomerEmail = new UpdateCustomerEmail(inMemoryCustomerRepository, CustomerMapper.INSTANCE);
+        this.createCustomer = new CreateCustomer(customerRepository, CustomerMapper.INSTANCE);
+        this.findCustomer = new FindCustomer(customerRepository, CustomerMapper.INSTANCE);
+        this.listCustomers = new ListCustomers(customerRepository, CustomerMapper.INSTANCE);
+        this.updateCustomerEmail = new UpdateCustomerEmail(customerRepository, CustomerMapper.INSTANCE);
 
         // BOOK
-        InMemoryBookRepository inMemoryBookRepository = new InMemoryBookRepository();
-        BookAvailabilityValidator bookAvailabilityValidator = new BookAvailabilityValidator(inMemoryBookRepository);
+        BookDbRepository bookRepository = new BookDbRepository(dataSource);
+        BookAvailabilityValidator bookAvailabilityValidator = new BookAvailabilityValidator(bookRepository);
 
-        this.registerBook = new RegisterBook(inMemoryBookRepository, BookMapper.INSTANCE);
-        this.findBook = new FindBook(inMemoryBookRepository, BookMapper.INSTANCE);
-        this.listBooks = new ListBooks(inMemoryBookRepository, BookMapper.INSTANCE);
+        this.registerBook = new RegisterBook(bookRepository, BookMapper.INSTANCE);
+        this.findBook = new FindBook(bookRepository, BookMapper.INSTANCE);
+        this.listBooks = new ListBooks(bookRepository, BookMapper.INSTANCE);
 
         // LOAN
-        InMemoryLoanRepository inMemoryLoanRepository = new InMemoryLoanRepository();
-        LoanEligibilityValidator loanEligibilityValidator = new LoanEligibilityValidator(inMemoryLoanRepository);
+        LoanDbRepository loanRepository = new LoanDbRepository(dataSource);
+        LoanEligibilityValidator loanEligibilityValidator = new LoanEligibilityValidator(loanRepository);
         SearchLoanValidator searchLoanValidator = new SearchLoanValidator();
 
-        this.createLoan = new CreateLoan(inMemoryLoanRepository, inMemoryBookRepository, loanEligibilityValidator, bookAvailabilityValidator);
-        this.searchLoans = new SearchLoans(inMemoryLoanRepository, LoanMapper.INSTANCE, searchLoanValidator);
-        this.listLoans = new ListLoans(inMemoryLoanRepository, LoanMapper.INSTANCE);
-        this.returnLoan = new ReturnLoan(inMemoryLoanRepository, inMemoryBookRepository, Clock.systemDefaultZone());
-        this.closeOverdueLoan = new CloseOverdueLoan(inMemoryLoanRepository);
+        this.createLoan = new CreateLoan(loanRepository, bookRepository, loanEligibilityValidator, bookAvailabilityValidator);
+        this.searchLoans = new SearchLoans(loanRepository, LoanMapper.INSTANCE, searchLoanValidator);
+        this.listLoans = new ListLoans(loanRepository, LoanMapper.INSTANCE);
+        this.returnLoan = new ReturnLoan(loanRepository, bookRepository, Clock.systemDefaultZone());
+        this.closeOverdueLoan = new CloseOverdueLoan(loanRepository);
     }
 
     public CreateCustomer getCreateCustomer() {
