@@ -1,7 +1,7 @@
 # Library Express
 A backend application for library management built in Java.
 
-> **Note on language:** this README is in English (public-facing documentation). Planning documents (`BACKLOG.md`, `VISION.md`) are in Portuguese — the working language used to think through and discuss the project's evolution. This split is intentional, not an inconsistency.
+> **Note on language:** every document in this project — this README, `docs/BACKLOG.md`, and everything under `docs/adr/` — is written in English. Portuguese was previously used as the working language for planning documents (`BACKLOG.md`, `VISION.md`); that split has been retired in favor of a single language across the whole project.
 
 This project is part of my **Java Journey**, a long-term learning path focused on mastering Java and software engineering by evolving a real-world application through incremental development, guided by a real agile process (epics, sprints, user stories, tasks).
 
@@ -62,9 +62,9 @@ library_express--api
 
 Dependency direction between modules: `infrastructure → application → domain`. `domain` has no dependency on the other two — it's pure business logic and contracts. `coverage-report` depends on all three, but only to aggregate their test coverage data — it contains no production code.
 
-It currently uses plain Java, without dependency injection or application frameworks. This is deliberate: new technologies (a web framework, a real database, etc.) are introduced only when they solve a real problem the project has reached — not upfront.
+It currently uses plain Java, without dependency injection or application frameworks. This is deliberate: new technologies (a real database, containerization, etc.) are introduced only when they solve a real problem the project has reached — not upfront. Unlike earlier drafts of the roadmap, this is not a temporary state pending a future Spring Boot migration: Library Express stays framework-free for its entire lifecycle by design. The framework step of the author's learning path happens in a separate, Spring-first project instead. Full rationale: [ADR 0001](./docs/adr/0001-keep-library-express-framework-free.md).
 
-Architectural decisions (like the module split above) are recorded as ADRs in [`docs/adr/`](./docs/adr/). A high-level C4 view of the modules lives in [`docs/architecture/`](./docs/architecture/).
+Architectural decisions (like the module split above, and the framework-free scope) are recorded as ADRs in [`docs/adr/`](./docs/adr/). A high-level C4 view of the modules lives in [`docs/architecture/`](./docs/architecture/).
 
 ## 🚀 Tech Stack
 - Java 21
@@ -111,10 +111,11 @@ Rather than building everything at once, this project evolves through iterative 
 
 Instead of introducing frameworks and architectural patterns from the beginning, each sprint solves a real problem found in the application. New technologies are adopted only when they provide clear value to the project's evolution.
 
-- **[BACKLOG.md](./docs/BACKLOG.md)** — active engineering roadmap: current epic, sprint backlog, BDD acceptance criteria, technical debt, commit conventions.
-- **[VISION.md](./docs/VISION.md)** — long-term product vision (not yet in execution): future expansions such as a self-service platform, marketplace, payments, and eventual microservices/event-driven evolution.
-- **[docs/adr/](./docs/adr/)** — Architecture Decision Records.
+- **[docs/BACKLOG.md](./docs/BACKLOG.md)** — active engineering roadmap: current epic, sprint backlog, BDD acceptance criteria, technical debt, commit conventions.
+- **[docs/adr/](./docs/adr/)** — Architecture Decision Records, including the decision to keep this project framework-free for its full lifecycle and to retire the long-term vision document below.
 - **[docs/architecture/](./docs/architecture/)** — C4 diagrams and structural documentation.
+
+A long-term product vision document (`VISION.md`) used to live alongside the backlog, describing aspirational, non-executable future expansions (a self-service platform, a marketplace, payments, subscriptions, microservices). It has been retired — Library Express's scope is bounded to what's tracked in `BACKLOG.md`. See [`docs/VISION.md`](./docs/VISION.md) for the retirement note and [ADR 0001](./docs/adr/0001-keep-library-express-framework-free.md) for the full rationale.
 
 ## 📄 License
 MIT
