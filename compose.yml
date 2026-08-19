@@ -16,6 +16,28 @@ services:
       timeout: 5s
       retries: 5
 
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: library_express_app
+    ports:
+      - "8080:8080"
+    # ----------------=========================================================
+    # MANDATORY FOR INTERACTIVE CLI APPLICATIONS (SCANNER) INSIDE DOCKER:
+    # ----------------=========================================================
+    tty: true          # Allocates a pseudo-TTY terminal descriptor for output rendering
+    stdin_open: true   # Keeps the standard input stream (System.in) persistently open for keyboard capture
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   postgres_data:
     driver: local
