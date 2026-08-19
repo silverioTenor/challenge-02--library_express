@@ -67,9 +67,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>org.libraryexpress.infrastructure.Application</mainClass>
-                </configuration>
             </plugin>
 
             <!-- Shade Plugin: Exclusive deployment bundler configuration for this module -->

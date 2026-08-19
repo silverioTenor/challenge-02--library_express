@@ -132,6 +132,9 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
                     <version>${codehaus.mojo.version}</version>
+                    <configuration>
+                        <mainClass>org.libraryexpress.infrastructure.Application</mainClass>
+                    </configuration>
                 </plugin>
 
                 <plugin>
