@@ -1,49 +1,55 @@
-# Library Express — Agile Backlog
+# 📚 Backlog
+
+## Library Express — Agile Backlog
 
 Java study project, evolved incrementally through real sprints.
-
 PO/Scrum Master: Claude · Dev: Silvério
 
-> **Note on language:** this document, `README.md`, and every ADR under `docs/adr/` are written in English. Portuguese was previously used as the internal planning language for `BACKLOG.md`/`VISION.md`; that split has been retired in favor of a single language across the whole project. `VISION.md` itself has also been retired — see [`docs/adr/0001-keep-library-express-framework-free.md`](./adr/0001-keep-library-express-framework-free.md) for the full rationale.
+**Note on language:** this document, `README.md`, and every ADR under `docs/adr/` are written in English. Portuguese was previously used as the internal planning language for `BACKLOG.md`/`VISION.md`; that split has been retired in favor of a single language across the whole project. `VISION.md` itself has also been retired — see `docs/adr/0001-keep-library-express-framework-free.md` for the full rationale.
 
-> **Note on detail level:** completed epics are recorded here only as a summary (status, points, sprint). Full detail (Gherkin, tasks, implementation deviations) lives in Git history and in issue closing comments on GitHub Projects — it is not duplicated here, to avoid two diverging sources of truth.
+**Note on detail level:** completed epics are recorded here only as a summary (status, points, sprint). Full detail (Gherkin, tasks, implementation deviations) lives in Git history and in issue closing comments on GitHub Projects — it is not duplicated here, to avoid two diverging sources of truth.
+
+---
 
 ## Epics
 
 | ID | Epic | Status |
 |---|---|---|
-| E0 | Initial organization and cleanup | ✅ Done (Sprint 0–1) |
+| E0 | Initial organization and cleanup | ✅ Done (Sprint 01) |
 | E1 | Foundation — decouple I/O from Services, centralize interaction in the CLI | ✅ Done |
 | E2 | MVP — Loan lifecycle | ✅ Done (Sprint 2) |
 | E3 | Manual dependency inversion + repository standardization + TD01 | ✅ Done (Sprint 3) |
 | E4 | Automated test foundation — JUnit 5 + Mockito | ✅ Done (Sprint 4), with a note — see TD06 |
 | E5 | Containerization (Docker) | ⛔ Discontinued — scope absorbed by E6 |
-| E6 | Real Persistence (JDBC/PostgreSQL) + Docker Containerization | 🔵 In progress (Sprint 5) |
-| E7 | Real CI — automated tests running as a pipeline gate | ⏳ Backlog (receives TD06 — infrastructure tests via Testcontainers) |
+| E6 | Real Persistence (JDBC/PostgreSQL) + Docker Containerization | ✅ Done (Sprint 5) |
+| E7 | Real CI — automated tests running as a pipeline gate | 🔵 Refined, ready for execution (Sprint 6) — resolves TD06 |
 | E8 | Customer Reputation + automatic loan-status Job | ⏳ Backlog |
-| E9 | CD — delivery pipeline + minimal API (**Marco 2 — Go Live**, on AWS, with E6 already in place) | ⏳ Backlog |
+| E9 | CD — delivery pipeline + minimal API (Marco 2 — Go Live, on AWS, with E6 already in place) | ⏳ Backlog |
 | E10 | Notifications (loan created / completed / overdue) | ⏳ Backlog (post-Marco 2, exercises the full CI/CD cycle) |
 
 E7 and E9 are not the same thing. E9 delivers the automated build + deploy — we call it "CD," not "CI/CD," because without tests running as a gate there is no verified integration, only automated delivery. E7 is when that becomes real CI: tests (E4) start running on every push, as a pipeline gate, before E9 exists. E7 is also where technical debt TD06 (infrastructure tests via Testcontainers) gets resolved, building on the JDBC layer already delivered in E6.
 
-### Renumbering note (this session)
+### Renumbering note (historical)
 
 The epics from E8 onward were deliberately reordered and renumbered:
 
-- The **Spring Boot migration epic**, originally numbered E9, is **removed** from the Library Express roadmap entirely — not deferred, descoped. Spring adoption moves to the next project (Internet Banking), built Spring-first from day one. Full rationale: [ADR 0001](./adr/0001-keep-library-express-framework-free.md).
-- **Customer Reputation**, originally E10 and unordered ("no defined priority"), is now **E8**, moved ahead of Marco 2 — CI (E7) should be mature before a new feature epic ships, and Reputation no longer waits behind Go Live.
-- **CD / Go Live**, originally E8, is renumbered to **E9** to make room for E8 above. Its scope is unchanged.
-- **Notifications** is a **new epic (E10)**, scoped after this session's discussion — see below.
+- The Spring Boot migration epic, originally numbered E9, is removed from the Library Express roadmap entirely — not deferred, descoped. Spring adoption moves to the next project (Internet Banking), built Spring-first from day one. Full rationale: ADR 0001.
+- Customer Reputation, originally E10 and unordered ("no defined priority"), is now E8, moved ahead of Marco 2 — CI (E7) should be mature before a new feature epic ships, and Reputation no longer waits behind Go Live.
+- CD / Go Live, originally E8, is renumbered to E9 to make room for E8 above. Its scope is unchanged.
+- Notifications is a new epic (E10), scoped separately — see below.
 
-E8 (Reputation) originated from a discussion during Sprint 2, about the return flow: when a loan is overdue, the customer loses reputation score; after 3 late returns the customer is "flagged" (concept still to be refined); after 5, the customer is blocked for a defined period. This is not technical debt — it is new scope. No fines or money are involved (payments are out of scope for this project entirely, now that the long-term vision document that used to sequence them has been retired — see ADR 0001).
+E8 (Reputation) originated from a discussion about the return flow: when a loan is overdue, the customer loses reputation score; after 3 late returns the customer is "flagged" (concept still to be refined); after 5, the customer is blocked for a defined period. This is not technical debt — it is new scope. No fines or money are involved (payments are out of scope for this project entirely, now that the long-term vision document that used to sequence them has been retired — see ADR 0001).
 
-**Automatic overdue detection**, previously an open question ("no scheduler — probably a lazy calculation on return/validation, not a background job"), is now resolved: E8 introduces a scheduler-driven background Job. The business rule stays in the domain/application layer (Java), with concurrency safety handled through explicit locking rather than delegating the rule to the database — see [ADR 0002](./adr/0002-domain-owned-overdue-status-rule-with-explicit-locking.md). On a successful status transition, the Job calls a domain-level notification port; E8 ships a no-op adapter for that port, and E10 (Notifications) later plugs in the real one — see [ADR 0003](./adr/0003-notification-port-with-noop-adapter-ahead-of-notifications-epic.md). Structured logging (SLF4J + Logback, TD07) is absorbed into E8 as well, since the Job is the first component in the system that runs unattended — see [ADR 0004](./adr/0004-slf4j-logback-without-full-observability.md). Still open for E8's refinement: `Customer` will need new fields (score, late-return count, `blockedUntil`).
+Automatic overdue detection is resolved as: E8 introduces a scheduler-driven background Job. The business rule stays in the domain/application layer (Java), with concurrency safety handled through explicit locking rather than delegating the rule to the database — see ADR 0002. On a successful status transition, the Job calls a domain-level notification port; E8 ships a no-op adapter for that port, and E10 (Notifications) later plugs in the real one — see ADR 0003. Structured logging (SLF4J + Logback, TD07) is absorbed into E8 as well, since the Job is the first component in the system that runs unattended — see ADR 0004.
 
-**E10 (Notifications)** is new scope: notify the customer by email when a loan is created, completed, or becomes overdue. Deliberately scheduled *after* Marco 2 (E9) — it is meant to simulate adding a feature to an already-deployed system through the full CI/CD pipeline, not to ship alongside Go Live. It implements the real adapter for the notification port introduced in E8, without touching the Job or the domain rule.
+E10 (Notifications) is new scope: notify the customer by email when a loan is created, completed, or becomes overdue. Deliberately scheduled after Marco 2 (E9) — it is meant to simulate adding a feature to an already-deployed system through the full CI/CD pipeline, not to ship alongside Go Live. It implements the real adapter for the notification port introduced in E8, without touching the Job or the domain rule.
+
+---
 
 ## Roadmap — Phases and Milestones
 
 ### 🌱 Phase 1 — Foundation
+
 Goal: build a solid base, consolidating the domain and eliminating architectural problems before introducing new technology.
 Scope: E0, E1, E2, E3.
 
@@ -51,17 +57,19 @@ Scope: E0, E1, E2, E3.
 The system meets the essential functional requirements of a library, via CLI. Closes with E2. Tag `v0.1.1`.
 
 ### 🏗 Phase 2 — Software Maturity
+
 Goal: raise the system's quality and reliability, driven by the project's real needs — now also calibrated to generate portfolio value in international (US/Canada) hiring processes.
 
 Theme sequence:
+
 1. Automated test foundation — JUnit 5 + Mockito (E4) ✅ done
-2. Real persistence (JDBC/PostgreSQL) + Docker containerization (E6) 🔵 current
-3. Real CI — tests as a pipeline gate, including infrastructure tests via Testcontainers/TD06 (E7)
+2. Real persistence (JDBC/PostgreSQL) + Docker containerization (E6) ✅ done
+3. Real CI — tests as a pipeline gate, including infrastructure tests via Testcontainers/TD06 (E7) 🔵 current
 4. Customer Reputation + automatic status Job (E8)
-5. **Marco 2 — Go Live** (E9, packaging CD + a minimal API, with Docker and JDBC already in place)
+5. Marco 2 — Go Live (E9, packaging CD + a minimal API, with Docker and JDBC already in place)
 6. Notifications (E10), exercising the full CI/CD cycle against an already-deployed system
 
-E5 + E6 merge (decision on record): Epic E5 (standalone Docker) was discontinued as its own block. Rationale: containerization only generates real business value once it's wired to real persistence — "containerize a CLI with an in-memory repository" is a weak portfolio narrative compared to "containerize an application with real PostgreSQL, HikariCP, and versioned migrations." E5 remains visible in the Epics table (not removed from the map), marked as discontinued, to preserve historical traceability. All containerization scope was absorbed by E6, which took on the name Real Persistence (JDBC/PostgreSQL) + Docker Containerization.
+**E5 + E6 merge (decision on record):** Epic E5 (standalone Docker) was discontinued as its own block. Rationale: containerization only generates real business value once it's wired to real persistence — "containerize a CLI with an in-memory repository" is a weak portfolio narrative compared to "containerize an application with real PostgreSQL, HikariCP, and versioned migrations." E5 remains visible in the Epics table (not removed from the map), marked as discontinued, to preserve historical traceability. All containerization scope was absorbed by E6, which took on the name Real Persistence (JDBC/PostgreSQL) + Docker Containerization.
 
 Database chosen: PostgreSQL (via pure JDBC, no ORM), aligned with AWS's RDS free tier.
 
@@ -70,11 +78,14 @@ First real deployment to production — on AWS (free tier: ECS/Fargate or Elasti
 
 Why does Go Live come after tests/Docker/persistence/CI? The sequence tells a strong portfolio narrative: tested → containerized → persisted → automated → only then went to production — the way real teams operate.
 
-Why raw tests and raw persistence before a framework? `@SpringBootTest`/Mockito and Spring Data JPA are abstractions over plain JUnit and plain JDBC. Doing the manual path first is deliberate: it forces understanding the mechanism underneath before a framework's convenience hides it. That abstraction is deliberately exercised in the *next* project (Internet Banking, Spring Boot from day one) rather than inside Library Express — see ADR 0001 for why the Spring migration was removed from this project's own roadmap instead of just being deferred.
+Why raw tests and raw persistence before a framework? `@SpringBootTest`/Mockito and Spring Data JPA are abstractions over plain JUnit and plain JDBC. Doing the manual path first is deliberate: it forces understanding the mechanism underneath before a framework's convenience hides it. That abstraction is deliberately exercised in the next project (Internet Banking, Spring Boot from day one) rather than inside Library Express — see ADR 0001 for why the Spring migration was removed from this project's own roadmap instead of just being deferred.
 
 ### ⚙️ Phase 3 — Professional Software Engineering
+
 Goal: deepen engineering practices on a system that has been in production since Marco 2 — security, observability, performance, scalability, documentation.
 Scope: not yet formalized into epics (future backlog). Given the project's terminal roadmap now ends at E10 (Notifications) with only maintenance-level adjustments afterward, Phase 3 in its original broad sense will not be pursued inside Library Express — see ADR 0001.
+
+---
 
 ## Principles
 
@@ -88,266 +99,300 @@ Scope: not yet formalized into epics (future backlog). Given the project's termi
 
 **Process rule (from E4 onward):** before generating any formal backlog artifact (epic breakdown, User Story, tasks) for a new implementation decision or architecture change, alignment with the Dev must be debated and closed in conversation first. Formal Markdown generation (points, Gherkin, tasks, commits) only happens after alignment — never before. This avoids rework from scope drift discovered after the fact.
 
+---
+
 ## Technical Debt
 
 | ID | Description | Points | Status |
 |---|---|---|---|
 | TD01 | `equals`/`hashCode` contract for Book, Customer, and Loan | 3 | ✅ Resolved (US-304, E3) |
 | TD05 | Fat JAR packaging (`maven-shade-plugin`, manifest with `Main-Class`) — frozen since E3, originally scheduled to resolve only in the (old) Go Live epic. Decision revised: the need for Docker moves the production justification for a single executable artifact earlier — freezing until Go Live no longer made sense. | 3 | ✅ Resolved (US-503, E6) |
-| TD06 | Infrastructure layer (in-memory repositories) with no automated test coverage since E4 closed. Intentional deferral: contract and concurrency tests (originally US-404) will be rewritten with Testcontainers against a real database (Postgres), after E6 (JDBC) delivers the definitive implementation — avoids duplicated effort on an in-memory implementation that will be replaced. Resolution allocated to E7. | — (to be estimated during E7 refinement) | 🟡 Accepted, waiting on E6 |
-| TD07 | Structured logging (SLF4J + Logback). No component in the system has run unattended before the E8 Job; ad hoc console output is no longer sufficient. Full observability/tracing stays out of scope — see [ADR 0004](./adr/0004-slf4j-logback-without-full-observability.md). | — (to be estimated during E8 refinement) | 🟡 Accepted, absorbed into E8 |
+| TD06 | Infrastructure layer (in-memory repositories) with no automated test coverage since E4 closed. Intentional deferral: contract and concurrency tests (originally US-404) rewritten with Testcontainers against a real database (Postgres), after E6 (JDBC) delivered the definitive implementation — avoids duplicated effort on an in-memory implementation that would be replaced. | 8 | 🔵 Refined — allocated to US-701 (E7) |
+| TD07 | Structured logging (SLF4J + Logback). No component in the system has run unattended before the E8 Job; ad hoc console output is no longer sufficient. Full observability/tracing stays out of scope — see ADR 0004. | — (to be estimated during E8 refinement) | 🟡 Accepted, absorbed into E8 |
 
 ---
 
-## 🔵 Epic E6 — Real Persistence (JDBC/PostgreSQL) + Docker Containerization
+## 🔵 Epic E7 — Real CI (Continuous Integration Gate)
 
-**Sprint:** 5
-**Total points:** 18 (2 + 8 + 3 + 5)
+**Sprint:** 6
+**Total points:** 18 (8 + 5 + 3 + 2)
 **Status:** 🔵 Refined, ready for execution
 
-### Decisions on record for this merge
+### Decisions on record for this epic
 
-- E5 discontinued as a standalone block, scope fully absorbed by E6. The row stays in the Epics table with status *Discontinued — scope absorbed by E6*, to preserve historical traceability.
-- TD05 unblocked and reallocated to this epic (US-503). Updated justification: the original freeze (until the old Go Live epic) assumed there would only be a production reason for single-artifact packaging at Go Live. The need to containerize via Docker moves that reason earlier.
-- Docker Compose is in scope, both for the local development environment (standalone Postgres, US-501) and for orchestrating the full application at the final stage (US-504).
-- Internal execution order: **C (JDBC persistence) → A (Fat JAR) → B (Docker multi-stage)** — the application works against a real database locally before any packaging/containerization effort.
-- Confirmed network scope: the application keeps running as a batch/interactive CLI inside the container, with no HTTP server — the minimal API is reserved for E9 (Go Live), even though it would technically be possible to bring it forward here.
-- PostgreSQL version: `postgres:17-alpine`, tracking the latest available stable release.
+- TD06 (infrastructure tests, formerly US-404) is resolved in this epic via US-701, using Testcontainers against a real PostgreSQL container — validating JDBC repositories and Flyway migrations together, not mocks. This was intentionally deferred until E6 delivered real persistence.
+- Coverage quality gate is enforced **per module** (domain / application / infrastructure) rather than as a single global threshold, reflecting that each layer has a different testability profile — domain (pure business logic) is held to the strictest bar.
+- CI build matrix kept simple: single JDK version (21). No multi-version matrix at this stage.
+- Branch protection on `main` (US-704) is only enabled once the CI workflow (US-702) exists and is verified stable — protecting a non-existent or flaky check would block the team, not help it.
 
 ### Epic goal
 
-Migrate in-memory storage to real PostgreSQL via pure JDBC, with a managed connection pool (HikariCP) and versioned schema migrations (Flyway), delivering a 100% reproducible environment via Docker — application and database.
+Establish an automated Continuous Integration pipeline that blocks any merge into `main` on build failure, test failure, or insufficient coverage — turning quality into an enforced gate rather than manual discipline.
 
 ### Business value
 
-Without real persistence, the system doesn't survive a restart and can't go to production (Marco 2 depends on it). Without containerization, the environment isn't reproducible across machines or deployable to AWS. The combination PostgreSQL + pure JDBC + HikariCP + Flyway + Docker multi-stage is the most commonly assessed skill set in senior backend Java technical interviews in the international market.
+A CI pipeline with an enforced coverage gate is table-stakes in international senior backend hiring processes — it signals engineering maturity beyond "tests exist" to "tests are enforced." This is also the epic that formally resolves TD06, closing the last piece of test-coverage debt carried since E4, before the system takes on new business scope (E8) and goes to production (E9).
 
-### Definition of Done — Epic E6
+### Definition of Done — Epic E7
 
-- `docker-compose.dev.yml` starts a local Postgres, ready for the JDBC repositories (US-501)
-- Flyway applies versioned migrations and HikariCP manages the connection pool at startup (US-502)
-- `BookDbRepository`, `LoanDbRepository`, `CustomerDbRepository` implement the domain repository interfaces via pure SQL, replacing the in-memory implementations in the Composition Root (US-502)
-- A single executable Fat JAR is generated via `maven-shade-plugin`, resolving TD05 (US-503)
-- A multi-stage Dockerfile builds the Fat JAR and runs it on an `eclipse-temurin:21-jre-alpine` image (US-504)
-- A production/integration `docker-compose.yml` starts the application (CLI batch) + Postgres together, with the application connecting to the database via environment variables (US-504)
-- All 4 User Stories in Done status
-
----
-
-### US-501 — Local development environment with Docker Compose (Postgres)
-
-**Points:** 2
-**Depends on:** —
-
-**Story:** As a developer, I need a `docker-compose.dev.yml` that starts an isolated local PostgreSQL, so I can implement and manually test the JDBC repositories without depending on a local database installation.
-
-**Scenarios (BDD):**
-
-```gherkin
-Scenario: Postgres starts via the development Docker Compose file
-  Given the docker-compose.dev.yml file at the project root
-  When "docker compose -f docker-compose.dev.yml up -d" is executed
-  Then a Postgres 17-alpine container should start on the configured port
-  And the database should accept connections with the credentials defined in the compose file
-
-Scenario: Development Postgres data persists across restarts
-  Given the development Postgres container running with data already written
-  When the container is restarted (docker compose restart)
-  Then previously written data should still be available
-```
-
-**Tasks:**
-- Create `docker-compose.dev.yml` with a `postgres:17-alpine` service
-- Configure a named volume for data persistence across restarts
-- Configure environment variables via a local `.env` (`.env.example` versioned, `.env` in `.gitignore`)
-- Document the "Local development" section in the README
-
-**Commits:**
-- `build(docker): US-501 create development docker-compose with postgres 17-alpine`
-- `docs(readme): US-501 document local development environment setup`
+- [ ] Testcontainers-based integration tests validate `BookRepository` and Flyway migrations against a real PostgreSQL container (US-701), resolving TD06
+- [ ] GitHub Actions workflow builds, runs unit tests, and runs integration tests on every push/PR (US-702)
+- [ ] JaCoCo `check` goal enforces per-module coverage thresholds and fails the build below them (US-703)
+- [ ] `main` requires a passing CI check before merge, with direct pushes blocked (US-704)
+- [ ] All 4 User Stories in Done status
+- [ ] TD06 formally resolved
 
 ---
 
-### US-502 — JDBC Persistence with HikariCP and Flyway
+### US-701 — Infrastructure Tests with Testcontainers (resolves TD06)
 
 **Points:** 8
-**Depends on:** US-501
+**Depends on:** — (unblocked by E6's JDBC delivery)
 
-**Story:** As a developer, I need to replace the in-memory repositories with real PostgreSQL implementations, using pure JDBC, HikariCP for connection pooling, and Flyway to version the schema — plugging everything into the repository interfaces already defined in the domain, without changing their contracts.
-
-**Scenarios (BDD):**
-
-```gherkin
-Scenario: Flyway applies migrations at application startup
-  Given migration scripts in src/main/resources/db/migration (V1__..., V2__...)
-  When the application starts
-  Then Flyway should automatically apply pending migrations
-  And the resulting schema should reflect the book, customer, and loan tables
-
-Scenario: HikariCP manages the connection pool
-  Given the HikariDataSource configured at application startup
-  When multiple repository operations occur in sequence
-  Then connections should be reused from the pool, with no exhaustion under normal load
-
-Scenario: BookDbRepository correctly persists and retrieves a book
-  Given a Postgres database with the schema applied
-  When a Book is saved via BookDbRepository.create()
-  Then getByIsbn() should return the same book with all attributes intact
-
-Scenario: The real database enforces the UNIQUE constraint on email
-  Given a Customer already persisted with a given email
-  When a second Customer is created with the same email
-  Then the database should reject the operation via the UNIQUE constraint
-  And the exception should be translated into a domain exception, not a leaked SQLException
-
-Scenario: LoanDbRepository.update() applies a status change by id
-  Given a Loan already persisted in the database
-  When update() is called with the same id and a new status
-  Then the persisted record should reflect the new status
-  And no other row in the table should be affected
-
-Scenario: Loan.search() correctly filters via a combined SQL query
-  Given multiple Loans persisted with distinct combinations of customerId, ISBN, and status
-  When search() is called with a subset of those criteria
-  Then only the Loans matching ALL informed criteria should be returned
-
-Scenario: Composition Root swaps in-memory repositories for JDBC without changing usecases
-  Given AppContext configured to use the JDBC implementations
-  When any Book, Customer, or Loan usecase is executed
-  Then the observable behavior should be identical to the in-memory implementations
-```
-
-**Tasks:**
-- Add `org.postgresql:postgresql`, `com.zaxxer:HikariCP`, `org.flywaydb:flyway-core` (+ `flyway-database-postgresql`) dependencies to the `infrastructure` module
-- Create Flyway migration scripts (`V1__create_book_table.sql`, `V2__create_customer_table.sql`, `V3__create_loan_table.sql`), including a UNIQUE constraint on `customer.email`
-- Configure `HikariDataSource` at application startup (conservative pool size and timeout for the free tier)
-- Implement `BookDbRepository`, `CustomerDbRepository`, `LoanDbRepository` in the `infrastructure` module
-- Translate SQL exceptions (e.g., constraint violations) into the existing domain exceptions
-- Update `AppContext` (Composition Root) to inject the JDBC implementations in place of the in-memory ones
-- Keep the in-memory implementations (future use in tests), unused in production
-- Update the README with connection environment variables
-
-**Commits:**
-- `build(pom): US-502 add postgresql, hikaricp and flyway to infrastructure module`
-- `build(flyway): US-502 create initial migrations for book, customer and loan`
-- `feat(datasource): US-502 configure hikaricp at application startup`
-- `feat(book-repository): US-502 implement bookdbrepository via pure jdbc`
-- `feat(customer-repository): US-502 implement customerdbrepository via pure jdbc`
-- `feat(loan-repository): US-502 implement loandbrepository via pure jdbc`
-- `fix(repositories): US-502 translate sqlexception into domain exceptions`
-- `refactor(composition-root): US-502 swap in-memory repositories for jdbc in appcontext`
-- `docs(readme): US-502 document database connection environment variables`
-
----
-
-### US-503 — Fat JAR Packaging (unblocks TD05)
-
-**Points:** 3
-**Depends on:** US-502
-
-**Story:** As a developer, I need a single executable artifact (Fat JAR) consolidating the `domain`, `application`, and `infrastructure` modules, so the application can run outside the IDE and be packaged into a Docker image.
+**Story:** As a developer, I need integration tests running against a real PostgreSQL container, so the JDBC repositories and Flyway migrations delivered in E6 are validated against real database behavior instead of mocks.
 
 **Scenarios (BDD):**
 
 ```gherkin
-Scenario: The Fat JAR builds successfully via Maven
-  Given maven-shade-plugin configured in the infrastructure module's pom.xml
-  When "mvn clean package" is executed at the root
-  Then a single executable jar should be generated under infrastructure/target/
+Feature: Infrastructure layer integration testing with real PostgreSQL
 
-Scenario: The Fat JAR runs the application standalone
-  Given the fat jar produced by the build
-  When "java -jar library-express.jar" is executed
-  Then the application should start correctly, applying migrations and connecting to the database
-  And no ClassNotFoundException or NoClassDefFoundError should occur
+  Scenario: BookRepository persists and retrieves a book against a real database
+    Given a PostgreSQL 17-alpine container is running via Testcontainers
+    And Flyway migrations have been applied successfully to the container
+    When a Book entity is persisted through BookDbRepository
+    Then the retrieved Book must match the original entity by identity and attributes
 
-Scenario: The manifest points to the correct main class
-  Given the generated fat jar
-  When the MANIFEST.MF manifest is inspected
-  Then the Main-Class attribute should point to the Application class
+  Scenario: Flyway migrations run cleanly on a fresh database
+    Given an empty PostgreSQL 17-alpine container
+    When the application starts against this container
+    Then all Flyway migration scripts execute without error
+    And the schema_version table reflects the latest migration as applied
+
+  Scenario: BookRepository enforces unique constraint at database level
+    Given a book already persisted with a given ISBN
+    When a second book with the same ISBN is persisted
+    Then a data integrity violation exception is thrown by the repository
+
+  Scenario: HikariCP connection pool recovers from a dropped connection
+    Given an active HikariCP connection pool against the Testcontainers instance
+    When the underlying connection is forcibly closed
+    Then a subsequent repository call successfully acquires a new connection
+    And completes the operation without manual intervention
 ```
 
 **Tasks:**
-- Configure `maven-shade-plugin` in `infrastructure/pom.xml`, consolidating classes from the sibling modules and external dependencies
-- Configure `Main-Class` in the manifest
-- Resolve resource merge conflicts (e.g., `META-INF/services`) via `ServicesResourceTransformer`, if they occur
-- Update the TD05 record: status "Unblocked" → "Resolved — US-503 (E6)"
-- Document the build and run command via `java -jar` in the README
+
+- Add Testcontainers dependencies (`testcontainers`, `testcontainers-postgresql`, `testcontainers-junit-jupiter`) to the `infrastructure` module
+- Extend the `@IntegrationTest` annotation convention (from E4) to this package
+- Implement `PostgresTestContainerConfig` — a reusable base class with a singleton container shared across test classes (avoids per-test container startup overhead)
+- Write `BookDbRepositoryIntegrationTest` covering the four Gherkin scenarios above
+- Validate Flyway migrations run within the Testcontainers setup itself (not mocked)
+- Cover the unique-constraint violation scenario (ISBN), asserting the translated domain exception
+- Cover HikariCP recovery from a dropped connection
+- Update the TD06 record: status "Refined, allocated to US-701" → "Resolved — US-701 (E7)"
+- Document the infrastructure testing strategy in the README (why Testcontainers instead of mocks at this layer)
 
 **Commits:**
-- `build(shade): US-503 configure maven-shade-plugin in the infrastructure module`
-- `build(manifest): US-503 point main-class to the application class`
-- `docs(td05): US-503 resolve TD05, recording the updated decision in the backlog`
-- `docs(readme): US-503 document build and execution via fat jar`
+
+```
+test(book-repository): US-701 add testcontainers postgres for integration tests
+feat(test-config): US-701 create reusable postgres testcontainer base config
+test(book-repository): US-701 cover persistence and retrieval via real jdbc
+test(flyway): US-701 validate clean migration run on empty database
+test(book-repository): US-701 cover unique isbn constraint violation
+test(hikaricp): US-701 cover pool recovery after dropped connection
+docs(td06): US-701 resolve td06, recording the updated decision in the backlog
+docs(readme): US-701 document infrastructure testing strategy
+```
 
 ---
 
-### US-504 — Application Containerization via Docker Multi-stage + Compose
+### US-702 — CI Pipeline Base (GitHub Actions)
 
 **Points:** 5
-**Depends on:** US-503
+**Depends on:** US-701
 
-**Story:** As a developer, I need a lightweight, multi-stage Docker image, and a `docker-compose.yml` that starts the application (CLI batch) and PostgreSQL together, to deliver the 100% reproducible environment Marco 2 requires.
+**Story:** As a developer, I need every push and pull request to `main` to automatically build the project and run its full test suite, so integration issues are caught before merge instead of after.
 
 **Scenarios (BDD):**
 
 ```gherkin
-Scenario: The Docker image builds the application in a separate stage
-  Given the multi-stage Dockerfile at the project root
-  When "docker build" is executed
-  Then the build stage should compile the submodules and produce the fat jar
-  And the runtime stage should contain only the JRE and the jar, no build tooling
+Feature: Continuous Integration pipeline
 
-Scenario: The final image is lightweight and contains no Maven or full JDK
-  Given the final image produced by the multi-stage build
-  When the image's size and contents are inspected
-  Then the image should be based on eclipse-temurin:21-jre-alpine
-  And it should contain neither Maven nor the full JDK from the build stage
+  Scenario: Pipeline triggers on pull request to main
+    Given a pull request is opened targeting the main branch
+    When the CI workflow is triggered
+    Then the workflow executes build, unit tests, and integration tests in sequence
 
-Scenario: The application connects to Postgres via environment variables in the container
-  Given the application running in a container with connection environment variables configured
-  When the container starts
-  Then the application should connect to the Postgres instance the variables point to, with no hardcoded values
+  Scenario: Pipeline fails fast on compilation error
+    Given a pull request contains a compilation error
+    When the CI workflow runs
+    Then the build step fails
+    And subsequent test steps are skipped
 
-Scenario: Docker Compose starts the application and database together
-  Given the docker-compose.yml at the project root, with the app and postgres services
-  When "docker compose up" is executed
-  Then both containers should start
-  And the application should wait for the database to be healthy before connecting (healthcheck/depends_on)
-  And the application should run correctly as a CLI batch process once startup completes
+  Scenario: Pipeline reports test results as a PR check
+    Given a pull request has completed the CI workflow
+    When the workflow finishes
+    Then a check status (success or failure) is visible directly on the pull request
+
+  Scenario: Pipeline caches Maven dependencies between runs
+    Given a previous successful pipeline run
+    When a new pipeline run starts on the same branch
+    Then Maven dependencies are restored from cache
+    And overall pipeline duration is reduced compared to a cold run
 ```
 
 **Tasks:**
-- Create a multi-stage Dockerfile: a build stage (Maven + Java 21) and a runtime stage (`eclipse-temurin:21-jre-alpine`)
-- Parameterize the database connection via environment variables
-- Create `docker-compose.yml` (production/integration, distinct from US-501's `docker-compose.dev.yml`) with `app` and `postgres:17-alpine` services
-- Configure a healthcheck on the Postgres service and a health-conditioned `depends_on` on the app service
-- Validate final image size and the absence of build tooling in the runtime image
-- Document a "Running with Docker" section in the README
+
+- Create workflow `.github/workflows/ci.yml`
+- Configure trigger on `pull_request` to `main` and `push` to feature branches
+- Configure the build step (`mvn -B compile`)
+- Configure the unit test step, isolated via the `@UnitTest` group (from E4)
+- Configure the integration test step, isolated via the `@IntegrationTest` group, running Testcontainers on the runner (`mvn -B verify`)
+- Configure Maven dependency caching (`actions/setup-java` built-in cache)
+- Validate that a failure in any step halts the workflow (fail-fast)
+- Validate the full pipeline by opening a draft PR
 
 **Commits:**
-- `build(docker): US-504 create multi-stage dockerfile for build and runtime`
-- `build(docker): US-504 create application docker-compose with app and postgres 17-alpine`
-- `feat(config): US-504 parameterize database connection via environment variables`
-- `docs(readme): US-504 document build and execution via docker compose`
+
+```
+ci(github-actions): US-702 create base continuous integration workflow
+ci(github-actions): US-702 configure triggers for pull request and push
+ci(github-actions): US-702 separate unit and integration test execution
+ci(github-actions): US-702 add maven dependency caching
+```
+
+---
+
+### US-703 — Per-Module JaCoCo Coverage Quality Gate
+
+**Points:** 3
+**Depends on:** US-702
+
+**Story:** As a Product Owner, I need the build to fail automatically when a module's test coverage drops below its defined threshold, so coverage regressions are caught by the pipeline instead of by manual review.
+
+**Confirmed thresholds:**
+
+| Module | Line | Branch |
+|---|---|---|
+| domain | 95% | 90% |
+| application | 90% | 85% |
+| infrastructure | 75% | 65% |
+
+**Scenarios (BDD):**
+
+```gherkin
+Feature: Per-module coverage quality gate
+
+  Scenario: Build fails when domain module coverage drops below threshold
+    Given the domain module has line coverage below 95% or branch coverage below 90%
+    When the JaCoCo check goal runs during the build
+    Then the build fails with a coverage violation report
+
+  Scenario: Build fails when application module coverage drops below threshold
+    Given the application module has line coverage below 90% or branch coverage below 85%
+    When the JaCoCo check goal runs during the build
+    Then the build fails with a coverage violation report
+
+  Scenario: Build fails when infrastructure module coverage drops below threshold
+    Given the infrastructure module has line coverage below 75% or branch coverage below 65%
+    When the JaCoCo check goal runs during the build
+    Then the build fails with a coverage violation report
+
+  Scenario: Build succeeds when all modules meet their individual thresholds
+    Given each module meets or exceeds its configured coverage threshold
+    When the JaCoCo check goal runs during the build
+    Then the build proceeds without a coverage-related failure
+
+  Scenario: Aggregate report reflects a per-module breakdown
+    Given all module test suites have executed
+    When the report-aggregate module generates the consolidated report
+    Then the report displays coverage figures separated by module
+```
+
+**Tasks:**
+
+- Configure the `jacoco-maven-plugin` `check` goal individually in each module's `pom.xml` (domain, application, infrastructure)
+- Define `limit` rules (COVEREDRATIO LINE/BRANCH) per module, using the thresholds table above
+- Bind the `check` goal to the `verify` phase, so it runs in the same CI step as US-702
+- Adjust `coverage-report`'s `report-aggregate` output to display coverage segmented by module, not only a consolidated total
+- Validate locally that a deliberate coverage drop in each module fails the build
+- Document the thresholds and their rationale in the README (why domain is held to a stricter bar than infrastructure)
+
+**Commits:**
+
+```
+build(jacoco): US-703 configure check goal per module with individual thresholds
+build(jacoco): US-703 define coverage limits for domain module
+build(jacoco): US-703 define coverage limits for application module
+build(jacoco): US-703 define coverage limits for infrastructure module
+build(jacoco): US-703 adjust report-aggregate to display per-module coverage
+docs(readme): US-703 document coverage thresholds and rationale
+```
+
+---
+
+### US-704 — Branch Protection on main
+
+**Points:** 2
+**Depends on:** US-703
+
+**Story:** As a Product Owner, I need `main` protected against direct pushes and unverified merges, so the CI gate built in this epic is actually enforced, not just informational.
+
+**Scenarios (BDD):**
+
+```gherkin
+Feature: Branch protection on main
+
+  Scenario: Direct push to main is blocked
+    Given a developer attempts to push directly to the main branch
+    When the push is executed
+    Then the push is rejected by branch protection rules
+
+  Scenario: Merge is blocked when CI check fails
+    Given a pull request targeting main has a failing CI status check
+    When a merge is attempted
+    Then GitHub blocks the merge until the check passes
+
+  Scenario: Merge is allowed when all required checks pass
+    Given a pull request targeting main has all required CI checks passing
+    When a merge is attempted
+    Then the merge is permitted
+```
+
+**Tasks:**
+
+- Configure branch protection rule for `main` in GitHub (Settings → Branches)
+- Mark the US-702 workflow as a required status check
+- Disable direct pushes (require a pull request before merging)
+- Validate the negative case: attempt a merge with a failing CI check and confirm it is blocked
+- Validate the positive case: merge with a passing CI check is permitted
+- Document the rule in the README (contribution/workflow section)
+
+**Commits:**
+
+```
+chore(github): US-704 configure branch protection rule on main
+docs(readme): US-704 document branch protection rule and contribution workflow
+```
 
 ---
 
 ## History of Completed Epics
 
-**E0 — Initial organization and cleanup**
+### E0 — Initial organization and cleanup
 ✅ Done · Iteration 1 (Jul 07–Jul 20)
 
-**E1 — Foundation**
+### E1 — Foundation
 ✅ Done
 Goal: prepare the application's base to support new interfaces without changing business rules — Services decoupled from I/O, interaction centralized in the CLI.
 
-**E2 — MVP: Loan lifecycle**
+### E2 — MVP: Loan lifecycle
 ✅ Done · Sprint 2 · 17 points (US-201 to US-207)
 Delivered the full flow via CLI: customer/book registration, loan, and return, respecting business rules (availability, active loan limits). Marco 1 (MVP) reached. Tag `v0.1.1`.
 Full detail (Gherkin, tasks, implementation deviations): see Issues #13–#18 on GitHub Projects.
 
-**E3 — Manual dependency inversion + repository standardization**
+### E3 — Manual dependency inversion + repository standardization
 ✅ Done · Sprint 3 · 19 points
 
 | US | Description | Points | Status |
@@ -360,7 +405,7 @@ Full detail (Gherkin, tasks, implementation deviations): see Issues #13–#18 on
 
 Full detail: see the corresponding Issues on GitHub Projects.
 
-**E4 — Automated Test Foundation (JUnit 5 + Mockito)**
+### E4 — Automated Test Foundation (JUnit 5 + Mockito)
 ✅ Done · Sprint 4 · 15 points (2 + 5 + 8) — revised down from 20 points after scope reallocation
 
 | US | Description | Points | Status |
@@ -375,6 +420,20 @@ US-404 (Infrastructure layer tests, 5 original points) was removed from E4 and r
 
 Full detail (Gherkin, tasks, commits): see the corresponding Issues on GitHub Projects.
 
+### E6 — Real Persistence (JDBC/PostgreSQL) + Docker Containerization
+✅ Done · Sprint 5 · 18 points (2 + 8 + 3 + 5)
+
+| US | Description | Points | Status |
+|---|---|---|---|
+| US-501 | Local development environment with Docker Compose (Postgres) | 2 | ✅ Done |
+| US-502 | JDBC Persistence with HikariCP and Flyway | 8 | ✅ Done |
+| US-503 | Fat JAR Packaging (resolved TD05) | 3 | ✅ Done |
+| US-504 | Application Containerization via Docker Multi-stage + Compose | 5 | ✅ Done |
+
+E5 (standalone Docker) was formally discontinued in favor of this merged scope. TD05 (Fat JAR packaging) resolved via US-503. Full detail (Gherkin, tasks, commits): see the corresponding Issues on GitHub Projects.
+
+---
+
 ## Commit Convention
 
 Follows Conventional Commits, single-line commits (no body/footer — terminal-driven workflow), with the US ID right after the colon:
@@ -383,14 +442,16 @@ Follows Conventional Commits, single-line commits (no body/footer — terminal-d
 <type>(<scope>): <ID> <description in the imperative, lowercase, no trailing period>
 ```
 
-No Pull Request flow yet (see E9 in the roadmap), commits go straight to `develop` — no auto-close on Issues. When a US is completed, close its Issue manually on the board.
+No Pull Request flow yet until E7's branch protection (US-704) lands; commits go straight to `develop` — no auto-close on Issues. When a US is completed, close its Issue manually on the board.
 
 Multiple commits on the same US: all repeat the same ID (`US-XXX`) at the start of the description.
 
 ## Versioning Convention
 
 Follows SemVer (`MAJOR.MINOR.PATCH`):
-- `0.y.z` while the project is in early development — internal contracts (architecture, persistence, framework) may still change without notice. `1.0.0` is reserved for when the system stabilizes (around Phase 3).
+
+- `0.y.z` while the project is in early development — internal contracts (architecture, persistence, framework) may still change without notice.
+- `1.0.0` is reserved for when the system stabilizes (around Phase 3).
 - `alpha`/`beta`/`rc` suffixes only make sense from Marco 2 onward (once the REST API exists).
 - `SNAPSHOT` in `pom.xml` during ongoing development; tags/releases use the clean version.
 
@@ -410,4 +471,4 @@ Follows SemVer (`MAJOR.MINOR.PATCH`):
 
 ---
 
-**Last update:** Epics E8, E9, and E10 renumbered and rescoped (Customer Reputation + status Job moved ahead of Marco 2; Go Live shifted to E9; Notifications added as a new E10; the Spring Boot migration epic removed from this project entirely — see ADR 0001). `VISION.md` retired. All project documentation unified to English. Epic E6 (E5+E6 merge — Real Persistence JDBC/PostgreSQL + Docker Containerization) refined and ready for execution: 18 pts (2+8+3+5), Sprint 5, US-501 to US-504.
+**Last update:** Epic E6 (Real Persistence JDBC/PostgreSQL + Docker Containerization) closed — 18 points (2+8+3+5), Sprint 5, US-501 to US-504, all Done. Epic E7 (Real CI) refined and ready for execution — 18 points (8+5+3+2), Sprint 6, US-701 to US-704, resolving TD06. Coverage quality gate defined per module (domain 95%/90%, application 90%/85%, infrastructure 75%/65%).
