@@ -1,18 +1,19 @@
 package org.libraryexpress.infrastructure.cli;
 
 import org.libraryexpress.infrastructure.config.AppContext;
+import org.libraryexpress.infrastructure.config.database.ConnectionProvider;
 
 import java.util.Scanner;
 
 public class ManagementCli {
 
+    private final ConnectionProvider connectionProvider;
     private final CustomerCli customerCli;
     private final BookCli bookCli;
     private final LoanCli loanCli;
 
-    public ManagementCli() {
-        AppContext context = new AppContext();
-
+    public ManagementCli(AppContext context, ConnectionProvider connectionProvider) {
+        this.connectionProvider = connectionProvider;
         this.customerCli = new CustomerCli(context);
         this.bookCli = new BookCli(context);
         this.loanCli = new LoanCli(context);
@@ -44,6 +45,7 @@ public class ManagementCli {
                 case 6 -> {
                     loop = false;
                     System.out.println("Good bye!");
+                    this.connectionProvider.close();
                 }
                 default -> System.out.println("Invalid option!");
             }
