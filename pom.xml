@@ -28,6 +28,8 @@
         <postgresql.version>42.7.13</postgresql.version>
         <hikari.version>6.2.1</hikari.version>
         <flyway.version>10.22.0</flyway.version>
+        <codehaus.mojo.version>3.6.3</codehaus.mojo.version>
+        <maven-shade-plugin.version>3.5.1</maven-shade-plugin.version>
 
         <exec.skip>true</exec.skip>
     </properties>
@@ -129,10 +131,13 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
-                    <version>3.6.3</version>
-                    <configuration>
-                        <mainClass>org.libraryexpress.infrastructure.Application</mainClass>
-                    </configuration>
+                    <version>${codehaus.mojo.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${maven-shade-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
