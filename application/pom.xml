@@ -19,6 +19,7 @@
 
         <argLine></argLine>
         <argLineJaCoCo></argLineJaCoCo>
+        <argLineJaCoCoIntegration></argLineJaCoCoIntegration>
     </properties>
 
     <dependencies>
