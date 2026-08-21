@@ -46,18 +46,24 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+
                 <executions>
                     <execution>
                         <id>report-aggregate</id>
                         <phase>verify</phase>
+
                         <goals>
                             <goal>report-aggregate</goal>
                         </goals>
 
                         <configuration>
+                            <dataFileIncludes>
+                                <dataFileInclude>**/jacoco-unit.exec</dataFileInclude>
+                                <dataFileInclude>**/jacoco-integration.exec</dataFileInclude>
+                            </dataFileIncludes>
+
                             <excludes>
                                 <exclude>**/dto/*</exclude>
-                                <exclude>**/mapper/*</exclude>
                                 <exclude>**/mapper/*</exclude>
                                 <exclude>**/exception/*</exclude>
                             </excludes>
