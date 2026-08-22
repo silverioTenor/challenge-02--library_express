@@ -34,14 +34,8 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Compile and Validate Project Modules
-        run: mvn -B clean compile
-
-      - name: Execute Isolated Unit Tests Suite
-        run: mvn -B test -Dgroups=unit
-
-      - name: Execute Isolated Integration Tests Suite
-        run: mvn -B verify -Dgroups=integration
+      - name: Build, Test and Enforce Quality Gates
+        run: mvn -B clean verify
 
   # -------------------------------------------------------------------------
   # Job 2: Continuous Delivery (Dynamic Build and Publish to Registry)

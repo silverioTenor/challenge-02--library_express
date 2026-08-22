@@ -59,13 +59,19 @@
                         <configuration>
                             <dataFileIncludes>
                                 <dataFileInclude>**/jacoco-unit.exec</dataFileInclude>
-                                <dataFileInclude>**/jacoco-integration.exec</dataFileInclude>
+<!--                                <dataFileInclude>**/jacoco-integration.exec</dataFileInclude>-->
+                                <dataFileInclude>**/jacoco-merged.exec</dataFileInclude>
                             </dataFileIncludes>
 
                             <excludes>
-                                <exclude>**/dto/*</exclude>
+                                <exclude>**/dto/**/*</exclude>
+                                <exclude>**/core/**/*</exclude>
                                 <exclude>**/mapper/*</exclude>
                                 <exclude>**/exception/*</exclude>
+                                <exclude>**/cli/**/*</exclude>
+                                <exclude>**/config/**/*</exclude>
+                                <exclude>**/util/*</exclude>
+                                <exclude>**/InMemory/*</exclude>
                             </excludes>
                         </configuration>
                     </execution>

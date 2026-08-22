@@ -151,6 +151,53 @@
                     <artifactId>maven-shade-plugin</artifactId>
                     <version>${maven-shade-plugin.version}</version>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
+
+                    <executions>
+                        <!-- Unit test coverage -->
+                        <execution>
+                            <id>prepare-agent</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+
+                            <configuration>
+                                <propertyName>argLineJaCoCo</propertyName>
+                                <destFile>
+                                    ${project.build.directory}/jacoco-unit.exec
+                                </destFile>
+                            </configuration>
+                        </execution>
+
+                        <!-- Integration test coverage -->
+                        <execution>
+                            <id>prepare-agent-integration</id>
+                            <goals>
+                                <goal>prepare-agent-integration</goal>
+                            </goals>
+
+                            <configuration>
+                                <propertyName>argLineJaCoCoIntegration</propertyName>
+                                <destFile>
+                                    ${project.build.directory}/jacoco-integration.exec
+                                </destFile>
+                            </configuration>
+                        </execution>
+
+                        <!-- Module reports -->
+                        <execution>
+                            <id>report</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -215,52 +262,6 @@
                         <goals>
                             <goal>integration-test</goal>
                             <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <executions>
-                    <!-- Unit test coverage -->
-                    <execution>
-                        <id>prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-
-                        <configuration>
-                            <propertyName>argLineJaCoCo</propertyName>
-                            <destFile>
-                                ${project.build.directory}/jacoco-unit.exec
-                            </destFile>
-                        </configuration>
-                    </execution>
-
-                    <!-- Integration test coverage -->
-                    <execution>
-                        <id>prepare-agent-integration</id>
-                        <goals>
-                            <goal>prepare-agent-integration</goal>
-                        </goals>
-
-                        <configuration>
-                            <propertyName>argLineJaCoCoIntegration</propertyName>
-                            <destFile>
-                                ${project.build.directory}/jacoco-integration.exec
-                            </destFile>
-                        </configuration>
-                    </execution>
-
-                    <!-- Module reports -->
-                    <execution>
-                        <id>report</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>
