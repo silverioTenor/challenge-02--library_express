@@ -23,8 +23,8 @@ PO/Scrum Master: Claude · Dev: Silvério
 | E5 | Containerization (Docker) | ⛔ Discontinued — scope absorbed by E6 |
 | E6 | Real Persistence (JDBC/PostgreSQL) + Docker Containerization | ✅ Done (Sprint 5) |
 | E7 | Real CI — automated tests running as a pipeline gate | ✅ Done (Sprint 6) — resolved TD06 |
-| E8 | Structured Logging Foundation (SLF4J + Logback, system-wide) | 🔵 Refined, ready for execution (Sprint 7) — resolves TD07 |
-| E9 | REST API + Documentation (Swagger/OpenAPI) | ⏳ Backlog (title only) |
+| E8 | Structured Logging Foundation (SLF4J + Logback, system-wide) | ✅ Done (Sprint 7) — resolves TD07 |
+| E9 | REST API + Documentation (Swagger/OpenAPI) | 🔵 Refined, ready for execution (Sprint 8) |
 | E10 | CD — Go Live (Marco 2, on AWS) | ⏳ Backlog (title only) |
 | E11 | Log Evolution & Full Observability (Prometheus/Grafana) | ⏳ Backlog (post Go-Live — scope note captured, not refined) |
 | E12 | Overdue Enforcement Evolution — Job, Loan Restriction & Settlement | ⏳ Backlog (post Go-Live — scope note captured, not refined) |
@@ -70,7 +70,7 @@ Theme sequence:
 1. Automated test foundation — JUnit 5 + Mockito (E4) ✅ done
 2. Real persistence (JDBC/PostgreSQL) + Docker containerization (E6) ✅ done
 3. Real CI — tests as a pipeline gate, including infrastructure tests via Testcontainers/TD06 (E7) ✅ done
-4. Structured logging foundation, system-wide (E8) 🔵 current — resolves TD07
+4. Structured logging foundation, system-wide (E8) ✅ done — resolves TD07
 5. REST API + documentation (Swagger/OpenAPI) (E9)
 6. Marco 2 — Go Live (E10, packaging CD on top of persistence, Docker, and the documented API already in place)
 7. Log evolution — full observability with Prometheus/Grafana (E11), post Go-Live
@@ -113,13 +113,13 @@ Scope: not yet formalized into epics (future backlog). Most of what would tradit
 
 ## Technical Debt
 
-| ID | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Points | Status |
-|---|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---|---|
-| TD01 | `equals`/`hashCode` contract for Book, Customer, and Loan                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 3 | ✅ Resolved (US-304, E3) |
-| TD05 | Fat JAR packaging (`maven-shade-plugin`, manifest with `Main-Class`) — frozen since E3, originally scheduled to resolve only in the (old) Go Live epic. Decision revised: the need for Docker moves the production justification for a single executable artifact earlier — freezing until Go Live no longer made sense.                                                                                                                                                                                                                                | 3 | ✅ Resolved (US-503, E6) |
-| TD06 | Infrastructure layer (in-memory repositories) with no automated test coverage since E4 closed. Intentional deferral: contract and concurrency tests (originally US-404) rewritten with Testcontainers against a real database (Postgres), after E6 (JDBC) delivered the definitive implementation.                                                                                                                                                                                                                                                      | 8 | ✅ Resolved (US-701, E7) |
-| TD07 | Structured logging (SLF4J + Logback). Originally scoped to only the E8 (old) scheduler Job; re-scoped during the second roadmap revision to cover the entire system from the start, ahead of the API and any scheduler — establishing observability as a convention every subsequent epic inherits, rather than retrofitting it under time pressure later. Full observability/tracing (metrics, dashboards) stays explicitly out of scope for this epic — see ADR [0004](./adr/0004-slf4j-logback-without-full-observability.md) and E11. | 10 | 🔵 Refined — allocated to US-801/US-802/US-803 (E8) |
-| TD08 | Coverage thresholds (Instruction/Branch, per module) were reduced during US-703 to reflect the current testable surface — notably `infrastructure` at 70%/50%. Revisit and raise thresholds once the API layer (E9) expands what's testable, and ideally once E2E tests against the live system (post E10) exist.                                                                                                                                                                                                                                       | — (to be estimated when revisited) | 🟡 Accepted, tracked for E9/E10 |
+| ID | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Points | Status                                 |
+|---|---|---|---|
+| TD01 | `equals`/`hashCode` contract for Book, Customer, and Loan                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 3 | ✅ Resolved (US-304, E3)               |
+| TD05 | Fat JAR packaging (`maven-shade-plugin`, manifest with `Main-Class`) — frozen since E3, originally scheduled to resolve only in the (old) Go Live epic. Decision revised: the need for Docker moves the production justification for a single executable artifact earlier — freezing until Go Live no longer made sense.                                                                                                                                                                                                                                | 3 | ✅ Resolved (US-503, E6)               |
+| TD06 | Infrastructure layer (in-memory repositories) with no automated test coverage since E4 closed. Intentional deferral: contract and concurrency tests (originally US-404) rewritten with Testcontainers against a real database (Postgres), after E6 (JDBC) delivered the definitive implementation.                                                                                                                                                                                                                                                      | 8 | ✅ Resolved (US-701, E7)               |
+| TD07 | Structured logging (SLF4J + Logback). Originally scoped to only the E8 (old) scheduler Job; re-scoped during the second roadmap revision to cover the entire system from the start, ahead of the API and any scheduler — establishing observability as a convention every subsequent epic inherits, rather than retrofitting it under time pressure later. Full observability/tracing (metrics, dashboards) stays explicitly out of scope for this epic — see ADR [0004](./adr/0004-slf4j-logback-without-full-observability.md) and E11. | 10 | ✅ Resolved (US-803, E8) |
+| TD08 | Coverage thresholds (Instruction/Branch, per module) were reduced during US-703 to reflect the current testable surface — notably `infrastructure` at 70%/50%. Revisit and raise thresholds once the API layer (E9) expands what's testable, and ideally once E2E tests against the live system (post E10) exist.                                                                                                                                                                                                                                       | — (to be estimated when revisited) | 🟡 Accepted, tracked for E9/E10        |
 
 ---
 
@@ -131,171 +131,447 @@ Ideas surfaced during refinement that were deliberately **not** turned into epic
 
 ---
 
-## 🔵 Epic E8 — Structured Logging Foundation (SLF4J + Logback, System-Wide)
+## 🔵 Epic E9 — REST API + Documentation (Swagger/OpenAPI)
 
-**Sprint:** 7 (proposed)
-**Total points:** 10 (3 + 5 + 2)
+**Sprint:** 8
+**Total points:** 35 (5 + 5 + 5 + 5 + 3 + 2 + 5 + 5)
 **Status:** 🔵 Refined, ready for execution
-**Resolves:** TD07
 
 ### Decisions on record for this epic
 
-- Logback uses a **JSON structured encoder** (via `logstash-logback-encoder` or equivalent) — not plain text — from the first line of configuration.
-- Output target is **stdout/stderr**, not a file and not a database table. This is the universal container contract: once E10 (Go-Live, AWS ECS) exists, stdout is captured automatically via the `awslogs` driver into CloudWatch Logs, with no additional infrastructure.
-- Correlation across log lines within the same operation is handled via **SLF4J's MDC** (`operationId`/`correlationId`), not a custom database schema.
-- This epic retrofits logging into the **existing** use cases (book, customer, loan). The future API (E9) and scheduler (E12) will follow the same established convention, avoiding rework later.
-- Full observability (metrics, dashboards, distributed tracing) remains explicitly out of scope for this epic — see ADR [0004](./adr/0004-slf4j-logback-without-full-observability.md). That boundary is revisited in E11, not here.
+- No framework: HTTP layer built on `com.sun.net.httpserver.HttpServer`, with a small hand-rolled router (path/method → `HttpHandler`), per ADR [0001](./adr/0001-keep-library-express-framework-free.md).
+- JSON serialization via **Jackson** (already centralized in the parent `dependencyManagement`).
+- **Richardson Maturity Model, Level 2**: correct HTTP verbs, resource-based URIs, semantic status codes. No HATEOAS (Level 3) — deliberately out of scope, since the only consumers are the project's own soon-to-be-sunset CLI and local manual testing; no real client benefits from hypermedia navigation. Full rationale: ADR 0008.
+- **No URI version prefix** (`/books`, not `/v1/books`) — no external consumer exists yet to justify a stable versioned contract.
+- **Pagination:** `page`/`size` query parameters (Spring Data convention), optional with defaults (`page=0`, `size=20`), so the CLI — which sends neither parameter — keeps working unchanged against the first default page.
+- This epic exposes the **existing** book/customer/loan usecases over HTTP; no new business rules are introduced.
+- Central exception handling maps existing domain/application exceptions to HTTP status codes (400/404/409/etc.) — one dedicated US, not scattered per-handler try/catch.
+- Correlation ID (E8's `CorrelationIdSupport`) moves its entrypoint boundary from the CLI to the HTTP handler: accepts an inbound `X-Correlation-Id` header when present, generates one otherwise, and always echoes it back in the response header.
+- OpenAPI documentation generated via `swagger-core` annotations + `swagger-maven-plugin` (build-time static contract) with Swagger UI served as a static resource by the project's own `HttpServer` — not `springdoc-openapi`, which requires a Spring runtime. Full rationale: ADR 0008.
+- Coverage priority is **domain > application > infrastructure**, reflecting where business-rule density actually lives. `domain`/`application` thresholds are not expected to drop (no new business logic). The `infrastructure` threshold is **measured after implementation**, not guessed upfront — closes TD08 as an amendment to ADR 0006.
+- Test strategy: unit tests per `HttpHandler` (usecases mocked via Mockito) + end-to-end tests via **REST-Assured** against the real embedded `HttpServer` backed by Testcontainers Postgres (Java's closest equivalent to Node's supertest).
 
 ### Epic goal
 
-Establish a structured, machine-parseable logging foundation across the entire system before any new component (API, scheduler, observability stack) is built on top of it, so operational visibility is a built-in convention rather than an afterthought retrofitted later under time pressure.
+Expose the existing book, customer, and loan usecases through a documented, framework-free REST API — without introducing new business rules — establishing the HTTP boundary that Marco 2 (Go-Live, E10) will deploy.
 
 ### Business value
 
-Structured logging (SLF4J + Logback, JSON-encoded, correlation-aware via MDC) is table-stakes in professional Java backend roles — interviewers expect to see this as a baseline, not an advanced topic. Establishing it now, ahead of the API and CD epics, means every subsequent epic inherits observability by convention instead of bolting it on afterward.
+A documented REST API (Swagger/OpenAPI) with conventional pagination, correct status-code semantics, and correlation-aware structured logging is the baseline international hiring panels expect from a backend candidate. Building the HTTP layer without a framework — routing, serialization boundaries, and exception mapping by hand — before Go-Live demonstrates the mechanics that Spring normally hides, directly reinforcing the two-project portfolio narrative (ADR 0001).
 
-### Definition of Done — Epic E8
+### Definition of Done — Epic E9
 
-- [ ] SLF4J + Logback configured with a structured JSON encoder (US-801)
-- [ ] Existing book/customer/loan use cases emit INFO/WARN/ERROR logs consistently (US-802)
-- [ ] Correlation ID convention via MDC implemented and validated (US-803)
-- [ ] Logging conventions documented in the README
-- [ ] All 3 User Stories in Done status
-- [ ] TD07 formally resolved
-
----
-
-### US-801 — SLF4J + Logback Setup with Structured JSON Encoder
-
-**Points:** 3
-**Depends on:** — (unblocked, first US of the epic)
-
-**Story:** As a developer, I need a structured logging foundation in place, so every component built from this point forward (existing use cases, the future API, the future scheduler) emits machine-parseable logs instead of ad hoc console output.
-
-**Scenarios (BDD):**
-
-```gherkin
-Feature: Structured logging foundation
-
-  Scenario: Application emits logs in structured JSON format
-    Given the SLF4J + Logback dependencies are configured
-    When any log statement is executed
-    Then the output is a single-line JSON object containing timestamp, level, logger name, and message
-
-  Scenario: Log level is configurable per environment
-    Given a Logback configuration profile for local development
-    And a separate profile for containerized/production execution
-    When the application starts under each profile
-    Then the effective log level matches the profile's configuration
-```
-
-**Tasks:**
-
-- Add `logback-classic` and a JSON encoder (`logstash-logback-encoder` or equivalent) to the `infrastructure` module
-- Configure `logback.xml` with a JSON encoder targeting stdout
-- Define separate profiles: `logback-dev.xml` (human-readable, console) vs `logback-prod.xml` (JSON)
-- Document logging conventions in the README (levels: ERROR/WARN/INFO/DEBUG usage criteria)
-
-**Commits:**
-
-```
-build(logging): US-801 add slf4j and logback dependencies
-build(logging): US-801 configure json structured encoder
-build(logging): US-801 add dev and prod logback profiles
-docs(readme): US-801 document logging conventions
-```
+- [ ] HTTP foundation (router + Jackson wiring) in place (US-901)
+- [ ] Book REST endpoints, paginated (US-902)
+- [ ] Customer REST endpoints, paginated (US-903)
+- [ ] Loan REST endpoints, paginated (US-904)
+- [ ] Central exception handler mapping domain/application exceptions to HTTP status codes (US-905)
+- [ ] Correlation ID accepted/generated/echoed via HTTP header, reusing E8's MDC support (US-906)
+- [ ] OpenAPI contract generated (swagger-core + swagger-maven-plugin) and Swagger UI served (US-907)
+- [ ] HTTP layer covered by unit + REST-Assured/Testcontainers e2e tests; `infrastructure` JaCoCo threshold re-measured and raised (US-908)
+- [ ] TD08 formally resolved (amendment recorded against ADR 0006)
+- [ ] All 8 User Stories in Done status
+- [ ] API conventions (pagination, RMM Level 2, no versioning) documented in the README
 
 ---
 
-### US-802 — Retrofit Logging into Existing Use Cases
+### US-901 — HTTP Foundation: Router, Jackson Wiring, Base Request/Response Contract
 
 **Points:** 5
-**Depends on:** US-801
+**Depends on:** — (unblocked, first US of the epic)
 
-**Story:** As a Product Owner, I need meaningful log output on every existing business flow, so operational visibility isn't limited to newly built features going forward.
+**Story:** As a developer, I need a minimal, framework-free HTTP foundation (routing + JSON serialization), so every resource endpoint built afterward plugs into a consistent, already-solved boundary instead of reinventing routing and parsing per handler.
 
 **Scenarios (BDD):**
 
 ```gherkin
-Feature: Logging in existing use cases
+Feature: HTTP foundation
 
-  Scenario: Successful loan creation is logged at INFO level
-    Given a valid loan creation request
-    When the use case completes successfully
-    Then an INFO log entry is recorded with the loan and customer identifiers
+  Scenario: Router dispatches a request to the correct handler by path and method
+    Given a route is registered for GET /books
+    When a GET request arrives at /books
+    Then the corresponding handler is invoked
 
-  Scenario: Business rule violation is logged at WARN level
-    Given a loan request that violates an active business rule (e.g., book unavailable)
-    When the use case rejects the request
-    Then a WARN log entry is recorded with the violated rule and relevant identifiers
+  Scenario: Unregistered route returns 404
+    Given no route is registered for a given path/method combination
+    When a request arrives at that path
+    Then the response status is 404 with a structured JSON error body
 
-  Scenario: Unexpected exception is logged at ERROR level
-    Given an unexpected exception occurs during a use case execution
-    When the exception propagates
-    Then an ERROR log entry is recorded with the exception stack trace
+  Scenario: Request and response bodies are serialized as JSON via Jackson
+    Given a handler returns a Java object as its response
+    When the response is written
+    Then the client receives a valid JSON body with the correct Content-Type header
+
+  Scenario: Pagination parameters have safe defaults
+    Given a GET request to a paginated resource without page or size query parameters
+    When the request is handled
+    Then page defaults to 0 and size defaults to 20
 ```
 
 **Tasks:**
 
-- Inject `Logger` (via `LoggerFactory.getLogger`) into Book, Customer, and Loan usecases
-- Add INFO logging on successful completion of each usecase
-- Add WARN logging on business validation failures (existing custom exceptions)
-- Add ERROR logging at exception boundaries (CLI layer / composition root)
-- Ensure no sensitive data is logged in plain text
+- Implement a lightweight router (`Map<RouteKey, HttpHandler>`, `RouteKey` = method + path pattern) on top of `com.sun.net.httpserver.HttpServer`
+- Wire Jackson `ObjectMapper` as a shared component for request/response (de)serialization
+- Implement a `PageRequest`/`PageResponse` contract (page/size params, total count, items) shared across resources
+- Define a base JSON error-response shape (status, message, timestamp) reused by later exception handling (US-905)
+- Add server bootstrap wiring in the composition root (start/stop lifecycle)
 
 **Commits:**
 
 ```
-feat(logging): US-802 add info logging to book usecases
-feat(logging): US-802 add info logging to customer usecases
-feat(logging): US-802 add info logging to loan usecases
-feat(logging): US-802 add warn logging on business rule violations
-feat(logging): US-802 add error logging at exception boundaries
+feat(api): US-901 implement lightweight http router
+feat(api): US-901 wire jackson object mapper for json serialization
+feat(api): US-901 add page request and page response contracts
+feat(api): US-901 add base json error response shape
+feat(api): US-901 wire http server bootstrap in composition root
 ```
 
 ---
 
-### US-803 — Correlation ID Convention via MDC
+### US-902 — Book REST Endpoints (Paginated)
 
-**Points:** 2
-**Depends on:** US-801
+**Points:** 5
+**Depends on:** US-901
 
-**Story:** As a developer, I need every log line belonging to the same operation to share a correlation identifier, so a single business flow can be traced end-to-end in the logs without a distributed tracing system.
+**Story:** As an API consumer, I need to create, retrieve, and list books over HTTP, so book management is available beyond the CLI.
 
 **Scenarios (BDD):**
 
 ```gherkin
-Feature: Correlation ID via MDC
+Feature: Book REST endpoints
 
-  Scenario: Correlation ID is generated at the start of an operation
-    Given a use case execution begins
-    When no correlation ID is present in the current context
-    Then a new correlation ID is generated and placed into MDC
+  Scenario: Create a book
+    Given a valid book payload
+    When a POST request is sent to /books
+    Then the response status is 201 with the created book in the body
 
-  Scenario: All log lines within the same operation share the correlation ID
-    Given a correlation ID has been set in MDC for the current operation
-    When multiple log statements are executed during that operation
-    Then every log line includes the same correlation ID field
+  Scenario: Retrieve a book by id
+    Given an existing book
+    When a GET request is sent to /books/{id}
+    Then the response status is 200 with the book's data
 
-  Scenario: MDC is cleared after the operation completes
-    Given an operation has finished (successfully or with error)
-    When the use case returns control to the caller
-    Then the MDC context is cleared to prevent leaking into unrelated operations
+  Scenario: List books with pagination
+    Given more books exist than the default page size
+    When a GET request is sent to /books?page=0&size=10
+    Then the response contains at most 10 books and pagination metadata (page, size, totalElements)
+
+  Scenario: Retrieve a non-existent book
+    Given no book exists with a given id
+    When a GET request is sent to /books/{id}
+    Then the response status is 404
 ```
 
 **Tasks:**
 
-- Implement a `CorrelationIdSupport` helper (set/get/clear on MDC)
-- Wire correlation ID generation at the entrypoint of each CLI flow (composition root boundary)
-- Ensure MDC is cleared in a `finally` block to avoid leakage across CLI invocations
-- Validate correlation ID appears consistently across all log lines of a single flow
+- Implement `BookHttpHandler` (POST /books, GET /books/{id}, GET /books)
+- Reuse existing Book usecases/DTOs/mappers (application layer) — no new business logic
+- Apply `PageRequest`/`PageResponse` contract from US-901 to the list endpoint
+- Register routes in the router
 
 **Commits:**
 
 ```
-feat(logging): US-803 implement correlation id support via mdc
-feat(logging): US-803 wire correlation id generation at cli entrypoint
-test(logging): US-803 validate mdc cleared after operation completes
+feat(api): US-902 implement book creation endpoint
+feat(api): US-902 implement book retrieval by id endpoint
+feat(api): US-902 implement paginated book listing endpoint
+```
+
+---
+
+### US-903 — Customer REST Endpoints (Paginated)
+
+**Points:** 5
+**Depends on:** US-901
+
+**Story:** As an API consumer, I need to create, retrieve, and list customers over HTTP, so customer management is available beyond the CLI.
+
+**Scenarios (BDD):**
+
+```gherkin
+Feature: Customer REST endpoints
+
+  Scenario: Create a customer
+    Given a valid customer payload
+    When a POST request is sent to /customers
+    Then the response status is 201 with the created customer in the body
+
+  Scenario: Retrieve a customer by id
+    Given an existing customer
+    When a GET request is sent to /customers/{id}
+    Then the response status is 200 with the customer's data
+
+  Scenario: List customers with pagination
+    Given more customers exist than the default page size
+    When a GET request is sent to /customers?page=0&size=10
+    Then the response contains at most 10 customers and pagination metadata
+
+  Scenario: Create a customer with a duplicate email
+    Given a customer already exists with a given email
+    When a POST request is sent to /customers with that same email
+    Then the response status is 409
+```
+
+**Tasks:**
+
+- Implement `CustomerHttpHandler` (POST /customers, GET /customers/{id}, GET /customers)
+- Reuse existing Customer usecases/DTOs/mappers — no new business logic
+- Apply `PageRequest`/`PageResponse` contract to the list endpoint
+- Register routes in the router
+
+**Commits:**
+
+```
+feat(api): US-903 implement customer creation endpoint
+feat(api): US-903 implement customer retrieval by id endpoint
+feat(api): US-903 implement paginated customer listing endpoint
+```
+
+---
+
+### US-904 — Loan REST Endpoints (Paginated)
+
+**Points:** 5
+**Depends on:** US-901
+
+**Story:** As an API consumer, I need to create and retrieve loans over HTTP, so loan management is available beyond the CLI.
+
+**Scenarios (BDD):**
+
+```gherkin
+Feature: Loan REST endpoints
+
+  Scenario: Create a loan
+    Given a valid loan request for an available book and eligible customer
+    When a POST request is sent to /loans
+    Then the response status is 201 with the created loan in the body
+
+  Scenario: Reject a loan for an unavailable book
+    Given a book with no available copies
+    When a POST request is sent to /loans for that book
+    Then the response status is 409 with a message describing the violated rule
+
+  Scenario: Retrieve a loan by id
+    Given an existing loan
+    When a GET request is sent to /loans/{id}
+    Then the response status is 200 with the loan's data
+
+  Scenario: List loans with pagination
+    Given more loans exist than the default page size
+    When a GET request is sent to /loans?page=0&size=10
+    Then the response contains at most 10 loans and pagination metadata
+```
+
+**Tasks:**
+
+- Implement `LoanHttpHandler` (POST /loans, GET /loans/{id}, GET /loans)
+- Reuse existing Loan usecases/DTOs/mappers/validators — no new business logic
+- Apply `PageRequest`/`PageResponse` contract to the list endpoint
+- Register routes in the router
+
+**Commits:**
+
+```
+feat(api): US-904 implement loan creation endpoint
+feat(api): US-904 implement loan retrieval by id endpoint
+feat(api): US-904 implement paginated loan listing endpoint
+```
+
+---
+
+### US-905 — Central Exception Handler (Domain/Application Exceptions → HTTP Status)
+
+**Points:** 3
+**Depends on:** US-901
+
+**Story:** As an API consumer, I need consistent, correct HTTP status codes and error bodies when a request fails, so client error handling doesn't have to guess or parse free-text messages.
+
+**Scenarios (BDD):**
+
+```gherkin
+Feature: Central exception handling
+
+  Scenario: Validation failure returns 400
+    Given a request payload that fails input validation
+    When the request is handled
+    Then the response status is 400 with a structured error body describing the violation
+
+  Scenario: Not-found domain exception returns 404
+    Given a request referencing an entity that does not exist
+    When the request is handled
+    Then the response status is 404
+
+  Scenario: Business rule violation returns 409
+    Given a request that violates an active business rule (e.g., book unavailable, active loan limit)
+    When the request is handled
+    Then the response status is 409 with a structured error body naming the violated rule
+
+  Scenario: Unexpected exception returns 500 without leaking internals
+    Given an unhandled exception occurs during request processing
+    When the response is written
+    Then the response status is 500 with a generic error body, and the stack trace is only present in the ERROR log line, not in the response
+```
+
+**Tasks:**
+
+- Implement a central `ExceptionMappingHandler`/wrapper applied to every registered route
+- Map existing custom exceptions (validation, not-found, business rule violation) to 400/404/409 respectively
+- Map unexpected exceptions to 500, using the base error-response shape from US-901
+- Ensure ERROR-level logging (from E8's conventions) fires on every 500, without exposing stack traces in the HTTP response
+
+**Commits:**
+
+```
+feat(api): US-905 implement central exception mapping handler
+feat(api): US-905 map validation exceptions to 400 responses
+feat(api): US-905 map not-found exceptions to 404 responses
+feat(api): US-905 map business rule violations to 409 responses
+feat(api): US-905 map unexpected exceptions to 500 without leaking internals
+```
+
+---
+
+### US-906 — Correlation ID via HTTP Header (Accept / Generate / Echo)
+
+**Points:** 2
+**Depends on:** US-901
+
+**Story:** As a developer, I need every HTTP request to carry a correlation ID — accepted from the client when provided, generated otherwise, and always returned in the response — so a request can be traced end-to-end in the logs the same way a CLI flow already can since E8.
+
+**Scenarios (BDD):**
+
+```gherkin
+Feature: Correlation ID over HTTP
+
+  Scenario: Correlation ID is accepted from the request header
+    Given a request arrives with an X-Correlation-Id header
+    When the request is handled
+    Then that value is placed into MDC and echoed back in the response's X-Correlation-Id header
+
+  Scenario: Correlation ID is generated when absent
+    Given a request arrives without an X-Correlation-Id header
+    When the request is handled
+    Then a new correlation ID is generated, placed into MDC, and returned in the response's X-Correlation-Id header
+
+  Scenario: MDC is cleared after the request completes
+    Given a request has finished processing (successfully or with error)
+    When the handler returns control to the server
+    Then the MDC context is cleared to prevent leaking into unrelated requests
+```
+
+**Tasks:**
+
+- Extend the HTTP foundation (US-901) with a correlation filter/wrapper applied to every route
+- Reuse `CorrelationIdSupport` (from E8) — read `X-Correlation-Id` if present, else generate
+- Echo the resolved correlation ID back via the `X-Correlation-Id` response header
+- Ensure MDC is cleared in a `finally` block per request, avoiding leakage across pooled request-handling threads
+
+**Commits:**
+
+```
+feat(api): US-906 implement correlation id http filter
+feat(api): US-906 accept inbound x-correlation-id header
+feat(api): US-906 echo correlation id in response header
+test(api): US-906 validate mdc cleared after request completes
+```
+
+---
+
+### US-907 — OpenAPI Documentation (swagger-core + swagger-maven-plugin, Swagger UI)
+
+**Points:** 5
+**Depends on:** US-902, US-903, US-904, US-905
+
+**Story:** As an API consumer (or reviewer), I need an accurate, browsable API contract, so I can understand and exercise the API without reading the handler source code.
+
+**Scenarios (BDD):**
+
+```gherkin
+Feature: OpenAPI documentation
+
+  Scenario: OpenAPI contract is generated at build time
+    Given all resource handlers are annotated with swagger-core annotations
+    When the Maven build runs
+    Then an openapi.json/yaml contract is generated reflecting all registered endpoints
+
+  Scenario: Swagger UI is reachable
+    Given the application is running
+    When a browser navigates to /docs
+    Then the Swagger UI is rendered, listing all documented endpoints
+
+  Scenario: Generated contract matches actual response shapes
+    Given a documented endpoint's response schema
+    When the corresponding handler is exercised
+    Then the actual JSON response conforms to the documented schema
+```
+
+**Tasks:**
+
+- Add `swagger-core` and `swagger-maven-plugin` to the `infrastructure` module
+- Annotate Book/Customer/Loan handlers (`@Operation`, `@Parameter`, `@ApiResponse`) including pagination and error responses (400/404/409/500)
+- Configure `swagger-maven-plugin` to generate `openapi.json`/`openapi.yaml` at build time
+- Serve Swagger UI (static webjar resource) via the project's own `HttpServer` at `/docs`
+- Document the RMM Level 2 / no-versioning / pagination conventions in the README
+
+**Commits:**
+
+```
+build(docs): US-907 add swagger-core and swagger-maven-plugin
+docs(api): US-907 annotate book handlers with openapi metadata
+docs(api): US-907 annotate customer handlers with openapi metadata
+docs(api): US-907 annotate loan handlers with openapi metadata
+feat(docs): US-907 serve swagger ui as static resource
+docs(readme): US-907 document rest api conventions
+```
+
+---
+
+### US-908 — HTTP Layer Test Suite (Unit + E2E) and TD08 Closure
+
+**Points:** 5
+**Depends on:** US-902, US-903, US-904, US-905, US-906
+
+**Story:** As a Product Owner, I need the new HTTP layer covered by both fast unit tests and realistic end-to-end tests, and the `infrastructure` coverage threshold re-measured against real numbers, so the API ships with the same testing discipline as the rest of the system instead of an arbitrary guessed target.
+
+**Scenarios (BDD):**
+
+```gherkin
+Feature: HTTP layer test coverage
+
+  Scenario: Handler unit tests exercise routing and error mapping with mocked usecases
+    Given a resource handler under test
+    When a request is simulated with a mocked usecase dependency
+    Then the handler's response status and body match the expected contract
+
+  Scenario: End-to-end tests exercise the real server against real persistence
+    Given the embedded HttpServer is running against a Testcontainers PostgreSQL instance
+    When a REST-Assured request is sent to a resource endpoint
+    Then the full request/response cycle (routing, usecase, persistence, JSON serialization) behaves correctly
+
+  Scenario: Infrastructure coverage threshold reflects the newly measured surface
+    Given the HTTP handlers and router are fully covered by unit and e2e tests
+    When JaCoCo coverage is measured for the infrastructure module
+    Then the check goal threshold is updated to the measured value, not an assumed one
+```
+
+**Tasks:**
+
+- Add `rest-assured` as a test-scope dependency in `infrastructure`
+- Write unit tests per `HttpHandler` (Book, Customer, Loan, exception mapping) with Mockito-mocked usecases
+- Write e2e tests (REST-Assured + Testcontainers) covering the full happy path and key error paths (400/404/409) per resource
+- Measure resulting `infrastructure` module Instruction/Branch coverage and set the new JaCoCo `check` threshold accordingly
+- Record the new threshold as an amendment to ADR 0006; formally resolve TD08 in `BACKLOG.md`
+
+**Commits:**
+
+```
+build(test): US-908 add rest-assured test dependency
+test(api): US-908 add unit tests for book handler
+test(api): US-908 add unit tests for customer handler
+test(api): US-908 add unit tests for loan handler
+test(api): US-908 add unit tests for exception mapping handler
+test(api): US-908 add e2e tests via rest-assured and testcontainers
+build(coverage): US-908 raise infrastructure jacoco thresholds to measured baseline
+docs(adr): US-908 amend adr 0006 with e9 infrastructure coverage baseline
 ```
 
 ---
@@ -303,9 +579,6 @@ test(logging): US-803 validate mdc cleared after operation completes
 ## Placeholder Epics (Titles Only — Not Yet Refined)
 
 Per the just-in-time grooming rule, these exist only as titles (plus any scope notes already captured in conversation) until their turn comes.
-
-### E9 — REST API + Documentation (Swagger/OpenAPI)
-Minimal REST API via `com.sun.net.httpserver.HttpServer` (framework-free, per ADR [0001](./adr/0001-keep-library-express-framework-free.md)), documented with Swagger/OpenAPI. No further detail refined yet.
 
 ### E10 — CD / Go Live (Marco 2, AWS)
 Packages the CD pipeline on top of persistence (E6), the documented API (E9), and structured logging (E8) already in place. ADR and formal US breakdown deferred until this epic enters refinement.
@@ -408,6 +681,17 @@ This reduction is temporary — see TD08 for the plan to revisit thresholds once
 
 `main` requires a passing `build-and-test` check and blocks direct pushes (US-704). Full detail (Gherkin, tasks, commits): see the corresponding Issues on GitHub Projects.
 
+### E8 — Structured Logging Foundation (SLF4J + Logback, System-Wide)
+✅ Done · Sprint 7 · 10 points (3 + 5 + 2) — resolved TD07
+
+| US | Description | Points | Status |
+|---|---|---|---|
+| US-801 | SLF4J + Logback Setup with Structured JSON Encoder | 3 | ✅ Done |
+| US-802 | Retrofit Logging into Existing Use Cases (book/customer/loan) | 5 | ✅ Done |
+| US-803 | Correlation ID Convention via MDC | 2 | ✅ Done |
+
+Logback configured with a JSON structured encoder (`logstash-logback-encoder`) targeting stdout, with separate `logback-dev.xml`/`logback-prod.xml` profiles. Existing book/customer/loan usecases emit INFO/WARN/ERROR logs consistently. Correlation across log lines within an operation is handled via SLF4J's MDC (`CorrelationIdSupport`), wired at the CLI entrypoint and cleared in a `finally` block. Full observability (metrics, dashboards, tracing) stayed explicitly out of scope — see ADR [0004](./adr/0004-slf4j-logback-without-full-observability.md) — revisited in E11. TD07 formally resolved. Full detail (Gherkin, tasks, commits): see the corresponding Issues on GitHub Projects.
+
 ---
 
 ## Commit Convention
@@ -447,4 +731,4 @@ Follows SemVer (`MAJOR.MINOR.PATCH`):
 
 ---
 
-**Last update:** Roadmap reorganized from E8 onward per **ADR 0005** (Roadmap Restructuring & Settlement) and **ADR 0006** (JaCoCo Metrics & PL/pgSQL Exception). Epic E8 is currently refined and ready for execution (Structured Logging Foundation, resolving TD07). ADR 0005 and ADR 0006 are officially Accepted.
+**Last update:** Epic E8 (Structured Logging Foundation) closed — Sprint 7, 10 points, resolved TD07. Epic E9 (REST API + Documentation) fully refined and ready for execution — Sprint 8, 35 points across 8 User Stories (US-901–US-908). Key E9 conventions: framework-free HTTP via `com.sun.net.httpserver.HttpServer`, Richardson Maturity Model Level 2 (no HATEOAS), no URI version prefix, `page`/`size` pagination, OpenAPI via `swagger-core`/`swagger-maven-plugin` (no Spring), REST-Assured for e2e tests. These conventions are recorded in ADR 0008 (pending drafting). TD08 (infrastructure coverage thresholds) will be closed at the end of E9 via US-908, based on measured coverage rather than an assumed target.
