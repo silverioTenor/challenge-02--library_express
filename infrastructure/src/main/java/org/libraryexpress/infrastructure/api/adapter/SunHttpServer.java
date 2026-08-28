@@ -1,6 +1,7 @@
 package org.libraryexpress.infrastructure.api.adapter;
 
 import com.sun.net.httpserver.HttpExchange;
+import org.libraryexpress.infrastructure.api.enums.HttpStatusCode;
 import org.libraryexpress.infrastructure.api.routing.HttpContextRequest;
 import org.libraryexpress.infrastructure.api.routing.HttpContextResponse;
 import org.libraryexpress.infrastructure.util.JsonPrinter;
@@ -9,8 +10,10 @@ import org.libraryexpress.infrastructure.util.JsonReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +23,7 @@ public final class SunHttpServer {
 
     private SunHttpServer() {}
 
-    public static HttpContextRequest adaptRequest(HttpExchange exchange) {
+    public static HttpContextRequest adaptRequest(HttpExchange exchange, Map<String, String> routParams) {
         return new HttpContextRequest() {
 
             private Map<String, String> queryParams;
@@ -38,11 +41,16 @@ public final class SunHttpServer {
             }
 
             @Override
+            public String getRouteParam(String key) {
+                return routParams != null ? routParams.get(key) : null;
+            }
+
+            @Override
             public PageRequest getPageRequest() {
                 Map<String, String> params = getQueryParams();
 
                 int page = params.containsKey("page") ? Integer.parseInt(params.get("page")) : 0;
-                int size = params.containsKey("size") ? Integer.parseInt(params.get("size")) : 10;
+                int size = params.containsKey("limit") ? Integer.parseInt(params.get("limit")) : 10;
 
                 return PageRequest.of(page, size);
             }
@@ -83,8 +91,8 @@ public final class SunHttpServer {
             private int currentStatus = 200;
 
             @Override
-            public HttpContextResponse status(int statusCode) {
-                this.currentStatus = statusCode;
+            public HttpContextResponse status(HttpStatusCode statusCode) {
+                this.currentStatus = statusCode.getCode();
                 return this;
             }
 
@@ -102,7 +110,7 @@ public final class SunHttpServer {
             }
 
             @Override
-            public void sendEmpty(Object body) throws IOException {
+            public void sendEmpty() throws IOException {
                 exchange.sendResponseHeaders(currentStatus, -1);
             }
 
