@@ -146,7 +146,7 @@ Ideas surfaced during refinement that were deliberately **not** turned into epic
 - **Pagination:** `page`/`size` query parameters (Spring Data convention), optional with defaults (`page=0`, `size=20`), so the CLI — which sends neither parameter — keeps working unchanged against the first default page.
 - This epic exposes the **existing** book/customer/loan usecases over HTTP; no new business rules are introduced.
 - Central exception handling maps existing domain/application exceptions to HTTP status codes (400/404/409/etc.) — one dedicated US, not scattered per-handler try/catch.
-- Correlation ID (E8's `CorrelationIdSupport`) moves its entrypoint boundary from the CLI to the HTTP handler: accepts an inbound `X-Correlation-Id` header when present, generates one otherwise, and always echoes it back in the response header.
+- Correlation ID (E8's `LogTrace`) moves its entrypoint boundary from the CLI to the HTTP handler: accepts an inbound `X-Correlation-Id` header when present, generates one otherwise, and always echoes it back in the response header.
 - OpenAPI documentation generated via `swagger-core` annotations + `swagger-maven-plugin` (build-time static contract) with Swagger UI served as a static resource by the project's own `HttpServer` — not `springdoc-openapi`, which requires a Spring runtime. Full rationale: ADR 0008.
 - Coverage priority is **domain > application > infrastructure**, reflecting where business-rule density actually lives. `domain`/`application` thresholds are not expected to drop (no new business logic). The `infrastructure` threshold is **measured after implementation**, not guessed upfront — closes TD08 as an amendment to ADR 0006.
 - Test strategy: unit tests per `HttpHandler` (usecases mocked via Mockito) + end-to-end tests via **REST-Assured** against the real embedded `HttpServer` backed by Testcontainers Postgres (Java's closest equivalent to Node's supertest).
@@ -461,7 +461,7 @@ Feature: Correlation ID over HTTP
 **Tasks:**
 
 - Extend the HTTP foundation (US-901) with a correlation filter/wrapper applied to every route
-- Reuse `CorrelationIdSupport` (from E8) — read `X-Correlation-Id` if present, else generate
+- Reuse `LogTrace` (from E8) — read `X-Correlation-Id` if present, else generate
 - Echo the resolved correlation ID back via the `X-Correlation-Id` response header
 - Ensure MDC is cleared in a `finally` block per request, avoiding leakage across pooled request-handling threads
 
@@ -690,7 +690,7 @@ This reduction is temporary — see TD08 for the plan to revisit thresholds once
 | US-802 | Retrofit Logging into Existing Use Cases (book/customer/loan) | 5 | ✅ Done |
 | US-803 | Correlation ID Convention via MDC | 2 | ✅ Done |
 
-Logback configured with a JSON structured encoder (`logstash-logback-encoder`) targeting stdout, with separate `logback-dev.xml`/`logback-prod.xml` profiles. Existing book/customer/loan usecases emit INFO/WARN/ERROR logs consistently. Correlation across log lines within an operation is handled via SLF4J's MDC (`CorrelationIdSupport`), wired at the CLI entrypoint and cleared in a `finally` block. Full observability (metrics, dashboards, tracing) stayed explicitly out of scope — see ADR [0004](./adr/0004-slf4j-logback-without-full-observability.md) — revisited in E11. TD07 formally resolved. Full detail (Gherkin, tasks, commits): see the corresponding Issues on GitHub Projects.
+Logback configured with a JSON structured encoder (`logstash-logback-encoder`) targeting stdout, with separate `logback-dev.xml`/`logback-prod.xml` profiles. Existing book/customer/loan usecases emit INFO/WARN/ERROR logs consistently. Correlation across log lines within an operation is handled via SLF4J's MDC (`LogTrace`), wired at the CLI entrypoint and cleared in a `finally` block. Full observability (metrics, dashboards, tracing) stayed explicitly out of scope — see ADR [0004](./adr/0004-slf4j-logback-without-full-observability.md) — revisited in E11. TD07 formally resolved. Full detail (Gherkin, tasks, commits): see the corresponding Issues on GitHub Projects.
 
 ---
 

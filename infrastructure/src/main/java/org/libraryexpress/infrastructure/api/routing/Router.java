@@ -39,9 +39,14 @@ public final class Router implements HttpHandler {
 
         Pattern pattern = Pattern.compile(regexPattern);
 
-        CustomHttpHandler customHttpHandler = new GlobalExceptionHandler(handler);
+        CustomHttpHandler globalExceptionHandler = new GlobalExceptionHandler(handler);
+        LogTraceFilter traceFilter = new LogTraceFilter();
 
-        routes.add(new RouteEntry(method.getVerb(), pattern, parameterNames, customHttpHandler));
+        CustomHttpHandler fullHandler = (request, response) -> {
+            traceFilter.doFilter(request, response, globalExceptionHandler);
+        };
+
+        routes.add(new RouteEntry(method.getVerb(), pattern, parameterNames, fullHandler));
     }
 
     @Override
